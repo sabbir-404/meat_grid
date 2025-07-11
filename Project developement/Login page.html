@@ -14,13 +14,27 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+    img {
+  border-radius: 5%;
+  }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #343a40;
+      color: white;
+      padding: 10px 0;
+    }
   </style>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="front page.html">Meat Grid</a>
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="Logo/Logo white.png" alt="Meat Grid Logo" height="40" class="me-2">
+      <span>Meat Grid</span>
+    </a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="Sign up.html">Sign-up</a></li>
@@ -32,6 +46,7 @@
 
   <!-- Login Form -->
   <div class="form-container">
+    <img src="Logo/Logo.png" alt="Meat Grid Logo" class="d-block mx-auto mb-4" height="110">
     <h3 class="text-center mb-4">Login to Your Account</h3>
     <form>
       <div class="mb-3">
