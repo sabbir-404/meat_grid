@@ -14,31 +14,44 @@
     .wrapper {
     display: flex;
     }
-    .sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #343a40;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    }
-    .sidebar h4 {
-    color: #f8f9fa;
-    margin-bottom: 20px;
-    }
-    .sidebar a {
-    color: #ccc;
-    text-decoration: none;
-    display: block;
-    padding: 10px 0;
-    border-bottom: 1px solid #495057;
-    }
-    .sidebar a:hover {
-    color: white;
-    }
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: #343a40;
+  color: white;
+  padding: 20px 0;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .text-center {
+  margin-bottom: 15px;
+}
+
+.sidebar h5 {
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  color: #ccc;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  color: white;
+  background-color: #495057;
+  border-left: 3px solid #ffffff;
+  font-weight: bold;
+}
+
+
     .user-dropdown {
     z-index: 9999 !important;
     position: fixed;
@@ -85,24 +98,20 @@
 <div class="wrapper">
 <!-- Sidebar -->
 <div class="sidebar">
-<!-- Logo -->
-<div class="text-center" style="padding: 0; margin: 0;">
-    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto; margin: 0; padding: 0;">
+  <div class="text-center">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
   </div>
-
-  <!-- Admin Panel Title -->
-  <h5 class="text-white mt-2 mb-3" style="font-weight: bold;"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
-
-  <!-- Nav Links -->
-  <a href="#dashboard"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="#analytics"><i class="fas fa-chart-bar me-2"></i>Charts & Trends</a>
-  <a href="#farmers"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
-  <a href="#retailers"><i class="fas fa-store me-2"></i>Retailer Sales</a>
-  <a href="#slaughter"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
-  <a href="#wholesalers"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
-  <a href="#consumers"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
-  <a href="#nutrition"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+  <h5 class="text-white mt-3 mb-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
 </div>
+
+
 
 
     <!-- Main Dashboard Content -->
