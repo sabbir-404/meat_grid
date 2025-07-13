@@ -56,10 +56,31 @@
     footer {
       margin-left: 270px;
     }
+        .user-dropdown {
+      z-index: 9999 !important;
+      position: fixed;
+      top: 20px;
+      right: 30px;
+    }
+    .dropdown-menu {
+      z-index: 9999 !important;
+    }
   </style>
 </head>
 <body>
-
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+    <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user-circle"></i> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+    </ul>
+    </div>
+</div>
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="text-center">
