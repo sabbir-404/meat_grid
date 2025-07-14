@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Retailer Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+  .hover-box {
+    position: absolute;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: none;
+    max-width: 350px;
+    font-size: 0.9rem;
+  }
+  .details-toggle {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: underline;
+  }
+    body {
+      background-color: #f4f6f9;
+    }
+    .wrapper {
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar .text-center {
+      margin-bottom: 15px;
+    }
+    .sidebar h5 {
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      color: #ccc;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      border-left: 3px solid #ffffff;
+      font-weight: bold;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    .treeview {
+      padding-left: 20px;
+    }
+    footer {
+      margin-left: 270px;
+    }
+        .user-dropdown {
+      z-index: 9999 !important;
+      position: fixed;
+      top: 20px;
+      right: 30px;
+    }
+    .dropdown-menu {
+      z-index: 9999 !important;
+    }
+  </style>
+</head>
+<body>
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+    <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user-circle"></i> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+    </ul>
+    </div>
+</div>
+<div class="sidebar">
+  <div class="text-center">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
+  </div>
+  <h5><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+  <a href="admin-retailers.html" class="active"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+</div>
+
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Retailer Sales Dashboard</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Retailer Information</h5>
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr><th>Retailer Type</th><th>Retailer ID</th><th>Name</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Online</td><td>R001</td><td>FreshMeat BD</td><td>Dhaka</td></tr>
+          <tr><td>Offline</td><td>R002</td><td>MeatHub</td><td>Chittagong</td></tr>
+          <tr><td>Online</td><td>R003</td><td>DailyMeat</td><td>Khulna</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Retailer Sales Overview</h5>
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr><th>Retailer</th><th>Meat Type</th><th>Sold Quantity</th><th>Price per Unit</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FreshMeat BD</td><td>Drumstick</td><td>100 pcs</td><td>80</td><td>Dhaka</td></tr>
+          <tr><td>MeatHub</td><td>Rib</td><td>30 pcs</td><td>500</td><td>Chittagong</td></tr>
+          <tr><td>DailyMeat</td><td>Wing</td><td>70 pcs</td><td>50</td><td>Khulna</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<div class="card">
+  <div class="card-body position-relative">
+    <h5 class="card-title">Total Monthly Sales</h5>
+    <table class="table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr><th>Retailer</th><th>Total Sales (BDT)</th></tr>
+      </thead>
+      <tbody>
+        <tr class="retailer-row" onclick="toggleHoverBox()"><td>FreshMeat BD</td><td>80000</td></tr>
+      </tbody>
+    </table>
+    <div class="hover-box" id="retailerTooltip">
+      <strong>FreshMeat BD - Monthly Purchase Records</strong>
+      <div>
+        <p><strong>Customer ID:</strong> C045</p>
+        <p><strong>Purchase ID:</strong> <span class="details-toggle" onclick="toggleDetails('details1')">P001</span></p>
+        <p><strong>Bill Date:</strong> 2025-07-01</p>
+        <p><strong>Total Bill:</strong> 1800 TK</p>
+        <div id="details1" style="display:none; padding-left: 15px;">
+          <ul>
+            <li>Product ID: M001 - Drumstick: 10 pcs - 800 TK</li>
+            <li>Product ID: M002 - Rib: 2 pcs - 1000 TK</li>
+          </ul>
+        </div>
+        <hr>
+        <p><strong>Customer ID:</strong> C046</p>
+        <p><strong>Purchase ID:</strong> <span class="details-toggle" onclick="toggleDetails('details2')">P002</span></p>
+        <p><strong>Bill Date:</strong> 2025-07-04</p>
+        <p><strong>Total Bill:</strong> 1050 TK</p>
+        <div id="details2" style="display:none; padding-left: 15px;">
+          <ul>
+            <li>Product ID: M003 - Wing: 6 pcs - 450 TK</li>
+            <li>Product ID: M004 - Thigh: 4 pcs - 600 TK</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Retailer Price Comparison Over Time</h5>
+      <canvas id="retailerChart" style="width:100%; max-height:300px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<footer class="bg-dark text-white text-center p-3 mt-5">
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('retailerChart');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Drumstick', 'Rib', 'Wing'],
+      datasets: [
+        {
+          label: 'FreshMeat BD',
+          data: [800, 1000, 0],
+          backgroundColor: '#007bff'
+        },
+        {
+          label: 'MeatHub',
+          data: [0, 15000, 0],
+          backgroundColor: '#dc3545'
+        },
+        {
+          label: 'DailyMeat',
+          data: [0, 0, 3500],
+          backgroundColor: '#28a745'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'Price Comparison of Meat Products' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Price (BDT)' }
+        }
+      }
+    }
+  });
+</script>
+<script>
+  const tooltip = document.getElementById('retailerTooltip');
+  let isTooltipVisible = false;
+
+  function toggleHoverBox() {
+    isTooltipVisible = !isTooltipVisible;
+    tooltip.style.display = isTooltipVisible ? 'block' : 'none';
+  }
+
+  function toggleDetails(id) {
+    const section = document.getElementById(id);
+    if (section.style.display === 'none') {
+      section.style.display = 'block';
+    } else {
+      section.style.display = 'none';
+    }
+  }
+</script>
+
+</body>
+</html>

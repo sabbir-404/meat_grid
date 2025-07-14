@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wholesale Data - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .dashboard-container {
+  margin-left: 270px;  /* Space for sidebar + margin */
+  padding: 30px;
+  width: calc(100% - 270px);
+  position: relative;
+  z-index: 1;
+}
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+    }
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content-box {
+      background: #fff;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80%;
+      overflow-y: auto;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+    }
+    .modal-content-box .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+        .user-dropdown {
+      z-index: 9999 !important;
+      position: fixed;
+      top: 20px;
+      right: 30px;
+    }
+    .dropdown-menu {
+      z-index: 9999 !important;
+    }
+  </style>
+</head>
+<body>
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+    <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user-circle"></i> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+    </ul>
+    </div>
+</div>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-wholesalers.html" class="active"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+</div>
+
+<!-- Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Wholesale Data Overview</h2>
+
+  <!-- Table 1: Wholesale Basic Info -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Wholesale Information</h5>
+      <input class="form-control mb-2" type="text" placeholder="Search wholesale info..." onkeyup="filterTable(this, 'wholesaleTable')">
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="wholesaleTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Wholesale ID</th>
+              <th>Wholesale Name</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>W001</td><td>FreshMeat Ltd</td><td>Dhaka</td></tr>
+            <tr><td>W002</td><td>Prime Cuts</td><td>Chittagong</td></tr>
+            <tr><td>W003</td><td>Meat World</td><td>Khulna</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 2: Inventory Summary -->
+  <div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Meat Inventory Summary</h5>
+    <input class="form-control mb-2" type="text" placeholder="Search inventory..." onkeyup="filterTable(this, 'inventoryTable')">
+    <div class="table-wrapper">
+      <table class="table table-bordered table-hover" id="inventoryTable">
+        <thead class="table-dark">
+          <tr>
+            <th>Wholesale ID</th>
+            <th>Wholesaler Name</th>
+            <th>Total Meat Products</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onclick="showDetails('W001')">
+            <td>W001</td><td>FreshMeat Ltd</td><td>450</td>
+          </tr>
+          <tr onclick="showDetails('W002')">
+            <td>W002</td><td>Prime Cuts</td><td>320</td>
+          </tr>
+          <tr onclick="showDetails('W003')">
+            <td>W003</td><td>Meat World</td><td>280</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Scatter Plot -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Price vs Quantity Over Time</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <select class="form-select" id="breedSelect">
+            <option value="">Select Breed</option>
+            <option value="broiler">Broiler</option>
+            <option value="local">Local Cattle</option>
+            <option value="blackBengal">Black Bengal</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select" id="meatTypeSelect">
+            <option value="">Select Meat Type</option>
+            <option value="drumstick">Drumstick</option>
+            <option value="tbone">T-Bone</option>
+            <option value="ribs">Ribs</option>
+            <option value="liver">Liver</option>
+          </select>
+        </div>
+      </div>
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Box for Meat Details -->
+<div class="modal-overlay" id="detailsModal">
+  <div class="modal-content-box">
+    <span class="close-btn" onclick="hideDetails()">&times;</span>
+    <h5>Batch Details for <span id="modalTitle">W001</span></h5>
+    <input class="form-control mb-2" type="text" placeholder="Search meat types..." onkeyup="filterTable(this, 'detailTable')">
+    <div class="table-wrapper">
+      <table class="table table-bordered" id="detailTable">
+        <thead class="table-secondary">
+          <tr>
+            <th>Batch ID</th>
+            <th>Meat Type</th>
+            <th>Quantity</th>
+            <th>Price per Unit</th>
+            <th>Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>B101</td><td>Drumstick</td><td>40</td><td>120</td><td>4800</td></tr>
+          <tr><td>B102</td><td>Ribs</td><td>20</td><td>200</td><td>4000</td></tr>
+          <tr><td>B103</td><td>Liver</td><td>30</td><td>180</td><td>5400</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-4">
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script>
+const chartDataMap = {
+  broiler: {
+    drumstick: [
+      {x: 20, y: 180},
+      {x: 30, y: 190},
+      {x: 40, y: 210}
+    ],
+    thigh: [
+      {x: 10, y: 150},
+      {x: 25, y: 160},
+      {x: 35, y: 180}
+    ]
+  },
+  local: {
+    tbone: [
+      {x: 15, y: 240},
+      {x: 30, y: 260},
+      {x: 45, y: 300}
+    ],
+    ribs: [
+      {x: 20, y: 230},
+      {x: 50, y: 280}
+    ]
+  },
+  blackBengal: {
+    liver: [
+      {x: 10, y: 130},
+      {x: 15, y: 150}
+    ]
+  }
+};
+
+  function showDetails(wholesaleId) {
+    document.getElementById('modalTitle').innerText = wholesaleId;
+    document.getElementById('detailsModal').style.display = 'flex';
+  }
+  function hideDetails() {
+    document.getElementById('detailsModal').style.display = 'none';
+  }
+
+  function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    rows.forEach(row => {
+      const match = row.textContent.toLowerCase().includes(filter);
+      row.style.display = match ? '' : 'none';
+    });
+  }
+
+const ctx = document.getElementById('scatterChart');
+let scatter = new Chart(ctx, {
+  type: 'scatter',
+  data: {
+    datasets: []
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: { title: { display: true, text: 'Quantity' }},
+      y: { title: { display: true, text: 'Price (Tk)' }}
+    },
+    plugins: {
+      legend: { display: true }
+    }
+  }
+});
+
+document.getElementById('breedSelect').addEventListener('change', updateChart);
+document.getElementById('meatTypeSelect').addEventListener('change', updateChart);
+
+function updateChart() {
+  const breed = document.getElementById('breedSelect').value;
+  const meat = document.getElementById('meatTypeSelect').value;
+
+  if (!breed || !meat || !chartDataMap[breed] || !chartDataMap[breed][meat]) {
+    scatter.data.datasets = [];
+    scatter.update();
+    return;
+  }
+
+  const dataPoints = chartDataMap[breed][meat];
+
+  scatter.data.datasets = [
+    {
+      type: 'scatter',
+      label: `${meat} (Points)`,
+      data: dataPoints,
+      backgroundColor: '#007bff'
+    },
+    {
+      type: 'line',
+      label: 'Trend Line',
+      data: dataPoints,
+      borderColor: '#28a745',
+      borderWidth: 2,
+      fill: false,
+      tension: 0.3,
+      pointRadius: 0
+    }
+  ];
+
+  scatter.update();
+}
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

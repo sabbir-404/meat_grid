@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Slaughterhouse Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .wrapper {
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar .text-center {
+      margin-bottom: 15px;
+    }
+    .sidebar h5 {
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      color: #ccc;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      border-left: 3px solid #ffffff;
+      font-weight: bold;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .card {
+      margin-bottom: 20px;
+    }
+    footer {
+      margin-left: 270px;
+    }
+        .user-dropdown {
+      z-index: 9999 !important;
+      position: fixed;
+      top: 20px;
+      right: 30px;
+    }
+    .dropdown-menu {
+      z-index: 9999 !important;
+    }
+  </style>
+</head>
+<body>
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+    <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user-circle"></i> Admin
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+    </ul>
+    </div>
+</div>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
+  </div>
+  <h5><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html" class="active"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Slaughterhouse Dashboard</h2>
+
+  <!-- Table 1: Processed Meat Info -->
+  <div class="card" style="max-width: 100%;">
+    <div class="card-body">
+      <h5 class="card-title">Processed Meat Details</h5>
+      
+      <!-- Scrollable Table Container -->
+      <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+        <table class="table table-bordered table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Meat Type</th>
+              <th>Breed</th>
+              <th>Slaughterhouse Name</th>
+              <th>Slaughterhouse ID</th>
+              <th>Weight (kg)</th>
+              <th>Processed Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>T-Bone</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>90</td><td>2025-07-01</td></tr>
+            <tr><td>Drumstick</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>50</td><td>2025-07-02</td></tr>
+            <tr><td>Liver</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>30</td><td>2025-07-03</td></tr>
+            <tr><td>Heart</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>25</td><td>2025-07-03</td></tr>
+            <tr><td>Ribs</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>70</td><td>2025-07-04</td></tr>
+            <tr><td>Thigh</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>60</td><td>2025-07-04</td></tr>
+            <tr><td>Wing</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>40</td><td>2025-07-05</td></tr>
+            <tr><td>Brisket</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>85</td><td>2025-07-05</td></tr>
+            <tr><td>Neck</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>20</td><td>2025-07-06</td></tr>
+            <tr><td>Shank</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>65</td><td>2025-07-06</td></tr>
+            <tr><td>Breast</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>55</td><td>2025-07-07</td></tr>
+            <tr><td>Tail</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>35</td><td>2025-07-07</td></tr>
+            <tr><td>Kidney</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>22</td><td>2025-07-08</td></tr>
+            <tr><td>Leg</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>45</td><td>2025-07-08</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 2: Slaughterhouse Capacity -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Slaughterhouse Capacity Overview</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Slaughterhouse Name</th>
+              <th>Slaughter Rate (animals/day)</th>
+              <th>Processing Capacity (kg/day)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Dhaka Central</td><td>50</td><td>2000</td></tr>
+            <tr><td>Chittagong South</td><td>40</td><td>1500</td></tr>
+            <tr><td>Khulna East</td><td>30</td><td>1200</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 3: Total Meat Produced -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Total Meat Production Summary</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Meat Type</th>
+              <th>Breed</th>
+              <th>Storing Temperature (°C)</th>
+              <th>Yield Weight (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>T-Bone</td><td>Local Cattle</td><td>4</td><td>90</td></tr>
+            <tr><td>Drumstick</td><td>Broiler</td><td>2</td><td>50</td></tr>
+            <tr><td>Liver</td><td>Black Bengal</td><td>4</td><td>30</td></tr>
+            <tr><td>Heart</td><td>Black Bengal</td><td>4</td><td>25</td></tr>
+            <tr><td>Ribs</td><td>Local Cattle</td><td>4</td><td>70</td></tr>
+            <tr><td>Thigh</td><td>Broiler</td><td>2</td><td>60</td></tr>
+            <tr><td>Wing</td><td>Broiler</td><td>2</td><td>40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bar Chart: Meat Quantity -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Meat Quantity by Type</h5>
+      <canvas id="meatBarChart" style="width: 100%; max-height: 300px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-5">
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const ctx = document.getElementById('meatBarChart');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['T-Bone', 'Drumstick', 'Liver', 'Heart', 'Ribs', 'Thigh', 'Wing'],
+      datasets: [{
+        label: 'Quantity (kg)',
+        data: [90, 50, 30, 25, 70, 60, 40],
+        backgroundColor: [
+          '#dc3545', '#ffc107', '#28a745', '#17a2b8',
+          '#6f42c1', '#fd7e14', '#20c997'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Total Quantity by Meat Type'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Weight (kg)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Meat Type'
+          }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
