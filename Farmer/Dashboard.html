@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Farmer Dashboard - Meat Grid</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<style>
+body {
+    background-color: #f4f6f9;
+}
+.dashboard-container {
+    margin-left: 270px;
+    padding: 30px;
+    width: calc(100% - 270px);
+    position: relative;
+    z-index: 1;
+}
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #343a40;
+    color: white;
+    position: fixed;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar a {
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+.sidebar a:hover, .sidebar a.active {
+    color: white;
+    background-color: #495057;
+    font-weight: bold;
+    border-left: 3px solid #fff;
+}
+.user-dropdown {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 9999;
+}
+.dropdown-menu {
+    z-index: 9999;
+}
+</style>
+</head>
+<body>
+
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+<div class="dropdown">
+<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-user-circle"></i> Farmer
+</button>
+<ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="#">View Profile</a></li>
+    <li><hr class="dropdown-divider" /></li>
+    <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+</ul>
+</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+<div class="text-center mb-3">
+<img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+</div>
+<h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Farmer Panel</h5>
+<a href="farmer-dashboard.html" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
+<a href="farmer-livestock.html"><i class="fas fa-paw me-2"></i>Livestock & Farm Entry</a>
+</div>
+
+<div class="dashboard-container container-fluid">
+<h2 class="mb-4">Welcome, Farmer</h2>
+<p>This is your dashboard. Use the panel to manage your livestock and monitor performance.</p>
+
+<!-- Bar Chart 1: Animal Count by Type -->
+<div class="card mb-4">
+<div class="card-body">
+    <h5 class="card-title">Animal Count by Type</h5>
+    <canvas id="animalCountChart" style="max-height: 300px;"></canvas>
+</div>
+</div>
+
+<!-- Bar Chart 2: Average Weight by Type -->
+<div class="card mb-4">
+<div class="card-body">
+    <h5 class="card-title">Average Weight by Type</h5>
+    <canvas id="weightChart" style="max-height: 300px;"></canvas>
+</div>
+</div>
+
+<!-- Line Chart: Weight Trends (optional) -->
+<div class="card mb-4">
+<div class="card-body">
+    <h5 class="card-title">Livestock Weight Trends</h5>
+    <canvas id="weightTrendChart" style="max-height: 300px;"></canvas>
+</div>
+</div>
+</div>
+
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-4">
+&copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Animal Count by Type
+new Chart(document.getElementById('animalCountChart'), {
+type: 'bar',
+data: {
+    labels: ['Cattle', 'Goat', 'Chicken', 'Sheep'],
+    datasets: [{
+    label: 'Number of Animals',
+    data: [35, 50, 120, 20],
+    backgroundColor: ['#0d6efd', '#20c997', '#ffc107', '#dc3545']
+    }]
+},
+options: {
+    responsive: true,
+    plugins: {
+    title: { display: true, text: 'Total Livestock by Animal Type' },
+    legend: { display: false }
+    },
+    scales: {
+    y: { beginAtZero: true }
+    }
+}
+});
+
+// Average Weight by Type
+new Chart(document.getElementById('weightChart'), {
+type: 'bar',
+data: {
+    labels: ['Cattle', 'Goat', 'Chicken', 'Sheep'],
+    datasets: [{
+    label: 'Avg Weight (kg)',
+    data: [320, 45, 2.5, 40],
+    backgroundColor: ['#6610f2', '#198754', '#fd7e14', '#0dcaf0']
+    }]
+},
+options: {
+    responsive: true,
+    plugins: {
+    title: { display: true, text: 'Average Weight per Animal Type' },
+    legend: { display: false }
+    },
+    scales: {
+    y: { beginAtZero: true }
+    }
+}
+});
+
+// Weight Trend Over Time (Optional)
+new Chart(document.getElementById('weightTrendChart'), {
+type: 'line',
+data: {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+    {
+        label: 'Cattle',
+        data: [300, 310, 315, 320],
+        borderColor: '#0d6efd',
+        fill: false,
+        tension: 0.4
+    },
+    {
+        label: 'Goat',
+        data: [42, 43.5, 44, 45],
+        borderColor: '#20c997',
+        fill: false,
+        tension: 0.4
+    }
+    ]
+},
+options: {
+    responsive: true,
+    plugins: {
+    title: { display: true, text: 'Livestock Weight Trend Over Time' }
+    },
+    scales: {
+    y: {
+        beginAtZero: false,
+        title: { display: true, text: 'Weight (kg)' }
+    }
+    }
+}
+});
+</script>
+
+</body>
+</html>
