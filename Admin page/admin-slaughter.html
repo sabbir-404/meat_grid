@@ -56,7 +56,7 @@
     footer {
       margin-left: 270px;
     }
-        .user-dropdown {
+    .user-dropdown {
       z-index: 9999 !important;
       position: fixed;
       top: 20px;
@@ -65,22 +65,28 @@
     .dropdown-menu {
       z-index: 9999 !important;
     }
+    .table-actions {
+      display: flex;
+      gap: 8px;
+    }
   </style>
 </head>
 <body>
+
 <!-- User Profile Dropdown -->
 <div class="user-dropdown">
-    <div class="dropdown">
+  <div class="dropdown">
     <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i> Admin
+      <i class="fas fa-user-circle"></i> Admin
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="../Login page.html">Logout</a></li>
+      <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" href="../Login page.html">Logout</a></li>
     </ul>
-    </div>
+  </div>
 </div>
+
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="text-center">
@@ -101,13 +107,19 @@
   <h2 class="mb-4">Slaughterhouse Dashboard</h2>
 
   <!-- Table 1: Processed Meat Info -->
-  <div class="card" style="max-width: 100%;">
+  <div class="card">
     <div class="card-body">
-      <h5 class="card-title">Processed Meat Details</h5>
-      
-      <!-- Scrollable Table Container -->
+      <h5 class="card-title d-flex justify-content-between align-items-center">
+        Processed Meat Details
+        <button class="btn btn-sm btn-success" onclick="addProcessedRow()">
+          <i class="fas fa-plus"></i> Add
+        </button>
+        
+      </h5>
       <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
-        <table class="table table-bordered table-hover mb-0">
+  <input type="text" id="processedSearch" class="form-control mb-2" placeholder="Search meat details..." onkeyup="searchTable('processedSearch', 'processedTable')">
+
+        <table class="table table-bordered table-hover mb-0" id="processedTable">
           <thead class="table-dark">
             <tr>
               <th>Meat Type</th>
@@ -116,46 +128,57 @@
               <th>Slaughterhouse ID</th>
               <th>Weight (kg)</th>
               <th>Processed Date</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>T-Bone</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>90</td><td>2025-07-01</td></tr>
-            <tr><td>Drumstick</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>50</td><td>2025-07-02</td></tr>
-            <tr><td>Liver</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>30</td><td>2025-07-03</td></tr>
-            <tr><td>Heart</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>25</td><td>2025-07-03</td></tr>
-            <tr><td>Ribs</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>70</td><td>2025-07-04</td></tr>
-            <tr><td>Thigh</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>60</td><td>2025-07-04</td></tr>
-            <tr><td>Wing</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>40</td><td>2025-07-05</td></tr>
-            <tr><td>Brisket</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>85</td><td>2025-07-05</td></tr>
-            <tr><td>Neck</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>20</td><td>2025-07-06</td></tr>
-            <tr><td>Shank</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>65</td><td>2025-07-06</td></tr>
-            <tr><td>Breast</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>55</td><td>2025-07-07</td></tr>
-            <tr><td>Tail</td><td>Local Cattle</td><td>Dhaka Central</td><td>SH001</td><td>35</td><td>2025-07-07</td></tr>
-            <tr><td>Kidney</td><td>Black Bengal</td><td>Khulna East</td><td>SH003</td><td>22</td><td>2025-07-08</td></tr>
-            <tr><td>Leg</td><td>Broiler</td><td>Chittagong South</td><td>SH002</td><td>45</td><td>2025-07-08</td></tr>
+          <tbody id="processedBody">
+            <!-- Rows dynamically generated -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
-
   <!-- Table 2: Slaughterhouse Capacity -->
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">Slaughterhouse Capacity Overview</h5>
+      <h5 class="card-title d-flex justify-content-between align-items-center">
+        Slaughterhouse Capacity Overview
+        <button class="btn btn-sm btn-success" onclick="addCapacityRow()">
+          <i class="fas fa-plus"></i> Add
+        </button>
+      </h5>
       <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover" id="capacityTable">
           <thead class="table-dark">
             <tr>
               <th>Slaughterhouse Name</th>
               <th>Slaughter Rate (animals/day)</th>
               <th>Processing Capacity (kg/day)</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>Dhaka Central</td><td>50</td><td>2000</td></tr>
-            <tr><td>Chittagong South</td><td>40</td><td>1500</td></tr>
-            <tr><td>Khulna East</td><td>30</td><td>1200</td></tr>
+            <tr>
+              <td>Dhaka Central</td><td>50</td><td>2000</td>
+              <td class="table-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>Chittagong South</td><td>40</td><td>1500</td>
+              <td class="table-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>Khulna East</td><td>30</td><td>1200</td>
+              <td class="table-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -167,7 +190,7 @@
     <div class="card-body">
       <h5 class="card-title">Total Meat Production Summary</h5>
       <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover" id="summaryTable">
           <thead class="table-dark">
             <tr>
               <th>Meat Type</th>
@@ -176,15 +199,7 @@
               <th>Yield Weight (kg)</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td>T-Bone</td><td>Local Cattle</td><td>4</td><td>90</td></tr>
-            <tr><td>Drumstick</td><td>Broiler</td><td>2</td><td>50</td></tr>
-            <tr><td>Liver</td><td>Black Bengal</td><td>4</td><td>30</td></tr>
-            <tr><td>Heart</td><td>Black Bengal</td><td>4</td><td>25</td></tr>
-            <tr><td>Ribs</td><td>Local Cattle</td><td>4</td><td>70</td></tr>
-            <tr><td>Thigh</td><td>Broiler</td><td>2</td><td>60</td></tr>
-            <tr><td>Wing</td><td>Broiler</td><td>2</td><td>40</td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
@@ -205,49 +220,170 @@
 </footer>
 
 <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById('meatBarChart');
-  new Chart(ctx, {
+  const meatTypes = ['T-Bone', 'Drumstick', 'Liver', 'Heart', 'Ribs', 'Thigh', 'Wing', 'Brisket', 'Neck', 'Shank', 'Breast', 'Tail', 'Kidney', 'Leg'];
+  const breeds = ['Local Cattle', 'Broiler', 'Black Bengal'];
+
+  const processedTable = document.getElementById('processedBody');
+  const summaryTable = document.querySelector('#summaryTable tbody');
+
+  function createSelect(options, selected = '') {
+    const select = document.createElement('select');
+    select.className = 'form-select form-select-sm';
+    options.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = o.textContent = opt;
+      if (opt === selected) o.selected = true;
+      select.appendChild(o);
+    });
+    return select;
+  }
+
+  function addProcessedRow() {
+    const tr = document.createElement('tr');
+    const meatSel = createSelect(meatTypes);
+    const breedSel = createSelect(breeds);
+    tr.innerHTML = `
+      <td></td><td></td><td><input type="text" class="form-control form-control-sm"/></td>
+      <td><input type="text" class="form-control form-control-sm"/></td>
+      <td><input type="number" class="form-control form-control-sm"/></td>
+      <td><input type="date" class="form-control form-control-sm"/></td>
+      <td class="table-actions">
+        <button class="btn btn-sm btn-success me-1" onclick="saveProcessedRow(this)">Save</button>
+        <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
+      </td>
+    `;
+    tr.children[0].appendChild(meatSel);
+    tr.children[1].appendChild(breedSel);
+    processedTable.appendChild(tr);
+  }
+
+  function saveProcessedRow(btn) {
+    const row = btn.closest('tr');
+    const cells = row.querySelectorAll('td');
+    const values = [];
+    for (let i = 0; i < 6; i++) {
+      const input = cells[i].querySelector('input, select');
+      values.push(input.value);
+      cells[i].textContent = input.value;
+    }
+    cells[6].innerHTML = `
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+    `;
+    updateSummaryAndChart();
+  }
+
+  function editRow(btn) {
+    const row = btn.closest('tr');
+    const cells = row.querySelectorAll('td');
+    const values = Array.from(cells).slice(0, 6).map(td => td.textContent);
+
+    cells[0].innerHTML = '';
+    cells[0].appendChild(createSelect(meatTypes, values[0]));
+    cells[1].innerHTML = '';
+    cells[1].appendChild(createSelect(breeds, values[1]));
+    for (let i = 2; i <= 4; i++) {
+      cells[i].innerHTML = `<input type="text" class="form-control form-control-sm" value="${values[i]}">`;
+    }
+    cells[5].innerHTML = `<input type="date" class="form-control form-control-sm" value="${values[5]}">`;
+    cells[6].innerHTML = `
+      <button class="btn btn-sm btn-success me-1" onclick="saveProcessedRow(this)">Save</button>
+      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
+    `;
+  }
+
+  function cancelRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+  }
+
+  function deleteRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+    updateSummaryAndChart();
+  }
+
+  function updateSummaryAndChart() {
+    const meatMap = {};
+    summaryTable.innerHTML = '';
+    document.querySelectorAll('#processedBody tr').forEach(tr => {
+      const [meat, breed, , , weight] = Array.from(tr.children).map(td => td.textContent.trim());
+      const key = `${meat}|${breed}`;
+      meatMap[key] = (meatMap[key] || 0) + parseFloat(weight || 0);
+    });
+
+    const labels = [];
+    const data = [];
+
+    Object.entries(meatMap).forEach(([key, weight]) => {
+      const [meat, breed] = key.split('|');
+      const row = summaryTable.insertRow();
+      row.insertCell().textContent = meat;
+      row.insertCell().textContent = breed;
+      row.insertCell().textContent = meat.toLowerCase().includes('drumstick') || breed === 'Broiler' ? '2' : '4';
+      row.insertCell().textContent = weight;
+      labels.push(meat);
+      data.push(weight);
+    });
+
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+    chart.update();
+  }
+
+  function addCapacityRow() {
+    const tbody = document.querySelector('#capacityTable tbody');
+    const tr = document.createElement('tr');
+    for (let i = 0; i < 3; i++) {
+      const td = document.createElement('td');
+      td.innerHTML = `<input type="text" class="form-control form-control-sm">`;
+      tr.appendChild(td);
+    }
+    const td = document.createElement('td');
+    td.innerHTML = `
+      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
+      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
+    `;
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  }
+
+  const chart = new Chart(document.getElementById('meatBarChart'), {
     type: 'bar',
     data: {
-      labels: ['T-Bone', 'Drumstick', 'Liver', 'Heart', 'Ribs', 'Thigh', 'Wing'],
+      labels: [],
       datasets: [{
         label: 'Quantity (kg)',
-        data: [90, 50, 30, 25, 70, 60, 40],
-        backgroundColor: [
-          '#dc3545', '#ffc107', '#28a745', '#17a2b8',
-          '#6f42c1', '#fd7e14', '#20c997'
-        ]
+        data: [],
+        backgroundColor: '#28a745'
       }]
     },
     options: {
       responsive: true,
       plugins: {
         legend: { display: false },
-        title: {
-          display: true,
-          text: 'Total Quantity by Meat Type'
-        }
+        title: { display: true, text: 'Total Quantity by Meat Type' }
       },
       scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Weight (kg)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Meat Type'
-          }
-        }
+        y: { beginAtZero: true, title: { display: true, text: 'Weight (kg)' }},
+        x: { title: { display: true, text: 'Meat Type' }}
       }
     }
   });
+
 </script>
+<script>
+function searchTable(inputId, tableId) {
+  const input = document.getElementById(inputId).value.toLowerCase();
+  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+  rows.forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
+  });
+}
+</script>
+
 </body>
 </html>
