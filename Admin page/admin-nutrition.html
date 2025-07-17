@@ -42,6 +42,7 @@
       flex: 1;
       margin-left: 270px;
       padding: 30px;
+      width: calc(100% - 270px);
     }
     .modal-overlay {
       position: fixed;
@@ -75,26 +76,23 @@
       overflow-y: auto;
     }
     footer {
-    background-color: #343a40;
-    color: white;  
-    text-align: center;
-    padding: 1rem;
-    margin-left: 270px;  
-    }
-        .dashboard-container {
-      margin-left: 270px;
-      padding: 30px;
-      width: calc(100% - 270px);
+      background-color: #343a40;
+      color: white;  
+      text-align: center;
+      padding: 1rem;
+      margin-left: 270px;  
     }
     .user-dropdown {
-    z-index: 9999 !important;
-    position: fixed;
-    top: 20px;
-    right: 30px;
+      z-index: 9999 !important;
+      position: fixed;
+      top: 20px;
+      right: 30px;
     }
     .dropdown-menu {
       z-index: 9999 !important;
     }
+    .action-buttons button { margin-right: 5px; }
+    .top-right-btn { float:right; margin-bottom:10px; }
   </style>
 </head>
 <body>
@@ -107,10 +105,11 @@
     <ul class="dropdown-menu dropdown-menu-end">
         <li><a class="dropdown-item" href="admin-profile.html">View Profile</a></li>
         <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="Login page.html">Logout</a></li>
+        <li><a class="dropdown-item" href="../Login page.html">Logout</a></li>
     </ul>
     </div>
 </div>
+
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="text-center mb-3">
@@ -132,7 +131,10 @@
 
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">Health Guidelines Table</h5>
+      <h5 class="card-title">
+        Health Guidelines Table
+        <button class="btn btn-sm btn-success top-right-btn" onclick="addGuidelineRow()"><i class="fas fa-plus"></i> Add</button>
+      </h5>
       <input class="form-control mb-2" type="text" placeholder="Search guidelines..." onkeyup="filterTable(this, 'guidelineTable')">
       <div class="table-wrapper">
         <table class="table table-bordered table-hover" id="guidelineTable">
@@ -143,23 +145,49 @@
               <th>Issue Date</th>
               <th>Nutritional Intake</th>
               <th>Issued By</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr onclick="showModal('GL001')">
+            <tr>
               <td>GL001</td><td>Balanced Meat Diet</td><td>2025-07-01</td><td>Protein: 50g/day</td><td>Ministry of Health</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL001')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
-            <tr onclick="showModal('GL002')">
+            <tr>
               <td>GL002</td><td>Children's Nutrition</td><td>2025-07-05</td><td>Protein: 35g/day</td><td>WHO Bangladesh</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL002')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
-            <tr onclick="showModal('GL003')">
+            <tr>
               <td>GL003</td><td>Senior Dietary Guidelines</td><td>2025-06-15</td><td>Protein: 45g/day</td><td>National Health Board</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL003')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
-            <tr onclick="showModal('GL004')">
+            <tr>
               <td>GL004</td><td>Pregnancy Nutrition</td><td>2025-05-10</td><td>Protein: 60g/day</td><td>UNICEF</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL004')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
-            <tr onclick="showModal('GL005')">
+            <tr>
               <td>GL005</td><td>Iron-Rich Diet Plan</td><td>2025-04-20</td><td>Iron: 15mg/day</td><td>Nutrition Council</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL005')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -243,7 +271,6 @@
       li.innerText = `${age}: ${data.ageRanges[age]}`;
       list.appendChild(li);
     }
-
     document.getElementById("modalOverlay").style.display = "flex";
   }
 
@@ -257,6 +284,61 @@
     rows.forEach(row => {
       row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
     });
+  }
+
+  // Table add/edit/delete
+  function addGuidelineRow() {
+    const table = document.querySelector("#guidelineTable tbody");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="text" class="form-control"></td>
+      <td><input type="text" class="form-control"></td>
+      <td><input type="date" class="form-control"></td>
+      <td><input type="text" class="form-control"></td>
+      <td><input type="text" class="form-control"></td>
+      <td>
+        <button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-check"></i></button>
+        <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)"><i class="fas fa-times"></i></button>
+      </td>`;
+    table.appendChild(tr);
+  }
+
+  function editRow(btn) {
+    const row = btn.closest('tr');
+    const cells = row.querySelectorAll('td');
+    for (let i = 0; i < cells.length - 1; i++) {
+      const value = cells[i].innerText;
+      if (i === 2) {
+        cells[i].innerHTML = `<input type="date" class="form-control" value="${value}">`;
+      } else {
+        cells[i].innerHTML = `<input type="text" class="form-control" value="${value}">`;
+      }
+    }
+    cells[cells.length - 1].innerHTML = `
+      <button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-check"></i></button>
+      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)"><i class="fas fa-times"></i></button>`;
+  }
+
+  function saveRow(btn) {
+    const row = btn.closest('tr');
+    const cells = row.querySelectorAll('td');
+    for (let i = 0; i < cells.length - 1; i++) {
+      const val = cells[i].querySelector('input')?.value || cells[i].innerText;
+      cells[i].innerText = val;
+    }
+    cells[cells.length - 1].innerHTML = `
+      <button class="btn btn-sm btn-primary" onclick="showModal()"><i class="fas fa-eye"></i></button>
+      <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>`;
+  }
+
+  function cancelRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+  }
+
+  function deleteRow(btn) {
+    btn.closest('tr').remove();
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
