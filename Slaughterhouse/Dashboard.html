@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slaughterhouse Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+    background-color: #f4f6f9;
+}
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #343a40;
+    color: white;
+    position: fixed;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar a {
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+.sidebar a:hover, .sidebar a.active {
+    color: white;
+    background-color: #495057;
+    font-weight: bold;
+    border-left: 3px solid #fff;
+}
+.dashboard-container {
+    margin-left: 270px;
+    padding: 30px;
+}
+.summary-cards .card {
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+footer {
+    background: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-left: 270px;
+    margin-top: 20px;
+}
+.dashboard-container {
+    margin-left: 270px;
+    padding: 30px;
+    width: calc(100% - 270px);
+}
+</style>
+</head>
+<body>
+
+<!-- User Profile Dropdown -->
+<div class="user-dropdown" style="position:fixed; top:20px; right:30px; z-index:9999;">
+<div class="dropdown">
+<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fas fa-user-circle"></i> Slaughterhouse User
+</button>
+<ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="#">View Profile</a></li>
+    <li><hr class="dropdown-divider" /></li>
+    <li><a class="dropdown-item" href="../Login page.html">Logout</a></li>
+</ul>
+</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+<div class="text-center mb-3">
+<img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+</div>
+<h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+<a href="#" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
+<a href="#"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+<a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+<a href="#"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
+<a href="#"><i class="fas fa-comment-alt me-2"></i>Researcher Feedback</a>
+</div>
+
+<!-- Dashboard Content -->
+<div class="dashboard-container container-fluid">
+<h2 class="mb-4">Slaughterhouse Dashboard</h2>
+
+<!-- Summary Cards -->
+<div class="row summary-cards mb-4">
+<div class="col-md-4">
+    <div class="card">
+    <h4>Total Meat Products</h4>
+    <h3 id="totalMeat">520</h3>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="card">
+    <h4>Total Livestock</h4>
+    <h3 id="totalLivestock">300</h3>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="card">
+    <h4>Average Slaughter Rate</h4>
+    <h3 id="avgRate">45 / day</h3>
+    </div>
+</div>
+</div>
+
+<!-- Meat Product Summary Table -->
+<div class="card mb-4">
+<div class="card-body">
+    <h5 class="card-title">Meat Product Summary</h5>
+    <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+        <th>Meat Type</th>
+        <th>Available Quantity (kg)</th>
+        <th>Slaughter Rate (per day)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>T-Bone</td><td>90</td><td>12</td></tr>
+        <tr><td>Drumstick</td><td>120</td><td>20</td></tr>
+        <tr><td>Liver</td><td>60</td><td>10</td></tr>
+        <tr><td>Ribs</td><td>80</td><td>15</td></tr>
+        <tr><td>Wing</td><td>50</td><td>8</td></tr>
+    </tbody>
+    </table>
+</div>
+</div>
+
+<!-- Livestock Summary Table -->
+<div class="card mb-4">
+<div class="card-body">
+    <h5 class="card-title">Livestock Summary</h5>
+    <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+        <th>Breed Type</th>
+        <th>Total Animals</th>
+        <th>Slaughter Capacity / Day</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Local Cattle</td><td>120</td><td>25</td></tr>
+        <tr><td>Broiler Chicken</td><td>150</td><td>30</td></tr>
+        <tr><td>Black Bengal Goat</td><td>30</td><td>8</td></tr>
+    </tbody>
+    </table>
+</div>
+</div>
+
+<!-- Bar Chart -->
+<div class="card">
+<div class="card-body">
+    <h5 class="card-title">Slaughter Rate Per Meat Product</h5>
+    <canvas id="slaughterChart" style="width:100%; max-height:300px;"></canvas>
+</div>
+</div>
+</div>
+
+<!-- Footer -->
+<footer>
+&copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Bar Chart
+const ctx = document.getElementById('slaughterChart');
+new Chart(ctx, {
+type: 'bar',
+data: {
+    labels: ['T-Bone', 'Drumstick', 'Liver', 'Ribs', 'Wing'],
+    datasets: [{
+    label: 'Slaughter Rate / Day',
+    data: [12, 20, 10, 15, 8],
+    backgroundColor: ['#dc3545','#0d6efd','#20c997','#ffc107','#fd7e14']
+    }]
+},
+options: {
+    responsive: true,
+    plugins: {
+    title: { display: true, text: 'Daily Slaughter Rate by Meat Product' },
+    legend: { display: false }
+    },
+    scales: {
+    y: { beginAtZero: true, title: { display: true, text: 'Animals per Day' } }
+    }
+}
+});
+</script>
+</body>
+</html>
