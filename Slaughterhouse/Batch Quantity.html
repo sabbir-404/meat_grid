@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Batch Quantity - Slaughterhouse Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body { background-color: #f4f6f9; }
+    .sidebar {
+      width: 250px; height: 100vh; background: #343a40; color: white;
+      position: fixed; padding: 20px 0; display: flex; flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px; color: #ccc; text-decoration: none;
+      display: flex; align-items: center; border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white; background-color: #495057; font-weight: bold; border-left: 3px solid #fff;
+    }
+    .dashboard-container { margin-left: 270px; padding: 30px; }
+    .table-wrapper { max-height: 300px; overflow-y: auto; }
+    footer {
+      background: #343a40; color: white; text-align: center;
+      padding: 10px; margin-left: 270px; margin-top: 20px;
+    }
+    .form-section {
+      background: #fff; padding: 20px; border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+  <a href="slaughterhouse-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="meat-product-info.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+  <a href="#" class="active"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="#"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
+  <a href="#"><i class="fas fa-comment-alt me-2"></i>Researcher Feedback</a>
+</div>
+
+<!-- Dashboard Container -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Batch Quantity Management</h2>
+
+  <!-- Input Form -->
+  <div class="form-section">
+    <h5>Create New Batch</h5>
+    <form id="batchForm" class="row g-3">
+      <div class="col-md-2">
+        <label class="form-label">Batch ID</label>
+        <input type="text" id="batchID" class="form-control" required>
+      </div>
+
+      <!-- Meat Type linked from meat info page -->
+      <div class="col-md-3">
+        <label class="form-label">Select Meat Product</label>
+        <select id="linkedMeat" class="form-select" required>
+          <option value="">Select</option>
+          <option value="T-Bone|2025-07-17">T-Bone</option>
+          <option value="Drumstick|2025-07-17">Drumstick</option>
+          <option value="Liver|2025-07-18">Liver</option>
+          <option value="Ribs|2025-07-19">Ribs</option>
+        </select>
+        <small class="text-muted">Expiry will match processing date</small>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Product Quantity</label>
+        <input type="number" id="batchQuantity" class="form-control" required>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Production Date</label>
+        <input type="text" id="productionDate" class="form-control" readonly>
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Expiry Date</label>
+        <input type="text" id="expiryDate" class="form-control" readonly>
+      </div>
+
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Add</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search -->
+  <input class="form-control mb-2" type="text" placeholder="Search batch..." onkeyup="filterTable(this, 'batchTable')">
+
+  <!-- Table -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Batch Records</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="batchTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Batch ID</th>
+              <th>Meat Product</th>
+              <th>Quantity</th>
+              <th>Production Date</th>
+              <th>Expiry Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="batchBody">
+            <tr>
+              <td>B001</td><td>T-Bone</td><td>120</td><td>2025-07-17</td><td>2025-07-17</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>B002</td><td>Drumstick</td><td>80</td><td>2025-07-17</td><td>2025-07-17</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const batchBody = document.getElementById("batchBody");
+
+  // Auto-fill today's date for Production Date
+  document.getElementById("productionDate").value = new Date().toISOString().split("T")[0];
+
+  // When meat product selected, set expiry = processing date from meat info
+  document.getElementById("linkedMeat").addEventListener("change", function(){
+    const val = this.value;
+    if(val){
+      const parts = val.split("|");
+      const processingDate = parts[1];
+      document.getElementById("expiryDate").value = processingDate;
+    } else {
+      document.getElementById("expiryDate").value = "";
+    }
+  });
+
+  // Form submission
+  document.getElementById("batchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const batchID = document.getElementById("batchID").value.trim();
+    const selected = document.getElementById("linkedMeat").value.split("|");
+    const meatType = selected[0];
+    const expiry = document.getElementById("expiryDate").value;
+    const qty = document.getElementById("batchQuantity").value;
+    const productionDate = document.getElementById("productionDate").value;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${batchID}</td>
+      <td>${meatType}</td>
+      <td>${qty}</td>
+      <td>${productionDate}</td>
+      <td>${expiry}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    batchBody.appendChild(row);
+
+    this.reset();
+    document.getElementById("productionDate").value = new Date().toISOString().split("T")[0];
+  });
+
+  // Filter table
+  function filterTable(input, tableId){
+    const filter = input.value.toLowerCase();
+    document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+  }
+
+  // Edit Row (only Batch ID, Meat Product, Quantity can change)
+  function editRow(btn){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    const original = [];
+
+    for(let i=0; i<5; i++){
+      original.push(cells[i].textContent.trim());
+      if(i === 3 || i === 4){ 
+        // Production Date & Expiry Date are fixed
+        continue;
+      }
+      let input = document.createElement("input");
+      input.className = "form-control";
+      input.value = cells[i].textContent.trim();
+      cells[i].innerHTML = "";
+      cells[i].appendChild(input);
+    }
+
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
+      <button class="btn btn-sm btn-secondary" onclick='cancelRow(this, ${JSON.stringify(original)})'>Cancel</button>
+    `;
+  }
+
+  function saveRow(btn){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    for(let i=0; i<5; i++){
+      if(i === 3 || i === 4){
+        // Keep Production & Expiry same
+        continue;
+      }
+      cells[i].textContent = cells[i].querySelector("input")?.value || cells[i].textContent;
+    }
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+    `;
+  }
+
+  function cancelRow(btn, data){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    for(let i=0; i<5; i++){
+      cells[i].textContent = data[i];
+    }
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+    `;
+  }
+
+  function deleteRow(btn){
+    btn.closest("tr").remove();
+  }
+</script>
+
+</body>
+</html>
