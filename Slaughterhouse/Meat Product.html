@@ -64,17 +64,17 @@
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="text-center mb-3">
-    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
   <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
-  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="slaughterhouse-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
   <a href="#" class="active"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
   <a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
   <a href="#"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
   <a href="#"><i class="fas fa-comment-alt me-2"></i>Researcher Feedback</a>
 </div>
 
-<!-- Dashboard Content -->
+<!-- Dashboard Container -->
 <div class="dashboard-container container-fluid">
   <h2 class="mb-4">Meat Product Information</h2>
 
@@ -101,15 +101,16 @@
         <label class="form-label">Yield Weight (kg)</label>
         <input type="number" id="yieldWeight" class="form-control" required>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label class="form-label">Processing Date</label>
-        <input type="date" id="processingDate" class="form-control" required>
+        <!-- Auto-filled with today, disabled -->
+        <input type="text" id="processingDate" class="form-control" readonly>
       </div>
       <div class="col-md-2">
         <label class="form-label">Storage Temp (°C)</label>
         <input type="number" id="storageTemp" class="form-control" required>
       </div>
-      <div class="col-md-1 d-flex align-items-end">
+      <div class="col-md-2 d-flex align-items-end">
         <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Add</button>
       </div>
     </form>
@@ -136,14 +137,14 @@
           </thead>
           <tbody id="productBody">
             <tr>
-              <td>P001</td><td>T-Bone</td><td>50</td><td>2025-07-15</td><td>4</td>
+              <td>P001</td><td>T-Bone</td><td>50</td><td>2025-07-17</td><td>4</td>
               <td>
                 <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
                 <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
               </td>
             </tr>
             <tr>
-              <td>P002</td><td>Drumstick</td><td>60</td><td>2025-07-16</td><td>2</td>
+              <td>P002</td><td>Drumstick</td><td>60</td><td>2025-07-17</td><td>2</td>
               <td>
                 <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
                 <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
@@ -165,6 +166,7 @@
             <tr>
               <th>Meat Type</th>
               <th>Total Count</th>
+              <th>Total Weight (kg)</th>
             </tr>
           </thead>
           <tbody>
@@ -188,6 +190,9 @@
   const productBody = document.getElementById("productBody");
   const summaryTable = document.querySelector("#summaryTable tbody");
 
+  // Auto-fill processing date
+  document.getElementById("processingDate").value = new Date().toISOString().split("T")[0];
+
   // Form Submit
   document.getElementById("meatForm").addEventListener("submit", function(e){
     e.preventDefault();
@@ -195,7 +200,7 @@
     const pid = document.getElementById("productID").value.trim();
     const type = document.getElementById("meatType").value;
     const weight = document.getElementById("yieldWeight").value;
-    const date = document.getElementById("processingDate").value;
+    const date = document.getElementById("processingDate").value; // fixed system date
     const temp = document.getElementById("storageTemp").value;
 
     const row = document.createElement("tr");
@@ -214,20 +219,26 @@
 
     updateSummary();
     this.reset();
+    // Reset date to system date again
+    document.getElementById("processingDate").value = new Date().toISOString().split("T")[0];
   });
 
   // Update Meat Type Summary
   function updateSummary(){
     const counts = {};
+    const weights = {};
+
     productBody.querySelectorAll("tr").forEach(tr=>{
       const meat = tr.children[1].textContent.trim();
+      const weight = parseFloat(tr.children[2].textContent.trim()) || 0;
       counts[meat] = (counts[meat] || 0) + 1;
+      weights[meat] = (weights[meat] || 0) + weight;
     });
 
     summaryTable.innerHTML = "";
     Object.keys(counts).forEach(type=>{
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${type}</td><td>${counts[type]}</td>`;
+      tr.innerHTML = `<td>${type}</td><td>${counts[type]}</td><td>${weights[type]}</td>`;
       summaryTable.appendChild(tr);
     });
   }
@@ -240,19 +251,25 @@
     });
   }
 
-  // Edit Row
+  // Edit Row (but keep Processing Date fixed)
   function editRow(btn){
     const row = btn.closest("tr");
     const cells = row.querySelectorAll("td");
     const original = [];
+
     for(let i=0; i<5; i++){
       original.push(cells[i].textContent.trim());
+      if(i === 3){ 
+        // Processing Date is fixed, not editable
+        continue;
+      }
       let input = document.createElement("input");
       input.className = "form-control";
       input.value = cells[i].textContent.trim();
       cells[i].innerHTML = "";
       cells[i].appendChild(input);
     }
+
     cells[5].innerHTML = `
       <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
       <button class="btn btn-sm btn-secondary" onclick='cancelRow(this, ${JSON.stringify(original)})'>Cancel</button>
@@ -263,7 +280,11 @@
     const row = btn.closest("tr");
     const cells = row.querySelectorAll("td");
     for(let i=0; i<5; i++){
-      cells[i].textContent = cells[i].querySelector("input").value;
+      if(i === 3){ 
+        // Processing date stays same
+        continue;
+      }
+      cells[i].textContent = cells[i].querySelector("input")?.value || cells[i].textContent;
     }
     cells[5].innerHTML = `
       <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
