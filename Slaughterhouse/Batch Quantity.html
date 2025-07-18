@@ -3,37 +3,59 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Batch Quantity - Slaughterhouse Panel</title>
+  <title>Batch Quantity - Slaughterhouse</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
     body { background-color: #f4f6f9; }
     .sidebar {
-      width: 250px; height: 100vh; background: #343a40; color: white;
-      position: fixed; padding: 20px 0; display: flex; flex-direction: column;
+      width: 250px; height: 100vh;
+      background: #343a40; color: white;
+      position: fixed; padding: 20px 0;
+      display: flex; flex-direction: column;
     }
     .sidebar a {
       padding: 12px 20px; color: #ccc; text-decoration: none;
       display: flex; align-items: center; border-left: 3px solid transparent;
     }
     .sidebar a:hover, .sidebar a.active {
-      color: white; background-color: #495057; font-weight: bold; border-left: 3px solid #fff;
-    }
-    .dashboard-container { margin-left: 270px; padding: 30px; }
-    .table-wrapper { max-height: 300px; overflow-y: auto; }
-    footer {
-      background: #343a40; color: white; text-align: center;
-      padding: 10px; margin-left: 270px; margin-top: 20px;
-    }
-    .form-section {
-      background: #fff; padding: 20px; border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px;
+      color: white; background-color: #495057; font-weight: bold;
+      border-left: 3px solid #fff;
     }
     .dashboard-container {
-    margin-left: 270px;
+      margin-left: 270px; padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .table-wrapper { max-height: 250px; overflow-y: auto; }
+    .modal-overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .modal-box {
+      background: white; padding: 25px;
+      border-radius: 8px; max-width: 700px;
+      width: 90%; max-height: 80%;
+      overflow-y: auto; position: relative;
+    }
+    .close-btn {
+      position: absolute; top: 10px; right: 15px;
+      font-size: 22px; cursor: pointer;
+    }
+    html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    }
+    .dashboard-container {
+    flex: 1; /* Pushes footer down */
+    margin-left: 270px; /* Keep space for sidebar */
     padding: 30px;
     width: calc(100% - 270px);
-}
+    }
   </style>
 </head>
 <body>
@@ -44,221 +66,269 @@
     <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
   <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
-  <a href="slaughterhouse-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
   <a href="Meat Product.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
-  <a href="#" class="active"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
-  <a href="#"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
-  <a href="#"><i class="fas fa-comment-alt me-2"></i>Researcher Feedback</a>
+  <a href="batch-quantity.html" class="active"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="livestock.html"><i class="fas fa-cow me-2"></i>Livestock Info</a>
+  <a href="feedback.html"><i class="fas fa-comments me-2"></i>Analyst Feedback</a>
 </div>
 
-<!-- Dashboard Container -->
+<!-- Main Content -->
 <div class="dashboard-container container-fluid">
   <h2 class="mb-4">Batch Quantity Management</h2>
 
-  <!-- Input Form -->
-  <div class="form-section">
-    <h5>Create New Batch</h5>
-    <form id="batchForm" class="row g-3">
-      <div class="col-md-2">
-        <label class="form-label">Batch ID</label>
-        <input type="text" id="batchID" class="form-control" required>
-      </div>
-
-      <!-- Meat Type linked from meat info page -->
-      <div class="col-md-3">
-        <label class="form-label">Select Meat Product</label>
-        <select id="linkedMeat" class="form-select" required>
-          <option value="">Select</option>
-          <option value="T-Bone|2025-07-17">T-Bone</option>
-          <option value="Drumstick|2025-07-17">Drumstick</option>
-          <option value="Liver|2025-07-18">Liver</option>
-          <option value="Ribs|2025-07-19">Ribs</option>
-        </select>
-        <small class="text-muted">Expiry will match processing date</small>
-      </div>
-
-      <div class="col-md-2">
-        <label class="form-label">Product Quantity</label>
-        <input type="number" id="batchQuantity" class="form-control" required>
-      </div>
-
-      <div class="col-md-2">
-        <label class="form-label">Production Date</label>
-        <input type="text" id="productionDate" class="form-control" readonly>
-      </div>
-
-      <div class="col-md-2">
-        <label class="form-label">Expiry Date</label>
-        <input type="text" id="expiryDate" class="form-control" readonly>
-      </div>
-
-      <div class="col-md-1 d-flex align-items-end">
-        <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Add</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Search -->
-  <input class="form-control mb-2" type="text" placeholder="Search batch..." onkeyup="filterTable(this, 'batchTable')">
-
-  <!-- Table -->
+  <!-- Batch Creation Form -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Batch Records</h5>
+      <h5 class="card-title">Create a New Batch</h5>
+
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label>Batch ID</label>
+          <input type="text" class="form-control" id="batchID" placeholder="Enter Batch ID">
+        </div>
+        <div class="col-md-3">
+          <label>Meat Type</label>
+          <select class="form-select" id="meatTypeSelect">
+            <option value="">Select Meat Type</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label>Processing Date</label>
+          <select class="form-select" id="processDateSelect">
+            <option value="">Select Date</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" onclick="loadAvailableProducts()">Load Products</button>
+        </div>
+      </div>
+
+      <!-- Product Selection List -->
+      <div id="productSelection" style="display:none;">
+        <div class="d-flex justify-content-between">
+          <h6>Available Products</h6>
+          <div>
+            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"> Select All
+          </div>
+        </div>
+        <div class="table-wrapper mt-2">
+          <table class="table table-bordered table-hover" id="availableProductsTable">
+            <thead class="table-dark">
+              <tr>
+                <th>Select</th>
+                <th>Product ID</th>
+                <th>Weight (kg)</th>
+                <th>Storage Temp (°C)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn btn-success mt-3" onclick="createBatch()">Create Batch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Created Batches Table -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Created Batches</h5>
       <div class="table-wrapper">
         <table class="table table-bordered table-hover" id="batchTable">
           <thead class="table-dark">
             <tr>
               <th>Batch ID</th>
-              <th>Meat Product</th>
-              <th>Quantity</th>
-              <th>Production Date</th>
-              <th>Expiry Date</th>
+              <th>Meat Type</th>
+              <th>Process Date</th>
+              <th>Total Weight</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="batchBody">
-            <tr>
-              <td>B001</td><td>T-Bone</td><td>120</td><td>2025-07-17</td><td>2025-07-17</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>B002</td><td>Drumstick</td><td>80</td><td>2025-07-17</td><td>2025-07-17</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
   </div>
+</div>
 
+<!-- Modal for View/Edit -->
+<div class="modal-overlay" id="batchModal">
+  <div class="modal-box">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h5 id="modalTitle">Batch Details</h5>
+    <div class="table-wrapper mt-3">
+      <table class="table table-bordered" id="modalProductsTable">
+        <thead class="table-secondary">
+          <tr>
+            <th>Product ID</th>
+            <th>Weight</th>
+            <th>Storage Temp</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="btn btn-primary mt-3" onclick="saveBatchChanges()">Save Changes</button>
+  </div>
 </div>
 
 <!-- Footer -->
-<footer>
+<footer class="bg-dark text-white text-center p-3 mt-4">
   &copy; 2025 Meat Grid. All Rights Reserved.
 </footer>
 
-<!-- Scripts -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const batchBody = document.getElementById("batchBody");
+// Simulated Meat Product Info (normally fetched from backend)
+const processedMeatProducts = [
+  {id:'P001', type:'T-Bone', weight:20, date:'2025-07-10', temp:4},
+  {id:'P002', type:'T-Bone', weight:15, date:'2025-07-10', temp:4},
+  {id:'P003', type:'Drumstick', weight:10, date:'2025-07-11', temp:2},
+  {id:'P004', type:'Drumstick', weight:12, date:'2025-07-11', temp:2},
+  {id:'P005', type:'Liver', weight:8, date:'2025-07-09', temp:3}
+];
 
-  // Auto-fill today's date for Production Date
-  document.getElementById("productionDate").value = new Date().toISOString().split("T")[0];
+// Fill Meat Type & Dates
+const meatTypes = [...new Set(processedMeatProducts.map(p=>p.type))];
+meatTypes.forEach(t=>{
+  document.getElementById('meatTypeSelect').innerHTML += `<option value="${t}">${t}</option>`;
+});
 
-  // When meat product selected, set expiry = processing date from meat info
-  document.getElementById("linkedMeat").addEventListener("change", function(){
-    const val = this.value;
-    if(val){
-      const parts = val.split("|");
-      const processingDate = parts[1];
-      document.getElementById("expiryDate").value = processingDate;
-    } else {
-      document.getElementById("expiryDate").value = "";
-    }
+document.getElementById('meatTypeSelect').addEventListener('change', ()=>{
+  const selectedType = document.getElementById('meatTypeSelect').value;
+  const dateSelect = document.getElementById('processDateSelect');
+  dateSelect.innerHTML = '<option value="">Select Date</option>';
+  const dates = [...new Set(processedMeatProducts.filter(p=>p.type===selectedType).map(p=>p.date))];
+  dates.forEach(d=>{
+    dateSelect.innerHTML += `<option value="${d}">${d}</option>`;
+  });
+});
+
+// Global Batch Storage
+let createdBatches = [];
+let currentEditingBatch = null;
+
+function loadAvailableProducts() {
+  const type = document.getElementById('meatTypeSelect').value;
+  const date = document.getElementById('processDateSelect').value;
+  if(!type || !date){ alert('Please select Meat Type & Date!'); return; }
+
+  const products = processedMeatProducts.filter(p=>p.type===type && p.date===date);
+  const tbody = document.querySelector('#availableProductsTable tbody');
+  tbody.innerHTML = '';
+  products.forEach(p=>{
+    tbody.innerHTML += `
+      <tr>
+        <td><input type="checkbox" value="${p.id}" data-weight="${p.weight}" data-temp="${p.temp}"></td>
+        <td>${p.id}</td>
+        <td>${p.weight} kg</td>
+        <td>${p.temp}°C</td>
+      </tr>
+    `;
+  });
+  document.getElementById('productSelection').style.display = 'block';
+}
+
+function toggleSelectAll(checkbox){
+  document.querySelectorAll('#availableProductsTable tbody input[type=checkbox]')
+    .forEach(cb=>cb.checked = checkbox.checked);
+}
+
+function createBatch(){
+  const batchID = document.getElementById('batchID').value.trim();
+  const type = document.getElementById('meatTypeSelect').value;
+  const date = document.getElementById('processDateSelect').value;
+  if(!batchID || !type || !date){ alert('Enter all details!'); return; }
+
+  const selected = document.querySelectorAll('#availableProductsTable tbody input[type=checkbox]:checked');
+  if(selected.length===0){ alert('Select products to batch!'); return; }
+
+  let products = [];
+  let totalWeight = 0;
+  selected.forEach(cb=>{
+    const weight = parseFloat(cb.dataset.weight);
+    const temp = parseFloat(cb.dataset.temp);
+    products.push({id:cb.value, weight, temp});
+    totalWeight += weight;
   });
 
-  // Form submission
-  document.getElementById("batchForm").addEventListener("submit", function(e){
-    e.preventDefault();
+  createdBatches.push({batchID, type, date, products, totalWeight});
+  renderBatchTable();
 
-    const batchID = document.getElementById("batchID").value.trim();
-    const selected = document.getElementById("linkedMeat").value.split("|");
-    const meatType = selected[0];
-    const expiry = document.getElementById("expiryDate").value;
-    const qty = document.getElementById("batchQuantity").value;
-    const productionDate = document.getElementById("productionDate").value;
+  // Reset UI
+  document.getElementById('batchID').value='';
+  document.getElementById('meatTypeSelect').value='';
+  document.getElementById('processDateSelect').innerHTML='<option>Select Date</option>';
+  document.getElementById('productSelection').style.display='none';
+}
 
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${batchID}</td>
-      <td>${meatType}</td>
-      <td>${qty}</td>
-      <td>${productionDate}</td>
-      <td>${expiry}</td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-        <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-      </td>
+function renderBatchTable(){
+  const tbody = document.querySelector('#batchTable tbody');
+  tbody.innerHTML = '';
+  createdBatches.forEach((b,idx)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${b.batchID}</td>
+        <td>${b.type}</td>
+        <td>${b.date}</td>
+        <td>${b.totalWeight} kg</td>
+        <td>
+          <button class="btn btn-sm btn-info" onclick="viewBatch(${idx})"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-sm btn-warning" onclick="editBatch(${idx})"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteBatch(${idx})"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
     `;
-    batchBody.appendChild(row);
-
-    this.reset();
-    document.getElementById("productionDate").value = new Date().toISOString().split("T")[0];
   });
+}
 
-  // Filter table
-  function filterTable(input, tableId){
-    const filter = input.value.toLowerCase();
-    document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
-      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
-    });
-  }
+function viewBatch(idx){ openModal(idx,false); }
+function editBatch(idx){ openModal(idx,true); }
 
-  // Edit Row (only Batch ID, Meat Product, Quantity can change)
-  function editRow(btn){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    const original = [];
-
-    for(let i=0; i<5; i++){
-      original.push(cells[i].textContent.trim());
-      if(i === 3 || i === 4){ 
-        // Production Date & Expiry Date are fixed
-        continue;
-      }
-      let input = document.createElement("input");
-      input.className = "form-control";
-      input.value = cells[i].textContent.trim();
-      cells[i].innerHTML = "";
-      cells[i].appendChild(input);
-    }
-
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
-      <button class="btn btn-sm btn-secondary" onclick='cancelRow(this, ${JSON.stringify(original)})'>Cancel</button>
+function openModal(idx,isEdit){
+  currentEditingBatch = idx;
+  const b = createdBatches[idx];
+  document.getElementById('modalTitle').innerText = `Batch ${b.batchID} - ${b.type}`;
+  const tbody = document.querySelector('#modalProductsTable tbody');
+  tbody.innerHTML = '';
+  b.products.forEach((p,pi)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.weight}</td>
+        <td>${p.temp}</td>
+        <td>${isEdit?`<button class="btn btn-sm btn-danger" onclick="removeProduct(${pi})">Remove</button>`:''}</td>
+      </tr>
     `;
-  }
+  });
+  document.getElementById('batchModal').style.display='flex';
+}
 
-  function saveRow(btn){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    for(let i=0; i<5; i++){
-      if(i === 3 || i === 4){
-        // Keep Production & Expiry same
-        continue;
-      }
-      cells[i].textContent = cells[i].querySelector("input")?.value || cells[i].textContent;
-    }
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-    `;
-  }
+function removeProduct(pi){
+  const batch = createdBatches[currentEditingBatch];
+  batch.products.splice(pi,1);
+  batch.totalWeight = batch.products.reduce((sum,p)=>sum+p.weight,0);
+  openModal(currentEditingBatch,true);
+}
 
-  function cancelRow(btn, data){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    for(let i=0; i<5; i++){
-      cells[i].textContent = data[i];
-    }
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-    `;
-  }
+function saveBatchChanges(){
+  closeModal();
+  renderBatchTable();
+}
 
-  function deleteRow(btn){
-    btn.closest("tr").remove();
+function closeModal(){
+  document.getElementById('batchModal').style.display='none';
+}
+
+function deleteBatch(idx){
+  if(confirm('Delete this batch?')){
+    createdBatches.splice(idx,1);
+    renderBatchTable();
   }
+}
 </script>
-
 </body>
 </html>
