@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retailer Linking Panel with Edit/Delete</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f4f6f9; padding: 30px; }
+    .badge-linked { background-color: #198754; }
+    select.form-select-sm { width: 220px; display: inline-block; }
+    .action-btn { margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+<h3>🛒 Link Wholesaler Batches to Retailers (With Edit/Delete)</h3>
+<p class="text-muted">Each retailer must be linked to one wholesaler batch. But not every batch goes to a retailer.</p>
+
+<table class="table table-bordered mt-4">
+  <thead class="table-dark">
+    <tr>
+      <th>Batch ID</th>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Linked Retailer</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="retailerTableBody"></tbody>
+</table>
+
+<script>
+  const wholesalerBatches = [
+    { id: 'B001', product: 'T-Bone', quantity: '120 kg' },
+    { id: 'B002', product: 'Drumstick', quantity: '80 kg' },
+    { id: 'B003', product: 'Liver', quantity: '60 kg' },
+    { id: 'B004', product: 'Ribs', quantity: '50 kg' }
+  ];
+
+  const retailerList = [
+    'Meatwala',
+    'Daily Fresh',
+    'Super Butcher',
+    'Green Meat Shop'
+  ];
+
+  let linkedRetailers = [
+    { batchId: 'B001', retailerName: 'Meatwala' },
+    { batchId: 'B003', retailerName: 'Daily Fresh' }
+  ];
+
+  function renderRetailerTable() {
+    const tbody = document.getElementById("retailerTableBody");
+    tbody.innerHTML = "";
+
+    wholesalerBatches.forEach(batch => {
+      const link = linkedRetailers.find(l => l.batchId === batch.id);
+
+      let row = `<tr>
+        <td>${batch.id}</td>
+        <td>${batch.product}</td>
+        <td>${batch.quantity}</td>
+        <td id="retailer-cell-${batch.id}">${link ? link.retailerName : '-'}</td>
+        <td>`;
+
+      if (link) {
+        row += `
+          <button class="btn btn-sm btn-primary action-btn" onclick="editRetailer('${batch.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger action-btn" onclick="deleteRetailer('${batch.id}')">Delete</button>
+        `;
+      } else {
+        row += `
+          <select class="form-select form-select-sm" onchange="assignRetailer('${batch.id}', this.value)">
+            <option value="">-- Link to Retailer --</option>
+            ${retailerList.map(r => `<option value="${r}">${r}</option>`).join('')}
+          </select>
+        `;
+      }
+
+      row += `</td></tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function assignRetailer(batchId, retailerName) {
+    if (!retailerName) return;
+
+    if (linkedRetailers.find(link => link.retailerName === retailerName)) {
+      alert(`⚠️ ${retailerName} is already linked to another batch.`);
+      renderRetailerTable();
+      return;
+    }
+
+    linkedRetailers.push({ batchId, retailerName });
+    renderRetailerTable();
+  }
+
+  function editRetailer(batchId) {
+    const link = linkedRetailers.find(l => l.batchId === batchId);
+    if (!link) return;
+
+    const cell = document.getElementById(`retailer-cell-${batchId}`);
+    cell.innerHTML = `
+      <select id="edit-retailer-select-${batchId}" class="form-select form-select-sm">
+        <option value="">-- Select Retailer --</option>
+        ${retailerList.map(r => `<option value="${r}" ${r === link.retailerName ? 'selected' : ''}>${r}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm btn-success mt-1" onclick="saveRetailerEdit('${batchId}')">Save</button>
+      <button class="btn btn-sm btn-secondary mt-1" onclick="cancelRetailerEdit('${batchId}')">Cancel</button>
+    `;
+  }
+
+  function saveRetailerEdit(batchId) {
+    const select = document.getElementById(`edit-retailer-select-${batchId}`);
+    const newRetailer = select.value;
+
+    if (!newRetailer) {
+      alert('Please select a retailer.');
+      return;
+    }
+
+    if (linkedRetailers.some(l => l.retailerName === newRetailer && l.batchId !== batchId)) {
+      alert(`⚠️ ${newRetailer} is already linked to another batch.`);
+      return;
+    }
+
+    const idx = linkedRetailers.findIndex(l => l.batchId === batchId);
+    if (idx !== -1) {
+      linkedRetailers[idx].retailerName = newRetailer;
+    }
+
+    renderRetailerTable();
+  }
+
+  function cancelRetailerEdit(batchId) {
+    renderRetailerTable();
+  }
+
+  function deleteRetailer(batchId) {
+    if (!confirm('Are you sure to delete this link?')) return;
+
+    linkedRetailers = linkedRetailers.filter(l => l.batchId !== batchId);
+    renderRetailerTable();
+  }
+
+  renderRetailerTable();
+</script>
+
+</body>
+</html>

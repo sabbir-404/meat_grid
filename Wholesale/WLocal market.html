@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Local Market Linking Panel with Edit/Delete</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f4f6f9; padding: 30px; }
+    .badge-linked { background-color: #28a745; }
+    .badge-pending { background-color: #ffc107; color: black; }
+    select.form-select-sm { width: 200px; display: inline-block; }
+    .action-btn { margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+<h3>📦 Link Wholesaler Batches to Local Market (With Edit/Delete)</h3>
+<p class="text-muted">Each local market record must come from a wholesaler batch. But not all batches need to be linked.</p>
+
+<table class="table table-bordered mt-4">
+  <thead class="table-dark">
+    <tr>
+      <th>Batch ID</th>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Linked Market</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="linkTableBody"></tbody>
+</table>
+
+<script>
+  const wholesalerBatches = [
+    { id: 'B001', product: 'T-Bone', quantity: '120 kg' },
+    { id: 'B002', product: 'Drumstick', quantity: '80 kg' },
+    { id: 'B003', product: 'Liver', quantity: '60 kg' },
+    { id: 'B004', product: 'Ribs', quantity: '50 kg' }
+  ];
+
+  const marketOptions = [
+    'Gulshan Market',
+    'Farmgate Bazaar',
+    'Mirpur Super Mart',
+    'New Market'
+  ];
+
+  let linkedMarkets = [
+    { batchId: 'B001', marketName: 'Gulshan Market' },
+    { batchId: 'B003', marketName: 'Farmgate Bazaar' }
+  ];
+
+  function renderTable() {
+    const tbody = document.getElementById("linkTableBody");
+    tbody.innerHTML = "";
+
+    wholesalerBatches.forEach(batch => {
+      const link = linkedMarkets.find(l => l.batchId === batch.id);
+
+      let row = `<tr>
+          <td>${batch.id}</td>
+          <td>${batch.product}</td>
+          <td>${batch.quantity}</td>
+          <td id="market-cell-${batch.id}">${link ? link.marketName : '-'}</td>
+          <td>`;
+
+      if (link) {
+        row += `
+          <button class="btn btn-sm btn-primary action-btn" onclick="editLink('${batch.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger action-btn" onclick="deleteLink('${batch.id}')">Delete</button>
+        `;
+      } else {
+        row += `
+          <select class="form-select form-select-sm" onchange="assignMarket('${batch.id}', this.value)">
+            <option value="">-- Link to Market --</option>
+            ${marketOptions.map(m => `<option value="${m}">${m}</option>`).join('')}
+          </select>
+        `;
+      }
+
+      row += `</td></tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function assignMarket(batchId, marketName) {
+    if (!marketName) return;
+
+    if (linkedMarkets.find(link => link.marketName === marketName)) {
+      alert(`⚠️ ${marketName} already linked to another batch.`);
+      renderTable();
+      return;
+    }
+
+    linkedMarkets.push({ batchId, marketName });
+    renderTable();
+  }
+
+  function editLink(batchId) {
+    const link = linkedMarkets.find(l => l.batchId === batchId);
+    if (!link) return;
+
+    const cell = document.getElementById(`market-cell-${batchId}`);
+    cell.innerHTML = `
+      <select id="edit-select-${batchId}" class="form-select form-select-sm">
+        <option value="">-- Select Market --</option>
+        ${marketOptions.map(m => `<option value="${m}" ${m === link.marketName ? 'selected' : ''}>${m}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm btn-success mt-1" onclick="saveEdit('${batchId}')">Save</button>
+      <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${batchId}')">Cancel</button>
+    `;
+  }
+
+  function saveEdit(batchId) {
+    const select = document.getElementById(`edit-select-${batchId}`);
+    const newMarket = select.value;
+
+    if (!newMarket) {
+      alert('Please select a market.');
+      return;
+    }
+
+    // Check if newMarket is already linked to other batch
+    if (linkedMarkets.some(l => l.marketName === newMarket && l.batchId !== batchId)) {
+      alert(`⚠️ ${newMarket} already linked to another batch.`);
+      return;
+    }
+
+    // Update
+    const idx = linkedMarkets.findIndex(l => l.batchId === batchId);
+    if (idx !== -1) {
+      linkedMarkets[idx].marketName = newMarket;
+    }
+
+    renderTable();
+  }
+
+  function cancelEdit(batchId) {
+    renderTable();
+  }
+
+  function deleteLink(batchId) {
+    if (!confirm('Are you sure to delete this link?')) return;
+
+    linkedMarkets = linkedMarkets.filter(l => l.batchId !== batchId);
+    renderTable();
+  }
+
+  renderTable();
+</script>
+
+</body>
+</html>

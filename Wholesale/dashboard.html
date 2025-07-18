@@ -66,6 +66,9 @@
     footer {
       margin-left: 270px;
     }
+    canvas {
+      height: 300px !important;
+    }
   </style>
 </head>
 
@@ -101,9 +104,9 @@
   <div class="dashboard-container container-fluid">
     <h2 class="mb-4">Wholesale Dashboard Overview</h2>
 
-    <!-- Charts Section -->
+    <!-- Full-width Chart -->
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-12">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Product by Meat Type</h5>
@@ -115,7 +118,7 @@
 
     <!-- Summary Cards -->
     <div class="row text-center mt-4">
-      <div class="col-md-4">
+      <div class="col-md-6">
         <div class="card bg-success text-white">
           <div class="card-body">
             <h6 class="card-title">Retailers Supplied</h6>
@@ -123,7 +126,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <div class="card bg-info text-white">
           <div class="card-body">
             <h6 class="card-title">Wholesale Markets Supplied</h6>
@@ -140,7 +143,7 @@
   &copy; 2025 Meat Grid. All Rights Reserved.
 </footer>
 
-<!-- Charts Script -->
+<!-- Chart Script -->
 <script>
   const meatTypeChart = new Chart(document.getElementById('meatTypeChart'), {
     type: 'bar',
