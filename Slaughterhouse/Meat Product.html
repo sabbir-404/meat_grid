@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meat Product Information - Slaughterhouse Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+    }
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    footer {
+      background: #343a40;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-left: 270px;
+      margin-top: 20px;
+    }
+    .form-section {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#" class="active"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+  <a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="#"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
+  <a href="#"><i class="fas fa-comment-alt me-2"></i>Researcher Feedback</a>
+</div>
+
+<!-- Dashboard Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Meat Product Information</h2>
+
+  <!-- Input Form -->
+  <div class="form-section">
+    <h5>Enter New Meat Product</h5>
+    <form id="meatForm" class="row g-3">
+      <div class="col-md-2">
+        <label class="form-label">Product ID</label>
+        <input type="text" id="productID" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Meat Type</label>
+        <select id="meatType" class="form-select" required>
+          <option value="">Select</option>
+          <option value="T-Bone">T-Bone</option>
+          <option value="Drumstick">Drumstick</option>
+          <option value="Liver">Liver</option>
+          <option value="Ribs">Ribs</option>
+          <option value="Wing">Wing</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Yield Weight (kg)</label>
+        <input type="number" id="yieldWeight" class="form-control" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Processing Date</label>
+        <input type="date" id="processingDate" class="form-control" required>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Storage Temp (°C)</label>
+        <input type="number" id="storageTemp" class="form-control" required>
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Add</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search -->
+  <input class="form-control mb-2" type="text" placeholder="Search product..." onkeyup="filterTable(this, 'productTable')">
+
+  <!-- Table 1: Product Info -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Meat Products Entered</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="productTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Product ID</th>
+              <th>Meat Type</th>
+              <th>Yield Weight</th>
+              <th>Processing Date</th>
+              <th>Storage Temp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productBody">
+            <tr>
+              <td>P001</td><td>T-Bone</td><td>50</td><td>2025-07-15</td><td>4</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>P002</td><td>Drumstick</td><td>60</td><td>2025-07-16</td><td>2</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 2: Meat Type Summary -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Total Meat Type Summary</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered" id="summaryTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>Meat Type</th>
+              <th>Total Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const productBody = document.getElementById("productBody");
+  const summaryTable = document.querySelector("#summaryTable tbody");
+
+  // Form Submit
+  document.getElementById("meatForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const pid = document.getElementById("productID").value.trim();
+    const type = document.getElementById("meatType").value;
+    const weight = document.getElementById("yieldWeight").value;
+    const date = document.getElementById("processingDate").value;
+    const temp = document.getElementById("storageTemp").value;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${pid}</td>
+      <td>${type}</td>
+      <td>${weight}</td>
+      <td>${date}</td>
+      <td>${temp}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+      </td>
+    `;
+    productBody.appendChild(row);
+
+    updateSummary();
+    this.reset();
+  });
+
+  // Update Meat Type Summary
+  function updateSummary(){
+    const counts = {};
+    productBody.querySelectorAll("tr").forEach(tr=>{
+      const meat = tr.children[1].textContent.trim();
+      counts[meat] = (counts[meat] || 0) + 1;
+    });
+
+    summaryTable.innerHTML = "";
+    Object.keys(counts).forEach(type=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${type}</td><td>${counts[type]}</td>`;
+      summaryTable.appendChild(tr);
+    });
+  }
+
+  // Filter
+  function filterTable(input, tableId){
+    const filter = input.value.toLowerCase();
+    document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+  }
+
+  // Edit Row
+  function editRow(btn){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    const original = [];
+    for(let i=0; i<5; i++){
+      original.push(cells[i].textContent.trim());
+      let input = document.createElement("input");
+      input.className = "form-control";
+      input.value = cells[i].textContent.trim();
+      cells[i].innerHTML = "";
+      cells[i].appendChild(input);
+    }
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
+      <button class="btn btn-sm btn-secondary" onclick='cancelRow(this, ${JSON.stringify(original)})'>Cancel</button>
+    `;
+  }
+
+  function saveRow(btn){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    for(let i=0; i<5; i++){
+      cells[i].textContent = cells[i].querySelector("input").value;
+    }
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+    `;
+    updateSummary();
+  }
+
+  function cancelRow(btn, data){
+    const row = btn.closest("tr");
+    const cells = row.querySelectorAll("td");
+    for(let i=0; i<5; i++){
+      cells[i].textContent = data[i];
+    }
+    cells[5].innerHTML = `
+      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+    `;
+  }
+
+  function deleteRow(btn){
+    btn.closest("tr").remove();
+    updateSummary();
+  }
+
+  updateSummary(); // Initial call
+</script>
+
+</body>
+</html>
