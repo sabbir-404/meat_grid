@@ -122,76 +122,35 @@
 <script>
 const createdBatches = [
   {
-    batchID: "B101",
-    type: "T-Bone",
-    date: "2025-07-10",
-    totalWeight: 35,
-    products: [
-      { id: "P001", weight: 20, temp: 4 },
-      { id: "P002", weight: 15, temp: 4 }
-    ],
-    createdBy: "Slaughterhouse Admin",
-    slaughterhouse: "Greenfield Meats Ltd.",
-    receivedByWholesaler: true
+    batchID: "B101", type: "T-Bone", date: "2025-07-10", totalWeight: 35,
+    products: [{ id: "P001", weight: 20, temp: 4 }, { id: "P002", weight: 15, temp: 4 }],
+    createdBy: "Slaughterhouse Admin", slaughterhouse: "Greenfield Meats Ltd.", receivedByWholesaler: true
   },
   {
-    batchID: "B102",
-    type: "Drumstick",
-    date: "2025-07-11",
-    totalWeight: 22,
-    products: [
-      { id: "P003", weight: 10, temp: 2 },
-      { id: "P004", weight: 12, temp: 2 }
-    ],
-    createdBy: "Slaughterhouse Admin",
-    slaughterhouse: "Greenfield Meats Ltd.",
-    receivedByWholesaler: true
+    batchID: "B102", type: "Drumstick", date: "2025-07-11", totalWeight: 22,
+    products: [{ id: "P003", weight: 10, temp: 2 }, { id: "P004", weight: 12, temp: 2 }],
+    createdBy: "Slaughterhouse Admin", slaughterhouse: "Greenfield Meats Ltd.", receivedByWholesaler: true
   },
   {
-    batchID: "B103",
-    type: "Liver",
-    date: "2025-07-09",
-    totalWeight: 18,
-    products: [
-      { id: "P005", weight: 18, temp: 3 }
-    ],
-    createdBy: "Slaughterhouse Admin",
-    slaughterhouse: "FreshCuts BD",
-    receivedByWholesaler: true
+    batchID: "B103", type: "Liver", date: "2025-07-09", totalWeight: 18,
+    products: [{ id: "P005", weight: 18, temp: 3 }],
+    createdBy: "Slaughterhouse Admin", slaughterhouse: "FreshCuts BD", receivedByWholesaler: true
   },
   {
-    batchID: "B104",
-    type: "Beef Mince",
-    date: "2025-07-12",
-    totalWeight: 25,
-    products: [
-      { id: "P006", weight: 25, temp: 4 }
-    ],
-    createdBy: "Slaughterhouse Admin",
-    slaughterhouse: "FarmFresh Center",
-    receivedByWholesaler: true
+    batchID: "B104", type: "Beef Mince", date: "2025-07-12", totalWeight: 25,
+    products: [{ id: "P006", weight: 25, temp: 4 }],
+    createdBy: "Slaughterhouse Admin", slaughterhouse: "FarmFresh Center", receivedByWholesaler: true
   },
   {
-    batchID: "B105",
-    type: "Ribeye",
-    date: "2025-07-13",
-    totalWeight: 30,
-    products: [
-      { id: "P007", weight: 15, temp: 3 },
-      { id: "P008", weight: 15, temp: 3 }
-    ],
-    createdBy: "Slaughterhouse Admin",
-    slaughterhouse: "Greenfield Meats Ltd.",
-    receivedByWholesaler: true
+    batchID: "B105", type: "Ribeye", date: "2025-07-13", totalWeight: 30,
+    products: [{ id: "P007", weight: 15, temp: 3 }, { id: "P008", weight: 15, temp: 3 }],
+    createdBy: "Slaughterhouse Admin", slaughterhouse: "Greenfield Meats Ltd.", receivedByWholesaler: true
   }
 ];
 
-// Show only received batches
 function renderBatchTable() {
   const tbody = document.querySelector('#batchTable tbody');
   tbody.innerHTML = '';
-  const summary = {};
-
   const wholesaleBatches = createdBatches.filter(b => b.receivedByWholesaler);
 
   wholesaleBatches.forEach((b, idx) => {
@@ -208,36 +167,24 @@ function renderBatchTable() {
         </td>
       </tr>
     `;
-
-    if (!summary[b.type]) summary[b.type] = 0;
-    summary[b.type]++;
   });
 
-  // Summary
-  renderSummary(wholesaleBatches.length, wholesaleBatches.reduce((a,b)=>a+b.totalWeight,0), summary);
+  renderSummary(wholesaleBatches.length, wholesaleBatches.reduce((a, b) => a + b.totalWeight, 0));
 }
 
-function renderSummary(totalBatches, totalWeight, summaryByType) {
+function renderSummary(totalBatches, totalWeight) {
   const summaryDiv = document.getElementById('summarySection');
   summaryDiv.innerHTML = `
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="card bg-light p-3">
         <h5>Total Batches</h5>
         <p class="fs-4 fw-bold text-primary">${totalBatches}</p>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="card bg-light p-3">
         <h5>Total Weight</h5>
         <p class="fs-4 fw-bold text-success">${totalWeight} kg</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-light p-3">
-        <h5>Batch Count by Meat Type</h5>
-        <ul class="mb-0">
-          ${Object.entries(summaryByType).map(([type, count]) => `<li><strong>${type}:</strong> ${count}</li>`).join('')}
-        </ul>
       </div>
     </div>
   `;
@@ -270,7 +217,6 @@ function closeModal() {
   document.getElementById('batchModal').style.display = 'none';
 }
 
-// Load table and summary
 renderBatchTable();
 </script>
 </body>
