@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local Market Purchases</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background-color: #f4f6f9; margin: 0; }
+    .sidebar {
+      width: 250px; height: 100vh;
+      background: #343a40; color: white;
+      position: fixed; padding: 20px 0;
+      display: flex; flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px; color: #ccc; text-decoration: none;
+      display: flex; align-items: center; border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white; background-color: #495057; font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .main-content {
+      margin-left: 270px; padding: 30px;
+    }
+    .table-wrapper {
+      background: white; padding: 20px; border-radius: 8px;
+    }
+    .due { color: red; font-weight: bold; }
+    .paid { color: green; font-weight: bold; }
+    tfoot tr {
+      font-weight: bold;
+      background: #e9ecef;
+    }
+    footer {
+      background: #343a40; color: white;
+      text-align: center; padding: 10px;
+      margin-left: 270px; margin-top: 30px;
+    }
+    canvas { max-width: 100%; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-map-marker-alt me-2"></i>Local Market Panel</h5>
+  <a href="#"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#"><i class="fas fa-truck me-2"></i>Supply from Retailer</a>
+  <a href="#" class="active"><i class="fas fa-hand-holding-usd me-2"></i>Customer Purchases</a>
+  <a href="#"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content container-fluid">
+  <h2>Local Market Customer Purchases</h2>
+
+  <!-- Purchase Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Add New Purchase</h5>
+      <div class="row g-3">
+        <div class="col-md-3"><input type="text" class="form-control" id="customer" placeholder="Customer Name"></div>
+        <div class="col-md-2"><input type="text" class="form-control" id="product" placeholder="Product"></div>
+        <div class="col-md-2"><input type="date" class="form-control" id="date"></div>
+        <div class="col-md-1"><input type="number" class="form-control" id="quantity" placeholder="kg"></div>
+        <div class="col-md-2"><input type="number" class="form-control" id="paid" placeholder="Amount Paid"></div>
+        <div class="col-md-2"><input type="number" class="form-control" id="price" placeholder="Total Price"></div>
+      </div>
+      <button class="btn btn-success mt-3" onclick="addPurchase()">Add Purchase</button>
+    </div>
+  </div>
+
+  <!-- Purchase Table -->
+  <div class="table-wrapper mb-4">
+    <table class="table table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Date</th>
+          <th>Quantity (kg)</th>
+          <th>Paid</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="purchaseBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total</td>
+          <td id="totalQty">0</td>
+          <td id="totalPaid">0</td>
+          <td id="totalDue">0</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Monthly Bar Chart -->
+  <div class="card mt-4 mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Monthly Purchase Summary</h5>
+      <canvas id="monthlyChart" style="max-width: 600px; max-height: 300px;"></canvas>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Total Purchase Due Summary</h5>
+      <p><strong>Total Purchased:</strong> <span id="summaryQty">0</span> kg</p>
+      <p><strong>Total Paid:</strong> <span id="summaryPaid">0</span> TK</p>
+      <p><strong>Total Due:</strong> <span id="summaryDue">0</span> TK</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<script>
+let purchases = [
+  { customer: "Local Buyer 1", product: "T-Bone", date: "2025-01-10", quantity: 8, amountPaid: 1600, totalPrice: 2000 },
+  { customer: "Local Buyer 2", product: "Liver", date: "2025-02-15", quantity: 4, amountPaid: 800, totalPrice: 1000 }
+];
+
+function renderPurchases() {
+  const tbody = document.getElementById('purchaseBody');
+  let totalQty = 0, totalPaid = 0, totalDue = 0;
+
+  tbody.innerHTML = '';
+  purchases.forEach((p, i) => {
+    const due = p.totalPrice - p.amountPaid;
+    const statusClass = due > 0 ? "due" : "paid";
+    const statusText = due > 0 ? `Due ${due}` : "Paid";
+
+    totalQty += p.quantity;
+    totalPaid += p.amountPaid;
+    totalDue += due;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.customer}</td>
+        <td>${p.product}</td>
+        <td>${p.date}</td>
+        <td>${p.quantity}</td>
+        <td>${p.amountPaid}</td>
+        <td class="${statusClass}">${statusText}</td>
+        <td>
+          <button class="btn btn-sm btn-warning" onclick="editPurchase(${i})"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deletePurchase(${i})"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('totalQty').innerText = totalQty;
+  document.getElementById('totalPaid').innerText = totalPaid;
+  document.getElementById('totalDue').innerText = totalDue;
+  document.getElementById('summaryQty').innerText = totalQty;
+  document.getElementById('summaryPaid').innerText = totalPaid;
+  document.getElementById('summaryDue').innerText = totalDue;
+
+  renderMonthlyChart();
+}
+
+function addPurchase() {
+  const customer = document.getElementById('customer').value;
+  const product = document.getElementById('product').value;
+  const date = document.getElementById('date').value;
+  const quantity = parseFloat(document.getElementById('quantity').value);
+  const paid = parseFloat(document.getElementById('paid').value);
+  const price = parseFloat(document.getElementById('price').value);
+
+  if (!customer || !product || !date || isNaN(quantity) || isNaN(paid) || isNaN(price)) {
+    alert('Please fill all fields correctly');
+    return;
+  }
+
+  purchases.push({ customer, product, date, quantity, amountPaid: paid, totalPrice: price });
+
+  document.getElementById('customer').value = '';
+  document.getElementById('product').value = '';
+  document.getElementById('date').value = '';
+  document.getElementById('quantity').value = '';
+  document.getElementById('paid').value = '';
+  document.getElementById('price').value = '';
+
+  renderPurchases();
+}
+
+function deletePurchase(index) {
+  if (confirm('Delete this purchase?')) {
+    purchases.splice(index, 1);
+    renderPurchases();
+  }
+}
+
+function editPurchase(index) {
+  const p = purchases[index];
+  document.getElementById('customer').value = p.customer;
+  document.getElementById('product').value = p.product;
+  document.getElementById('date').value = p.date;
+  document.getElementById('quantity').value = p.quantity;
+  document.getElementById('paid').value = p.amountPaid;
+  document.getElementById('price').value = p.totalPrice;
+  purchases.splice(index, 1);
+  renderPurchases();
+}
+
+function renderMonthlyChart() {
+  const monthlyTotals = {};
+  purchases.forEach(p => {
+    const month = new Date(p.date).toLocaleString('default', { month: 'short' });
+    monthlyTotals[month] = (monthlyTotals[month] || 0) + p.quantity;
+  });
+
+  const labels = Object.keys(monthlyTotals);
+  const data = Object.values(monthlyTotals);
+
+  const ctx = document.getElementById('monthlyChart').getContext('2d');
+  if (window.monthlyChart) window.monthlyChart.destroy();
+  window.monthlyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Total Quantity (kg)',
+        data,
+        backgroundColor: '#0d6efd'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Monthly Purchased Quantity'
+        }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+renderPurchases();
+</script>
+
+</body>
+</html>
