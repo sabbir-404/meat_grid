@@ -36,7 +36,6 @@
       padding: 10px; margin-left: 270px; margin-top: 20px;
     }
 
-    /* Modal (hoverbox style) */
     .modal.fade-custom {
       display: none;
       position: fixed;
@@ -89,11 +88,12 @@
 <div class="dashboard-container container-fluid">
   <h2 class="mb-4">View Slaughterhouse Batch Info</h2>
 
+  <!-- Batch Table -->
   <div class="card mb-4">
     <div class="card-body">
       <h5 class="card-title">Available Batch Records</h5>
       <div class="table-wrapper">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover" id="batchTable">
           <thead class="table-dark">
             <tr>
               <th>Batch ID</th>
@@ -146,6 +146,14 @@
       </div>
     </div>
   </div>
+
+  <!-- 🔹 Summary Box -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">📦 Meat Summary</h5>
+      <ul id="summaryList" class="list-group list-group-flush"></ul>
+    </div>
+  </div>
 </div>
 
 <!-- Modal -->
@@ -189,6 +197,41 @@
       modal.style.display = "none";
     }
   });
+
+  // 🔹 Summary Generator
+  function generateSummary() {
+    const rows = document.querySelectorAll("#batchTable tbody tr");
+    const summary = {};
+    let grandTotal = 0;
+
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("td");
+      const product = cells[1].textContent.trim();
+      const qtyStr = cells[2].textContent.trim();
+      const qty = parseFloat(qtyStr.replace("kg", "").trim());
+
+      if (!summary[product]) summary[product] = 0;
+      summary[product] += qty;
+      grandTotal += qty;
+    });
+
+    const list = document.getElementById("summaryList");
+    list.innerHTML = "";
+
+    for (const meat in summary) {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-center";
+      li.innerHTML = `${meat} <span class="badge bg-primary rounded-pill">${summary[meat]} kg</span>`;
+      list.appendChild(li);
+    }
+
+    const totalLi = document.createElement("li");
+    totalLi.className = "list-group-item d-flex justify-content-between align-items-center fw-bold";
+    totalLi.innerHTML = `Total <span class="badge bg-dark rounded-pill">${grandTotal} kg</span>`;
+    list.appendChild(totalLi);
+  }
+
+  window.onload = generateSummary;
 </script>
 
 </body>

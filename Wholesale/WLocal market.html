@@ -1,152 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Local Market Linking Panel with Edit/Delete</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local Market Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { background-color: #f4f6f9; padding: 30px; }
-    .badge-linked { background-color: #28a745; }
-    .badge-pending { background-color: #ffc107; color: black; }
-    select.form-select-sm { width: 200px; display: inline-block; }
+    body {
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .summary-cards .card {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      background: #343a40;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-left: 270px;
+      margin-top: 20px;
+    }
     .action-btn { margin-right: 5px; }
   </style>
 </head>
 <body>
 
-<h3>📦 Link Wholesaler Batches to Local Market (With Edit/Delete)</h3>
-<p class="text-muted">Each local market record must come from a wholesaler batch. But not all batches need to be linked.</p>
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-map-marker-alt me-2"></i>Local Market Panel</h5>
+  <a href="#" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#"><i class="fas fa-link me-2"></i>Batch Linking</a>
+  <a href="#"><i class="fas fa-box-open me-2"></i>Market Inventory</a>
+  <a href="#"><i class="fas fa-chart-bar me-2"></i>Link Overview</a>
+</div>
 
-<table class="table table-bordered mt-4">
-  <thead class="table-dark">
-    <tr>
-      <th>Batch ID</th>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Linked Market</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="linkTableBody"></tbody>
-</table>
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Local Market Panel</h2>
+
+  <div class="row summary-cards mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <h4>Total Batches</h4>
+        <h3 id="totalBatches">0</h3>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <h4>Linked Markets</h4>
+        <h3 id="linkedCount">0</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Batch to Local Market Linking</h5>
+      <p class="text-muted">Each batch may be optionally linked to one local market. You can edit or delete links anytime.</p>
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Batch ID</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Linked Market</th>
+            <th>Date Linked</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="linkTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Link Status Overview</h5>
+      <canvas id="linkChart" style="width:100%; max-height:300px;"></canvas>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
 
 <script>
-  const wholesalerBatches = [
-    { id: 'B001', product: 'T-Bone', quantity: '120 kg' },
-    { id: 'B002', product: 'Drumstick', quantity: '80 kg' },
-    { id: 'B003', product: 'Liver', quantity: '60 kg' },
-    { id: 'B004', product: 'Ribs', quantity: '50 kg' }
-  ];
+const wholesalerBatches = [
+  { id: 'B001', product: 'T-Bone', quantity: '120 kg' },
+  { id: 'B002', product: 'Drumstick', quantity: '80 kg' },
+  { id: 'B003', product: 'Liver', quantity: '60 kg' },
+  { id: 'B004', product: 'Ribs', quantity: '50 kg' }
+];
 
-  const marketOptions = [
-    'Gulshan Market',
-    'Farmgate Bazaar',
-    'Mirpur Super Mart',
-    'New Market'
-  ];
+const marketOptions = [
+  'Karwan Bazar',
+  'Shyambazar',
+  'Chittagong Market',
+  'Gulshan Market',
+  'Farmgate Bazaar'
+];
 
-  let linkedMarkets = [
-    { batchId: 'B001', marketName: 'Gulshan Market' },
-    { batchId: 'B003', marketName: 'Farmgate Bazaar' }
-  ];
+let linkedMarkets = [
+  { batchId: 'B001', marketName: 'Karwan Bazar', date: '2025-07-10' },
+  { batchId: 'B003', marketName: 'Shyambazar', date: '2025-07-12' }
+];
 
-  function renderTable() {
-    const tbody = document.getElementById("linkTableBody");
-    tbody.innerHTML = "";
+function renderTable() {
+  const tbody = document.getElementById("linkTableBody");
+  tbody.innerHTML = "";
 
-    wholesalerBatches.forEach(batch => {
-      const link = linkedMarkets.find(l => l.batchId === batch.id);
+  wholesalerBatches.forEach(batch => {
+    const link = linkedMarkets.find(l => l.batchId === batch.id);
 
-      let row = `<tr>
-          <td>${batch.id}</td>
-          <td>${batch.product}</td>
-          <td>${batch.quantity}</td>
-          <td id="market-cell-${batch.id}">${link ? link.marketName : '-'}</td>
-          <td>`;
+    let row = `<tr>
+        <td>${batch.id}</td>
+        <td>${batch.product}</td>
+        <td>${batch.quantity}</td>
+        <td id="market-cell-${batch.id}">${link ? link.marketName : '-'}</td>
+        <td>${link ? link.date : '-'}</td>
+        <td>`;
 
-      if (link) {
-        row += `
-          <button class="btn btn-sm btn-primary action-btn" onclick="editLink('${batch.id}')">Edit</button>
-          <button class="btn btn-sm btn-danger action-btn" onclick="deleteLink('${batch.id}')">Delete</button>
-        `;
-      } else {
-        row += `
-          <select class="form-select form-select-sm" onchange="assignMarket('${batch.id}', this.value)">
-            <option value="">-- Link to Market --</option>
-            ${marketOptions.map(m => `<option value="${m}">${m}</option>`).join('')}
-          </select>
-        `;
-      }
-
-      row += `</td></tr>`;
-      tbody.innerHTML += row;
-    });
-  }
-
-  function assignMarket(batchId, marketName) {
-    if (!marketName) return;
-
-    if (linkedMarkets.find(link => link.marketName === marketName)) {
-      alert(`⚠️ ${marketName} already linked to another batch.`);
-      renderTable();
-      return;
+    if (link) {
+      row += `
+        <button class="btn btn-sm btn-primary action-btn" onclick="editLink('${batch.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger action-btn" onclick="deleteLink('${batch.id}')">Delete</button>
+      `;
+    } else {
+      row += `
+        <select class="form-select form-select-sm" onchange="assignMarket('${batch.id}', this.value)">
+          <option value="">-- Link to Market --</option>
+          ${marketOptions.map(m => `<option value="${m}">${m}</option>`).join('')}
+        </select>
+      `;
     }
 
-    linkedMarkets.push({ batchId, marketName });
+    row += `</td></tr>`;
+    tbody.innerHTML += row;
+  });
+
+  document.getElementById("totalBatches").textContent = wholesalerBatches.length;
+  document.getElementById("linkedCount").textContent = linkedMarkets.length;
+  renderChart();
+}
+
+function assignMarket(batchId, marketName) {
+  if (!marketName) return;
+
+  if (linkedMarkets.find(link => link.marketName === marketName)) {
+    alert(`⚠️ ${marketName} already linked to another batch.`);
     renderTable();
+    return;
   }
 
-  function editLink(batchId) {
-    const link = linkedMarkets.find(l => l.batchId === batchId);
-    if (!link) return;
+  const today = new Date().toISOString().split('T')[0];
+  linkedMarkets.push({ batchId, marketName, date: today });
+  renderTable();
+}
 
-    const cell = document.getElementById(`market-cell-${batchId}`);
-    cell.innerHTML = `
-      <select id="edit-select-${batchId}" class="form-select form-select-sm">
-        <option value="">-- Select Market --</option>
-        ${marketOptions.map(m => `<option value="${m}" ${m === link.marketName ? 'selected' : ''}>${m}</option>`).join('')}
-      </select>
-      <button class="btn btn-sm btn-success mt-1" onclick="saveEdit('${batchId}')">Save</button>
-      <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${batchId}')">Cancel</button>
-    `;
+function editLink(batchId) {
+  const link = linkedMarkets.find(l => l.batchId === batchId);
+  if (!link) return;
+
+  const cell = document.getElementById(`market-cell-${batchId}`);
+  cell.innerHTML = `
+    <select id="edit-select-${batchId}" class="form-select form-select-sm">
+      <option value="">-- Select Market --</option>
+      ${marketOptions.map(m => `<option value="${m}" ${m === link.marketName ? 'selected' : ''}>${m}</option>`).join('')}
+    </select>
+    <button class="btn btn-sm btn-success mt-1" onclick="saveEdit('${batchId}')">Save</button>
+    <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${batchId}')">Cancel</button>
+  `;
+}
+
+function saveEdit(batchId) {
+  const select = document.getElementById(`edit-select-${batchId}`);
+  const newMarket = select.value;
+
+  if (!newMarket) {
+    alert('Please select a market.');
+    return;
   }
 
-  function saveEdit(batchId) {
-    const select = document.getElementById(`edit-select-${batchId}`);
-    const newMarket = select.value;
-
-    if (!newMarket) {
-      alert('Please select a market.');
-      return;
-    }
-
-    // Check if newMarket is already linked to other batch
-    if (linkedMarkets.some(l => l.marketName === newMarket && l.batchId !== batchId)) {
-      alert(`⚠️ ${newMarket} already linked to another batch.`);
-      return;
-    }
-
-    // Update
-    const idx = linkedMarkets.findIndex(l => l.batchId === batchId);
-    if (idx !== -1) {
-      linkedMarkets[idx].marketName = newMarket;
-    }
-
-    renderTable();
+  if (linkedMarkets.some(l => l.marketName === newMarket && l.batchId !== batchId)) {
+    alert(`⚠️ ${newMarket} already linked to another batch.`);
+    return;
   }
 
-  function cancelEdit(batchId) {
-    renderTable();
-  }
-
-  function deleteLink(batchId) {
-    if (!confirm('Are you sure to delete this link?')) return;
-
-    linkedMarkets = linkedMarkets.filter(l => l.batchId !== batchId);
-    renderTable();
+  const idx = linkedMarkets.findIndex(l => l.batchId === batchId);
+  if (idx !== -1) {
+    linkedMarkets[idx].marketName = newMarket;
+    linkedMarkets[idx].date = new Date().toISOString().split('T')[0];
   }
 
   renderTable();
+}
+
+function cancelEdit(batchId) {
+  renderTable();
+}
+
+function deleteLink(batchId) {
+  if (!confirm('Are you sure to delete this link?')) return;
+
+  linkedMarkets = linkedMarkets.filter(l => l.batchId !== batchId);
+  renderTable();
+}
+
+function renderChart() {
+  const ctx = document.getElementById("linkChart");
+  const linked = linkedMarkets.length;
+  const unlinked = wholesalerBatches.length - linked;
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Linked', 'Unlinked'],
+      datasets: [{
+        data: [linked, unlinked],
+        backgroundColor: ['#28a745', '#ffc107']
+      }]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Batch Linking Status'
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+}
+
+renderTable();
 </script>
 
 </body>
