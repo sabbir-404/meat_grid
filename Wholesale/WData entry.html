@@ -5,15 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Wholesaler Distribution Entry</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
-    body { background-color: #f8f9fa; }
-    .container { max-width: 1000px; margin-top: 50px; }
+    body { background-color: #f8f9fa; margin: 0; }
+    .sidebar {
+      width: 250px; height: 100vh;
+      background: #343a40; color: white;
+      position: fixed; top: 0; left: 0;
+      padding: 20px 0;
+      display: flex; flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px; color: #ccc; text-decoration: none;
+      display: flex; align-items: center; border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white; background-color: #495057; font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .main-content {
+      margin-left: 270px;
+      padding: 30px;
+    }
     .table-wrapper { max-height: 300px; overflow-y: auto; }
   </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-warehouse me-2"></i>Wholesaler Panel</h5>
+  <a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="#"><i class="fas fa-store me-2"></i>Retailers</a>
+  <a href="#" class="active"><i class="fas fa-share-square me-2"></i>Distribution Entry</a>
+  <a href="#"><i class="fas fa-map-marked-alt me-2"></i>Local Market Supply</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
   <h2 class="mb-4">Wholesaler Distribution Entry</h2>
 
   <!-- Input Form -->
@@ -108,12 +140,10 @@ function addEntry() {
   const entry = { type, name, meat, qty, price, date };
 
   if (editingIndex !== null) {
-    // Update existing entry
     distributionList[editingIndex] = entry;
     editingIndex = null;
     document.getElementById('submitBtn').innerText = "Add Entry";
   } else {
-    // Add new entry
     distributionList.push(entry);
   }
 
