@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analyst Feedback - Meat Grid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .form-inline .form-control {
+      margin-bottom: 10px;
+    }
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+  <a href="slaughterhouse-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="meat-product-info.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+  <a href="batch-quantity.html"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="livestock.html"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
+  <a href="analyst-feedback.html" class="active"><i class="fas fa-chart-line me-2"></i>Analyst Feedback</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Analyst Feedback & Predictions</h2>
+
+  <!-- Form to add Analyst Feedback -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Provide Prediction</h5>
+      <form id="predictionForm" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Analyst ID</label>
+          <input type="text" class="form-control" id="analystID" placeholder="A001" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Analyst Name</label>
+          <input type="text" class="form-control" id="analystName" placeholder="John Doe" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Meat Type</label>
+          <select class="form-select" id="meatType" required>
+            <option value="">Select Meat Type</option>
+            <option value="T-Bone">T-Bone</option>
+            <option value="Drumstick">Drumstick</option>
+            <option value="Ribs">Ribs</option>
+            <option value="Liver">Liver</option>
+            <option value="Heart">Heart</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Predicted Quantity (kg)</label>
+          <input type="number" class="form-control" id="predictedQty" placeholder="100" required>
+        </div>
+        <div class="col-md-3 mt-2">
+          <label class="form-label">Prediction Date</label>
+          <input type="text" class="form-control" id="predictionDate" disabled>
+        </div>
+        <div class="col-12 mt-3">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Prediction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table of Predictions -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Prediction Records</h5>
+      <input class="form-control mb-2" type="text" placeholder="Search predictions..." onkeyup="filterTable(this, 'predictionTable')">
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="predictionTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Analyst ID</th>
+              <th>Analyst Name</th>
+              <th>Meat Type</th>
+              <th>Predicted Qty (kg)</th>
+              <th>Prediction Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="predictionBody">
+            <!-- Dynamically added rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Summary: Total Predicted Meat by Type</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered" id="summaryTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>Meat Type</th>
+              <th>Total Predicted Quantity (kg)</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-4">
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const predictionForm = document.getElementById("predictionForm");
+  const predictionBody = document.getElementById("predictionBody");
+  const summaryBody = document.getElementById("summaryBody");
+
+  let predictions = [];
+
+  // Set current date in the form
+  document.getElementById("predictionDate").value = new Date().toISOString().split('T')[0];
+
+  // Add Prediction
+  predictionForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const analystID = document.getElementById("analystID").value;
+    const analystName = document.getElementById("analystName").value;
+    const meatType = document.getElementById("meatType").value;
+    const predictedQty = parseFloat(document.getElementById("predictedQty").value);
+    const predictionDate = document.getElementById("predictionDate").value;
+
+    const newPrediction = { analystID, analystName, meatType, predictedQty, predictionDate };
+    predictions.push(newPrediction);
+
+    updatePredictionTable();
+    updateSummary();
+
+    predictionForm.reset();
+    document.getElementById("predictionDate").value = new Date().toISOString().split('T')[0];
+  });
+
+  // Update Prediction Table
+  function updatePredictionTable() {
+    predictionBody.innerHTML = "";
+    predictions.forEach((p, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${p.analystID}</td>
+        <td>${p.analystName}</td>
+        <td>${p.meatType}</td>
+        <td>${p.predictedQty}</td>
+        <td>${p.predictionDate}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary" onclick="editPrediction(${index})"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deletePrediction(${index})"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+      predictionBody.appendChild(row);
+    });
+  }
+
+  // Update Summary Table
+  function updateSummary() {
+    const totals = {};
+    predictions.forEach(p => {
+      totals[p.meatType] = (totals[p.meatType] || 0) + p.predictedQty;
+    });
+
+    summaryBody.innerHTML = "";
+    Object.keys(totals).forEach(meat => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${meat}</td><td>${totals[meat]}</td>`;
+      summaryBody.appendChild(row);
+    });
+  }
+
+  // Delete a Prediction
+  function deletePrediction(index) {
+    predictions.splice(index, 1);
+    updatePredictionTable();
+    updateSummary();
+  }
+
+  // Edit Prediction (popup-like prompt)
+  function editPrediction(index) {
+    const p = predictions[index];
+    const newQty = prompt(`Edit predicted quantity for ${p.meatType}`, p.predictedQty);
+    if (newQty !== null && !isNaN(newQty)) {
+      predictions[index].predictedQty = parseFloat(newQty);
+      updatePredictionTable();
+      updateSummary();
+    }
+  }
+
+  // Search Function
+  function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    rows.forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>

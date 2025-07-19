@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analyst Feedback - Slaughterhouse View</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="Meat Product.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+  <a href="Batch Quantity.html"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="Livestock.html"><i class="fas fa-tractor me-2"></i>Livestock Info</a>
+  <a href="Analyst Feedback.html" class="active"><i class="fas fa-chart-line me-2"></i>Analyst Feedback</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Analyst Feedback & Suggested Production</h2>
+
+  <!-- Search Bar -->
+  <input class="form-control mb-3" type="text" placeholder="Search feedback..." onkeyup="filterTable(this, 'feedbackTable')">
+
+  <!-- Analyst Feedback Table -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Suggested Meat Production</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="feedbackTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Analyst ID</th>
+              <th>Analyst Name</th>
+              <th>Meat Type</th>
+              <th>Suggested Qty (kg)</th>
+              <th>Reason for Suggestion</th>
+              <th>Prediction Date</th>
+            </tr>
+          </thead>
+          <tbody id="feedbackBody">
+            <!-- These will come from analyst -->
+            <tr>
+              <td>A001</td>
+              <td>Dr. Rahman</td>
+              <td>Drumstick</td>
+              <td>500</td>
+              <td>High retail demand expected due to seasonal festivals</td>
+              <td>2025-07-15</td>
+            </tr>
+            <tr>
+              <td>A002</td>
+              <td>Sarah Ahmed</td>
+              <td>T-Bone</td>
+              <td>300</td>
+              <td>Restaurant chains requested premium cuts</td>
+              <td>2025-07-15</td>
+            </tr>
+            <tr>
+              <td>A003</td>
+              <td>Imran Hossain</td>
+              <td>Liver</td>
+              <td>200</td>
+              <td>Health trend increasing demand for organ meat</td>
+              <td>2025-07-14</td>
+            </tr>
+            <tr>
+              <td>A001</td>
+              <td>Dr. Rahman</td>
+              <td>Ribs</td>
+              <td>150</td>
+              <td>BBQ events in urban areas</td>
+              <td>2025-07-14</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Summary: Total Suggested by Meat Type</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered" id="summaryTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>Meat Type</th>
+              <th>Total Suggested Qty (kg)</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody">
+            <!-- Filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center p-3 mt-4">
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<!-- Scripts -->
+<script>
+  // Calculate total per meat type
+  function calculateSummary() {
+    const rows = document.querySelectorAll("#feedbackTable tbody tr");
+    const totals = {};
+
+    rows.forEach(row => {
+      const meatType = row.cells[2].textContent.trim();
+      const qty = parseFloat(row.cells[3].textContent.trim());
+
+      if (!totals[meatType]) totals[meatType] = 0;
+      totals[meatType] += qty;
+    });
+
+    const summaryBody = document.getElementById("summaryBody");
+    summaryBody.innerHTML = "";
+    for (let meat in totals) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${meat}</td><td>${totals[meat]}</td>`;
+      summaryBody.appendChild(tr);
+    }
+  }
+
+  // Filter search
+  function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    rows.forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none";
+    });
+  }
+
+  // Run summary once page loads
+  calculateSummary();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
