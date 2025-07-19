@@ -1,198 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wholesaler Distribution Entry</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
-    body { background-color: #f8f9fa; margin: 0; }
+    body {
+      background-color: #f8f9fa;
+      margin: 0;
+    }
     .sidebar {
-      width: 250px; height: 100vh;
-      background: #343a40; color: white;
-      position: fixed; top: 0; left: 0;
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
       padding: 20px 0;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
     .sidebar a {
-      padding: 12px 20px; color: #ccc; text-decoration: none;
-      display: flex; align-items: center; border-left: 3px solid transparent;
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
     }
-    .sidebar a:hover, .sidebar a.active {
-      color: white; background-color: #495057; font-weight: bold;
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
       border-left: 3px solid #fff;
     }
     .main-content {
       margin-left: 270px;
       padding: 30px;
     }
-    .table-wrapper { max-height: 300px; overflow-y: auto; }
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="text-center mb-3">
-    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
-  </div>
-  <h5 class="text-white px-3"><i class="fas fa-warehouse me-2"></i>Wholesaler Panel</h5>
-  <a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
-  <a href="#"><i class="fas fa-store me-2"></i>Retailers</a>
-  <a href="#" class="active"><i class="fas fa-share-square me-2"></i>Distribution Entry</a>
-  <a href="#"><i class="fas fa-map-marked-alt me-2"></i>Local Market Supply</a>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Wholesaler Distribution Entry</h2>
-
-  <!-- Input Form -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <form id="distributionForm">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Receiver Type</label>
-            <select class="form-select" id="receiverType">
-              <option value="">Select</option>
-              <option value="Retailer">Retailer</option>
-              <option value="Local Market">Local Market</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Receiver Name</label>
-            <input type="text" class="form-control" id="receiverName" placeholder="Enter name">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Meat Product</label>
-            <select class="form-select" id="meatType">
-              <option value="">Select Meat</option>
-              <option>T-Bone</option>
-              <option>Drumstick</option>
-              <option>Liver</option>
-              <option>Beef Mince</option>
-              <option>Ribeye</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Quantity (kg)</label>
-            <input type="number" class="form-control" id="quantity" min="0">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Price (Tk)</label>
-            <input type="number" class="form-control" id="price" min="0">
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Distribution Date</label>
-            <input type="date" class="form-control" id="distDate">
-          </div>
-          <div class="col-md-3 d-flex align-items-end">
-            <button type="button" class="btn btn-success w-100" id="submitBtn" onclick="addEntry()">Add Entry</button>
-          </div>
-        </div>
-      </form>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="text-center mb-3">
+      <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px" />
     </div>
+    <h5 class="text-white px-3"><i class="fas fa-warehouse me-2"></i>Wholesaler Panel</h5>
+    <a href="#"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+    <a href="#"><i class="fas fa-store me-2"></i>Retailers</a>
+    <a href="#" class="active"><i class="fas fa-share-square me-2"></i>Distribution Entry</a>
+    <a href="#"><i class="fas fa-map-marked-alt me-2"></i>Local Market Supply</a>
   </div>
 
-  <!-- Distribution Table -->
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Distribution Records</h5>
-      <div class="table-wrapper">
-        <table class="table table-bordered table-striped" id="distributionTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Type</th>
-              <th>Name</th>
-              <th>Meat</th>
-              <th>Qty (kg)</th>
-              <th>Price (Tk)</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2 class="mb-4">Wholesaler Distribution Entry</h2>
+
+    <!-- Input Form -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <form id="distributionForm">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Receiver Type</label>
+              <select class="form-select" id="receiverType">
+                <option value="">Select</option>
+                <option value="Retailer">Retailer</option>
+                <option value="Local Market">Local Market</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Receiver Name</label>
+              <input type="text" class="form-control" id="receiverName" placeholder="Enter name" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Meat Product</label>
+              <select class="form-select" id="meatType" onchange="renderBatchProductTable()">
+                <option value="">Select Meat</option>
+                <option>T-Bone</option>
+                <option>Drumstick</option>
+                <option>Liver</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Quantity (kg)</label>
+              <input type="number" class="form-control" id="quantity" min="0" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Price (Tk)</label>
+              <input type="number" class="form-control" id="price" min="0" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Distribution Date</label>
+              <input type="date" class="form-control" id="distDate" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button
+                type="button"
+                class="btn btn-success w-100"
+                id="submitBtn"
+                onclick="addEntry()"
+              >
+                Add Entry
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Batch Product Table -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">
+          Available Batches for <span id="selectedMeatType">(select meat type)</span>
+        </h5>
+        <div class="table-responsive">
+          <table class="table table-bordered" id="batchProductTable">
+            <thead class="table-secondary">
+              <tr>
+                <th>Batch ID</th>
+                <th>Product ID</th>
+                <th>Available (kg)</th>
+                <th>Available (pcs)</th>
+                <th>Quantity to Distribute (kg)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribution Table -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Distribution Records</h5>
+        <div class="table-wrapper">
+          <table class="table table-bordered table-striped" id="distributionTable">
+            <thead class="table-dark">
+              <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Meat</th>
+                <th>Qty (kg)</th>
+                <th>Price (Tk)</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-let distributionList = [];
-let editingIndex = null;
+  <script>
+    let distributionList = [
+      {
+        type: "Retailer",
+        name: "FreshMeat Mart",
+        meat: "T-Bone",
+        qty: 18,
+        price: 3600,
+        date: "2025-07-20",
+      },
+      {
+        type: "Local Market",
+        name: "Shantinagar Bazaar",
+        meat: "Drumstick",
+        qty: 15,
+        price: 2850,
+        date: "2025-07-21",
+      },
+      {
+        type: "Retailer",
+        name: "City Butcher's",
+        meat: "Liver",
+        qty: 6,
+        price: 1080,
+        date: "2025-07-22",
+      },
+    ];
 
-function addEntry() {
-  const type = document.getElementById('receiverType').value;
-  const name = document.getElementById('receiverName').value.trim();
-  const meat = document.getElementById('meatType').value;
-  const qty = parseFloat(document.getElementById('quantity').value);
-  const price = parseFloat(document.getElementById('price').value);
-  const date = document.getElementById('distDate').value;
+    let editingIndex = null;
 
-  if (!type || !name || !meat || !qty || !price || !date) {
-    alert("Please fill all fields.");
-    return;
-  }
+    const batchProducts = [
+      {
+        batchID: "B101",
+        productID: "P001",
+        meatType: "T-Bone",
+        available: 20,
+        pcs: 10,
+      },
+      {
+        batchID: "B101",
+        productID: "P002",
+        meatType: "T-Bone",
+        available: 15,
+        pcs: 8,
+      },
+      {
+        batchID: "B102",
+        productID: "P003",
+        meatType: "Drumstick",
+        available: 10,
+        pcs: 5,
+      },
+      {
+        batchID: "B102",
+        productID: "P004",
+        meatType: "Drumstick",
+        available: 12,
+        pcs: 6,
+      },
+      {
+        batchID: "B103",
+        productID: "P005",
+        meatType: "Liver",
+        available: 8,
+        pcs: 4,
+      },
+    ];
 
-  const entry = { type, name, meat, qty, price, date };
+    function addEntry() {
+      const type = document.getElementById("receiverType").value;
+      const name = document.getElementById("receiverName").value.trim();
+      const meat = document.getElementById("meatType").value;
+      const qty = parseFloat(document.getElementById("quantity").value);
+      const price = parseFloat(document.getElementById("price").value);
+      const date = document.getElementById("distDate").value;
 
-  if (editingIndex !== null) {
-    distributionList[editingIndex] = entry;
-    editingIndex = null;
-    document.getElementById('submitBtn').innerText = "Add Entry";
-  } else {
-    distributionList.push(entry);
-  }
+      if (!type || !name || !meat || !qty || !price || !date) {
+        alert("Please fill all fields.");
+        return;
+      }
 
-  renderTable();
-  document.getElementById('distributionForm').reset();
-}
+      const entry = { type, name, meat, qty, price, date };
 
-function renderTable() {
-  const tbody = document.querySelector('#distributionTable tbody');
-  tbody.innerHTML = '';
+      if (editingIndex !== null) {
+        distributionList[editingIndex] = entry;
+        editingIndex = null;
+        document.getElementById("submitBtn").innerText = "Add Entry";
+      } else {
+        distributionList.push(entry);
+      }
 
-  distributionList.forEach((entry, index) => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${entry.type}</td>
-        <td>${entry.name}</td>
-        <td>${entry.meat}</td>
-        <td>${entry.qty}</td>
-        <td>${entry.price}</td>
-        <td>${entry.date}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" onclick="editEntry(${index})">Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteEntry(${index})">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-}
+      renderTable();
+      document.getElementById("distributionForm").reset();
+      renderBatchProductTable();
+    }
 
-function deleteEntry(index) {
-  if (confirm("Remove this entry?")) {
-    distributionList.splice(index, 1);
+    function renderTable() {
+      const tbody = document.querySelector("#distributionTable tbody");
+      tbody.innerHTML = "";
+
+      distributionList.forEach((entry, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${entry.type}</td>
+            <td>${entry.name}</td>
+            <td>${entry.meat}</td>
+            <td>${entry.qty}</td>
+            <td>${entry.price}</td>
+            <td>${entry.date}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" onclick="editEntry(${index})">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteEntry(${index})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function deleteEntry(index) {
+      if (confirm("Remove this entry?")) {
+        distributionList.splice(index, 1);
+        renderTable();
+      }
+    }
+
+    function editEntry(index) {
+      const entry = distributionList[index];
+      document.getElementById("receiverType").value = entry.type;
+      document.getElementById("receiverName").value = entry.name;
+      document.getElementById("meatType").value = entry.meat;
+      document.getElementById("quantity").value = entry.qty;
+      document.getElementById("price").value = entry.price;
+      document.getElementById("distDate").value = entry.date;
+
+      editingIndex = index;
+      document.getElementById("submitBtn").innerText = "Update Entry";
+      renderBatchProductTable();
+    }
+
+    function renderBatchProductTable() {
+      const meatType = document.getElementById("meatType").value;
+      const tbody = document.querySelector("#batchProductTable tbody");
+      document.getElementById("selectedMeatType").innerText = meatType
+        ? `(${meatType})`
+        : "(select meat type)";
+      tbody.innerHTML = "";
+
+      // Filter batchProducts for selected meatType
+      const filtered = batchProducts.filter((bp) => bp.meatType === meatType);
+      filtered.forEach((bp, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>
+              <select class="form-select" id="batchSelect-${index}" onchange="updateProductOptions(${index})">
+                ${filtered
+                  .map((b) => `<option value="${b.batchID}">${b.batchID}</option>`)
+                  .join("")}
+              </select>
+            </td>
+            <td>
+              <select class="form-select" id="productSelect-${index}">
+                <!-- Options updated by updateProductOptions -->
+              </select>
+            </td>
+            <td>${bp.available}</td>
+            <td>${bp.pcs}</td>
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                id="bpInput-${index}"
+                min="0"
+                max="${bp.available}"
+                oninput="validateQty(${index}, ${bp.available})"
+              />
+            </td>
+          </tr>
+        `;
+      });
+
+      // Initialize product selects for each row
+      filtered.forEach((_, idx) => updateProductOptions(idx));
+    }
+
+    function updateProductOptions(rowIndex) {
+      const batchSelect = document.getElementById(`batchSelect-${rowIndex}`);
+      const productSelect = document.getElementById(`productSelect-${rowIndex}`);
+      const selectedBatch = batchSelect.value;
+
+      const meatType = document.getElementById("meatType").value;
+      const productsForBatch = batchProducts.filter(
+        (bp) => bp.batchID === selectedBatch && bp.meatType === meatType
+      );
+
+      productSelect.innerHTML = productsForBatch
+        .map((p) => `<option value="${p.productID}">${p.productID}</option>`)
+        .join("");
+    }
+
+    function validateQty(index, maxVal) {
+      const input = document.getElementById(`bpInput-${index}`);
+      const val = parseFloat(input.value);
+      if (val > maxVal) {
+        alert(`Quantity can't exceed ${maxVal} kg`);
+        input.value = maxVal;
+      }
+    }
+
+    // Initial render
     renderTable();
-  }
-}
-
-function editEntry(index) {
-  const entry = distributionList[index];
-  document.getElementById('receiverType').value = entry.type;
-  document.getElementById('receiverName').value = entry.name;
-  document.getElementById('meatType').value = entry.meat;
-  document.getElementById('quantity').value = entry.qty;
-  document.getElementById('price').value = entry.price;
-  document.getElementById('distDate').value = entry.date;
-
-  editingIndex = index;
-  document.getElementById('submitBtn').innerText = "Update Entry";
-}
-</script>
-
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
