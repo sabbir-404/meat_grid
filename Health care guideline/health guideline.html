@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Guidelines - Meat Grid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    body {
+      background-color: #f4f6f9;
+    }
+    .wrapper {
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar .text-center {
+      margin-bottom: 15px;
+    }
+    .sidebar h5 {
+      padding: 0 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      color: #ccc;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      border-left: 3px solid #ffffff;
+      font-weight: bold;
+    }
+    .main-content {
+      margin-left: 270px;
+      padding: 30px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="text-center">
+        <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
+      </div>
+      <h5 class="text-white mt-3 mb-3"><i class="fas fa-bars me-2"></i>Dashboard</h5>
+
+        <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+        <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+        <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+        <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+        <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+        <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+        <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+        <a href="health-guidelines.html" class="active"><i class="fas fa-heartbeat me-2"></i>Health Guidelines</a>
+        <a href="analyst-feedback.html"><i class="fas fa-comment-medical me-2"></i>Analyst Feedback</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <h2 class="mb-4">Health Guidelines & Nutritional Intake</h2>
+
+      <div class="card mt-4">
+        <div class="card-body">
+          <p>Based on analyst feedback, the following nutritional intake has been reported for selected meat products. Health experts may provide tailored guidelines below.</p>
+
+          <form>
+            <div class="mb-3">
+              <label for="meatType" class="form-label">Select Meat Type</label>
+              <select class="form-select" id="meatType">
+                <option>Beef</option>
+                <option>Goat</option>
+                <option>Poultry</option>
+                <option>Lamb</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="reportedIntake" class="form-label">Reported Nutritional Intake from Analyst</label>
+              <input type="text" class="form-control" id="reportedIntake" value="Protein: 25g, Fat: 15g" disabled>
+            </div>
+
+            <div class="mb-3">
+              <label for="guidelineSuggestion" class="form-label">Suggested Nutritional Intake</label>
+              <textarea class="form-control" id="guidelineSuggestion" rows="4" placeholder="E.g., Increase protein intake for muscle growth, reduce fat intake for healthier consumption..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit Guidelines</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
