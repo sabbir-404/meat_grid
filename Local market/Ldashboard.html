@@ -1,3 +1,5 @@
+<!-- Replace your existing code with this -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,7 +64,7 @@
     }
     canvas {
       width: 100% !important;
-      height: auto !important;
+      height: 200px !important; /* Smaller height */
     }
   </style>
 </head>
@@ -73,11 +75,10 @@
   <div class="text-center mb-3">
     <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
-  <h5 class="text-white px-3"><i class="fas fa-store-alt me-2"></i>Local Market Panel</h5>
+  <h5 class="text-white px-3"><i class="fas fa-store me-2"></i>Local Market Panel</h5>
   <a href="#" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="#"><i class="fas fa-truck me-2"></i>Received from Wholesaler</a>
-  <a href="#"><i class="fas fa-users me-2"></i>Customer Sales</a>
-  <a href="#"><i class="fas fa-box-open me-2"></i>Inventory</a>
+  <a href="#"><i class="fas fa-truck-loading me-2"></i>Received from Retailer</a>
+  <a href="#"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
 </div>
 
 <!-- Main Dashboard -->
@@ -86,22 +87,28 @@
 
   <!-- Summary Cards -->
   <div class="row summary-cards mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card">
         <h5>Total Products in Stock</h5>
-        <h3>70 kg</h3>
+        <h3>48 kg</h3>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card">
         <h5>Unique Meat Types</h5>
         <h3>3</h3>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card">
-        <h5>Customers Served</h5>
-        <h3>35</h3>
+        <h5>Vendors Served</h5>
+        <h3>12</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <h5>Total Value</h5>
+        <h3>৳ 1800</h3>
       </div>
     </div>
   </div>
@@ -114,15 +121,15 @@
     </div>
   </div>
 
-  <!-- Table: Received from Wholesaler -->
+  <!-- Table: Received from Retailer -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Products Received from Wholesaler</h5>
+      <h5 class="card-title">Products Received from Retailer</h5>
       <div class="table-wrapper">
         <table class="table table-bordered">
           <thead class="table-dark">
             <tr>
-              <th>Wholesaler Name</th>
+              <th>Retailer Name</th>
               <th>Product</th>
               <th>Batch ID</th>
               <th>Quantity (kg)</th>
@@ -130,32 +137,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>XYZ Wholesale</td><td>Ribs</td><td>B201</td><td>30</td><td>2025-07-18</td></tr>
-            <tr><td>XYZ Wholesale</td><td>Wing</td><td>B202</td><td>40</td><td>2025-07-18</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Table: Customer Sales -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Customer Sales Record</h5>
-      <div class="table-wrapper">
-        <table class="table table-bordered">
-          <thead class="table-secondary">
-            <tr>
-              <th>Customer</th>
-              <th>Product</th>
-              <th>Quantity (kg)</th>
-              <th>Price</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Hasan Enterprise</td><td>Ribs</td><td>20</td><td>1800</td><td>2025-07-19</td></tr>
-            <tr><td>Mina Traders</td><td>Wing</td><td>25</td><td>2000</td><td>2025-07-19</td></tr>
+            <tr><td>XYZ Retailer</td><td>Beef</td><td>R101</td><td>20</td><td>2025-07-19</td></tr>
+            <tr><td>XYZ Retailer</td><td>Heart</td><td>R102</td><td>10</td><td>2025-07-19</td></tr>
           </tbody>
         </table>
       </div>
@@ -175,8 +158,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>Ribs</td><td>10</td></tr>
-            <tr><td>Wing</td><td>15</td></tr>
+            <tr><td>Beef</td><td>18</td></tr>
+            <tr><td>Heart</td><td>8</td></tr>
+            <tr><td>Kidney</td><td>22</td></tr>
           </tbody>
         </table>
       </div>
@@ -193,11 +177,11 @@ const ctx = document.getElementById('inventoryChart');
 new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ['Ribs', 'Wing'],
+    labels: ['Beef', 'Heart', 'Kidney'],
     datasets: [{
       label: 'Available Quantity (kg)',
-      data: [10, 15],
-      backgroundColor: ['#0d6efd', '#20c997']
+      data: [18, 8, 22],
+      backgroundColor: ['#198754', '#fd7e14', '#0dcaf0']
     }]
   },
   options: {
