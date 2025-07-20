@@ -40,7 +40,18 @@
       text-align: center; padding: 10px;
       margin-left: 270px; margin-top: 30px;
     }
-    canvas { max-width: 100%; }
+    canvas { max-width: 100%; 
+    }
+    .main-content {
+  margin-left: 270px;
+  padding: 30px;
+  width: calc(100% - 270px);
+    }
+  .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
   </style>
 </head>
 <body>
@@ -51,8 +62,8 @@
     <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
   <h5 class="text-white px-3"><i class="fas fa-user-tag me-2"></i>Retailer Panel</h5>
-  <a href="#"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="#"><i class="fas fa-truck-loading me-2"></i>Supply from Wholesale</a>
+  <a href="Rdashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="Rsupply.html"><i class="fas fa-truck-loading me-2"></i>Supply from Wholesale</a>
   <a href="#" class="active"><i class="fas fa-users me-2"></i>Customer Purchases</a>
   <a href="#"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
 </div>
@@ -60,6 +71,99 @@
 <!-- Main Content -->
 <div class="main-content container-fluid">
   <h2>Customer Purchase Records</h2>
+<!-- Customer Purchase Form -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Add Customer Purchase</h5>
+<form id="purchaseForm">
+  <!-- Customer Info -->
+  <div class="row mb-3">
+    <div class="col-md-3">
+      <label class="form-label">Consumer ID</label>
+      <input type="text" class="form-control" id="consumerID" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Phone Number</label>
+      <input type="tel" class="form-control" id="phoneNumber" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" id="email" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Purchase ID</label>
+      <input type="text" class="form-control" id="purchaseID" required>
+    </div>
+  </div>
+
+  <!-- Address and Date -->
+  <div class="row mb-3">
+    <div class="col-md-8">
+      <label class="form-label">Full Address</label>
+      <input type="text" class="form-control" id="fullAddress" placeholder="House, Block, Road, Area" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Purchase Date</label>
+      <input type="date" class="form-control" id="purchaseDate" required>
+    </div>
+  </div>
+
+  <!-- Product Selection -->
+  <div class="row mb-3 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label">Meat Product</label>
+      <select class="form-select" id="meatProduct">
+        <option value="" disabled selected>Select Product</option>
+        <option value="T-Bone">T-Bone</option>
+        <option value="Drumstick">Drumstick</option>
+        <option value="Ribs">Ribs</option>
+        <option value="Liver">Liver</option>
+        <option value="Wing">Wing</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Quantity (kg)</label>
+      <input type="number" class="form-control" id="productQty" min="1">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Price/kg (Tk)</label>
+      <input type="number" class="form-control" id="pricePerKg" min="0">
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-success w-100" onclick="addProduct()">Add Product</button>
+    </div>
+  </div>
+
+  <!-- Product Table -->
+  <div class="table-responsive mb-3">
+    <table class="table table-bordered" id="productTable">
+      <thead class="table-secondary">
+        <tr>
+          <th>Product</th>
+          <th>Quantity (kg)</th>
+          <th>Price/kg</th>
+          <th>Subtotal</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-end"><strong>Total Price (Tk):</strong></td>
+          <td colspan="2" id="totalAmount">0</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="text-end">
+    <button type="submit" class="btn btn-primary">Add Purchase</button>
+  </div>
+</form>
+
+  </div>
+</div>
 
   <!-- Purchase Table -->
   <div class="table-wrapper mt-4">
@@ -195,6 +299,93 @@ function renderMonthlyChart() {
 
 renderPurchases();
 renderMonthlyChart();
+
+function calculateTotal() {
+  const quantity = parseFloat(document.getElementById("quantity").value) || 0;
+  const pricePerKg = parseFloat(document.getElementById("pricePerKg").value) || 0;
+  document.getElementById("totalPrice").value = (quantity * pricePerKg).toFixed(2);
+}
+</script>
+
+<script>
+let products = [];
+
+function addProduct() {
+  const product = document.getElementById('meatProduct').value;
+  const qty = parseFloat(document.getElementById('productQty').value);
+  const price = parseFloat(document.getElementById('pricePerKg').value);
+
+  if (!product || !qty || !price) {
+    alert("Please fill in all product fields.");
+    return;
+  }
+
+  const subtotal = qty * price;
+  products.push({ product, qty, price, subtotal });
+
+  updateProductTable();
+  clearProductInputs();
+}
+
+function updateProductTable() {
+  const tbody = document.querySelector('#productTable tbody');
+  tbody.innerHTML = '';
+  let total = 0;
+
+  products.forEach((p, index) => {
+    total += p.subtotal;
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.product}</td>
+        <td>${p.qty}</td>
+        <td>${p.price}</td>
+        <td>${p.subtotal.toFixed(2)}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="removeProduct(${index})"><i class="fas fa-trash-alt"></i></button></td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('totalAmount').innerText = total.toFixed(2);
+}
+
+function clearProductInputs() {
+  document.getElementById('meatProduct').value = '';
+  document.getElementById('productQty').value = '';
+  document.getElementById('pricePerKg').value = '';
+}
+
+function removeProduct(index) {
+  products.splice(index, 1);
+  updateProductTable();
+}
+
+document.getElementById('purchaseForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  if (products.length === 0) {
+    alert("Please add at least one product.");
+    return;
+  }
+
+  const customerData = {
+    consumerID: document.getElementById('consumerID').value,
+    phone: document.getElementById('phoneNumber').value,
+    email: document.getElementById('email').value,
+    address: document.getElementById('fullAddress').value,
+    purchaseID: document.getElementById('purchaseID').value,
+    purchaseDate: document.getElementById('purchaseDate').value,
+    totalPrice: document.getElementById('totalAmount').innerText,
+    items: products
+  };
+
+  console.log("Submitted Purchase:", customerData);
+  alert("Purchase submitted successfully!");
+
+  // Reset form
+  products = [];
+  this.reset();
+  updateProductTable();
+});
 </script>
 
 </body>
