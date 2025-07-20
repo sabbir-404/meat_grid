@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Retailer Inventory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .container-custom {
+      margin-left: 250px;
+      padding: 30px;
+    }
+    .card {
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    footer {
+      background: #343a40;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-left: 250px;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-user-tag me-2"></i>Retailer Panel</h5>
+  <a href="#"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#"><i class="fas fa-truck me-2"></i>Received Products</a>
+  <a href="#" class="active"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
+</div>
+
+<!-- Inventory Section -->
+<div class="container-custom">
+  <h2 class="mb-4">Current Inventory</h2>
+
+  <!-- Chart -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Inventory Overview</h5>
+      <canvas id="inventoryChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Inventory Table</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th>Available Quantity (kg)</th>
+              <th>Price per kg (৳)</th>
+              <th>Total Value (৳)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>T-Bone</td>
+              <td>15</td>
+              <td>200</td>
+              <td>3000</td>
+            </tr>
+            <tr>
+              <td>Liver</td>
+              <td>10</td>
+              <td>180</td>
+              <td>1800</td>
+            </tr>
+            <tr>
+              <td>Beef Steak</td>
+              <td>12</td>
+              <td>250</td>
+              <td>3000</td>
+            </tr>
+            <tr>
+              <td>Goat Leg</td>
+              <td>8</td>
+              <td>220</td>
+              <td>1760</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Meat Grid. All Rights Reserved.
+</footer>
+
+<script>
+const ctx = document.getElementById('inventoryChart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['T-Bone', 'Liver', 'Beef Steak', 'Goat Leg'],
+    datasets: [{
+      label: 'Available Quantity (kg)',
+      data: [15, 10, 12, 8],
+      backgroundColor: ['#0d6efd', '#dc3545', '#198754', '#ffc107']
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Available Stock by Product'
+      }
+    },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
