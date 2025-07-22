@@ -63,8 +63,9 @@
       margin-left: 250px;
     }
     canvas {
-      width: 100% !important;
-      height: 200px !important; /* Smaller height */
+      width: 100%;
+      max-width: 700px;
+      height: auto;
     }
   </style>
 </head>
@@ -77,8 +78,8 @@
   </div>
   <h5 class="text-white px-3"><i class="fas fa-store me-2"></i>Local Market Panel</h5>
   <a href="#" class="active"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="#"><i class="fas fa-truck-loading me-2"></i>Received from Retailer</a>
-  <a href="#"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
+  <a href="Lpurchase.html"><i class="fas fa-shop me-2"></i>Pruchase</a>
+  <a href="Linventory.html"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
 </div>
 
 <!-- Main Dashboard -->
@@ -113,13 +114,16 @@
     </div>
   </div>
 
-  <!-- Inventory Chart -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Inventory Distribution by Meat Type</h5>
-      <canvas id="inventoryChart"></canvas>
+<!-- Inventory Chart -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Inventory Distribution by Meat Type</h5>
+    <div style="display: flex; justify-content: center;">
+      <canvas id="inventoryChart" width="600" height="300"></canvas>
     </div>
   </div>
+</div>
+
 
   <!-- Table: Received from Retailer -->
   <div class="card mb-4">
