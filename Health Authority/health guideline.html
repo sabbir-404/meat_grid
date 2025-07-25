@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Guidelines</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      margin: 0;
+    }
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+    }
+    .sidebar a {
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
+    }
+    .dashboard-container {
+      margin-left: 270px;
+      padding: 30px;
+      width: calc(100% - 270px);
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1050;
+    }
+    .modal-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .badge {
+      margin: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-user-md me-2"></i>Health Panel</h5>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#" class="active"><i class="fas fa-notes-medical me-2"></i>Health Guidelines</a>
+  <a href="Analyst feedback.html"><i class="fas fa-chart-bar me-2"></i>Analyst Report</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container">
+  <h2 class="mb-4">Health Guideline Entry</h2>
+
+  <!-- Form -->
+  <form id="guidelineForm" class="bg-white p-4 rounded shadow mb-5">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Guideline Title</label>
+        <input type="text" class="form-control" id="title" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Issue Date</label>
+        <input type="date" class="form-control" id="issueDate" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Target Age Group</label>
+        <select class="form-select" id="ageGroup" required>
+          <option value="">Select</option>
+          <option>0–12 (Children)</option>
+          <option>13–25 (Youth)</option>
+          <option>26–45 (Adults)</option>
+          <option>46+ (Elderly)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Nutrition Selector -->
+    <div class="mb-3">
+      <label class="form-label">Nutrition Type</label>
+      <div class="input-group mb-2">
+        <select class="form-select" id="nutritionSelect">
+          <option value="">Select</option>
+          <option>Protein</option>
+          <option>Iron</option>
+          <option>Vitamin B12</option>
+          <option>Omega-3</option>
+          <option>Calcium</option>
+        </select>
+        <button class="btn btn-outline-primary" type="button" onclick="addNutrition()">Add</button>
+      </div>
+      <div id="nutritionList"></div>
+    </div>
+
+    <!-- Recommended Quantity -->
+    <div class="mb-3">
+      <label class="form-label">Recommended Meat Quantity</label>
+      <input type="text" class="form-control" id="meatQty" placeholder="e.g. 150g/day">
+    </div>
+
+    <!-- Breed Selector -->
+    <div class="mb-3">
+      <label class="form-label">Recommended Breeds</label>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control" id="breedInput" placeholder="e.g. Local Cattle, Broiler">
+        <button class="btn btn-outline-primary" type="button" onclick="addBreed()">Add</button>
+      </div>
+      <div id="breedList"></div>
+    </div>
+
+    <!-- Guideline Text -->
+    <div class="mb-3">
+      <label class="form-label">Guideline Description</label>
+      <textarea class="form-control" id="guidelineText" rows="4" required></textarea>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Save Guideline</button>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="card shadow mb-5">
+    <div class="card-body">
+      <h5 class="card-title">Saved Guidelines</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered" id="guidelineTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Age Group</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="guidelineModal">
+  <div class="modal-box">
+    <span class="close-btn" onclick="document.getElementById('guidelineModal').style.display='none'">&times;</span>
+    <h5 id="modalTitle"></h5>
+    <p><strong>Issue Date:</strong> <span id="modalDate"></span></p>
+    <p><strong>Age Group:</strong> <span id="modalAge"></span></p>
+    <p><strong>Nutrition Types:</strong> <span id="modalNutrition"></span></p>
+    <p><strong>Meat Quantity:</strong> <span id="modalQty"></span></p>
+    <p><strong>Recommended Breeds:</strong> <span id="modalBreed"></span></p>
+    <p><strong>Description:</strong></p>
+    <p id="modalDesc"></p>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById("guidelineForm");
+  const tableBody = document.querySelector("#guidelineTable tbody");
+  const nutritionArray = [];
+  const breedArray = [];
+
+  function addNutrition() {
+    const sel = document.getElementById("nutritionSelect");
+    const value = sel.value;
+    if (value && !nutritionArray.includes(value)) {
+      nutritionArray.push(value);
+      const span = document.createElement("span");
+      span.className = "badge bg-primary";
+      span.innerText = value;
+      document.getElementById("nutritionList").appendChild(span);
+    }
+  }
+
+  function addBreed() {
+    const input = document.getElementById("breedInput");
+    const value = input.value.trim();
+    if (value && !breedArray.includes(value)) {
+      breedArray.push(value);
+      const span = document.createElement("span");
+      span.className = "badge bg-info";
+      span.innerText = value;
+      document.getElementById("breedList").appendChild(span);
+      input.value = '';
+    }
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const title = document.getElementById("title").value;
+    const date = document.getElementById("issueDate").value;
+    const age = document.getElementById("ageGroup").value;
+    const qty = document.getElementById("meatQty").value;
+    const desc = document.getElementById("guidelineText").value;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${title}</td>
+      <td>${date}</td>
+      <td>${age}</td>
+      <td><button class="btn btn-sm btn-primary" onclick='showModal(${JSON.stringify({ title, date, age, qty, desc, nutrition: [...nutritionArray], breed: [...breedArray] })})'>View</button></td>
+    `;
+    tableBody.appendChild(row);
+
+    form.reset();
+    nutritionArray.length = 0;
+    breedArray.length = 0;
+    document.getElementById("nutritionList").innerHTML = '';
+    document.getElementById("breedList").innerHTML = '';
+  });
+
+  function showModal(data) {
+    document.getElementById("modalTitle").innerText = data.title;
+    document.getElementById("modalDate").innerText = data.date;
+    document.getElementById("modalAge").innerText = data.age;
+    document.getElementById("modalNutrition").innerText = data.nutrition.join(", ");
+    document.getElementById("modalQty").innerText = data.qty;
+    document.getElementById("modalBreed").innerText = data.breed.join(", ");
+    document.getElementById("modalDesc").innerText = data.desc;
+    document.getElementById("guidelineModal").style.display = "flex";
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

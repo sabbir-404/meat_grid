@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Customer Feedback Analysis</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+    background-color: #f4f6f9;
+    margin: 0;
+}
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #343a40;
+    color: white;
+    position: fixed;
+    padding: 20px 0;
+}
+.sidebar a {
+    padding: 12px 20px;
+    color: #ccc;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+.sidebar a:hover, .sidebar a.active {
+    color: white;
+    background-color: #495057;
+    font-weight: bold;
+    border-left: 3px solid #fff;
+}
+.dashboard-container {
+    margin-left: 270px;
+    padding: 30px;
+    width: calc(100% - 270px);
+}
+.table-wrapper {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.chart-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.chart-container {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+.positive { color: green; }
+.neutral { color: orange; }
+.negative { color: red; }
+footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-left: 270px;
+    margin-top: 30px;
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+<div class="text-center mb-3">
+<img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+</div>
+<h5 class="text-white px-3"><i class="fas fa-chart-pie me-2"></i>Analyst Panel</h5>
+<a href="analyst-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+<a href="#" class="active"><i class="fas fa-comments me-2"></i>Customer Feedback</a>
+<a href="#"><i class="fas fa-history me-2"></i>Purchase History Report</a>
+<a href="#"><i class="fas fa-notes-medical me-2"></i>Health Authority Feedback</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container">
+<h2 class="mb-4">Customer Feedback Analysis</h2>
+
+<!-- Quick Summary -->
+<div class="row mb-4">
+<div class="col-md-4">
+    <div class="card text-center">
+    <div class="card-body">
+        <h5>Average Score</h5>
+        <h3 id="avgScore">0</h3>
+    </div>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="card text-center">
+    <div class="card-body">
+        <h5>Total Feedback</h5>
+        <h3 id="totalFeedbacks">0</h3>
+    </div>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="card text-center">
+    <div class="card-body">
+        <h5>Most Common Score</h5>
+        <h3 id="commonScore">-</h3>
+    </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Customer Feedback Table -->
+<div class="table-wrapper">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Customer Feedback Records</h4>
+    <input type="text" id="feedbackSearch" class="form-control" placeholder="Search feedback..." style="max-width: 300px;">
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>Feedback ID</th>
+        <th>Customer ID</th>
+        <th>Score</th>
+        <th>Comment</th>
+        <th>Submitted Date</th>
+    </tr>
+    </thead>
+    <tbody id="feedbackBody">
+    <!-- JS will populate -->
+    </tbody>
+</table>
+</div>
+
+
+<!-- Charts -->
+<div class="chart-row">
+<div class="chart-container">
+    <h5 class="text-center">Feedback Score Distribution</h5>
+    <canvas id="scoreBarChart"></canvas>
+</div>
+<div class="chart-container">
+    <h5 class="text-center">Sentiment Breakdown</h5>
+    <canvas id="sentimentPieChart"></canvas>
+</div>
+</div>
+</div>
+
+
+<script>
+// Sample feedback dataset
+const feedbacks = [
+{ id: "F001", customer: "CUST101", score: 5, comment: "Excellent quality!", date: "2025-07-10" },
+{ id: "F002", customer: "CUST102", score: 4, comment: "Very good but slightly pricey.", date: "2025-07-11" },
+{ id: "F003", customer: "CUST103", score: 3, comment: "Average, can be better.", date: "2025-07-12" },
+{ id: "F004", customer: "CUST104", score: 2, comment: "Not satisfied with freshness.", date: "2025-07-13" },
+{ id: "F005", customer: "CUST105", score: 1, comment: "Poor quality, disappointed.", date: "2025-07-14" },
+{ id: "F006", customer: "CUST106", score: 4, comment: "Good experience overall.", date: "2025-07-14" }
+];
+
+function renderFeedback() {
+const tbody = document.getElementById("feedbackBody");
+tbody.innerHTML = "";
+let totalScore = 0;
+let scoreCounts = {1:0,2:0,3:0,4:0,5:0};
+let sentiment = {positive:0,neutral:0,negative:0};
+
+feedbacks.forEach(f => {
+    totalScore += f.score;
+    scoreCounts[f.score]++;
+
+    // sentiment classification
+    if (f.score >=4) sentiment.positive++;
+    else if (f.score === 3) sentiment.neutral++;
+    else sentiment.negative++;
+
+    // sentiment text color
+    let sentimentClass = f.score >=4 ? "positive" : (f.score===3?"neutral":"negative");
+
+    tbody.innerHTML += `
+    <tr>
+        <td>${f.id}</td>
+        <td>${f.customer}</td>
+        <td class="${sentimentClass}">${f.score}</td>
+        <td>${f.comment}</td>
+        <td>${f.date}</td>
+    </tr>
+    `;
+});
+
+// Summary
+const avg = (totalScore / feedbacks.length).toFixed(2);
+document.getElementById("avgScore").textContent = avg;
+document.getElementById("totalFeedbacks").textContent = feedbacks.length;
+
+let mostCommon = Object.entries(scoreCounts).sort((a,b)=>b[1]-a[1])[0][0];
+document.getElementById("commonScore").textContent = mostCommon;
+
+// Chart data
+createCharts(scoreCounts, sentiment);
+}
+
+function createCharts(scoreCounts, sentiment) {
+// Score Distribution Chart
+new Chart(document.getElementById("scoreBarChart"), {
+    type: "bar",
+    data: {
+    labels: ["1","2","3","4","5"],
+    datasets: [{
+        label: "Feedback Count",
+        data: [scoreCounts[1],scoreCounts[2],scoreCounts[3],scoreCounts[4],scoreCounts[5]],
+        backgroundColor: ["#dc3545","#fd7e14","#ffc107","#0dcaf0","#198754"]
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: { title: { display: true, text: "Score Distribution" } },
+    scales: {
+        y: { beginAtZero: true }
+    }
+    }
+});
+
+// Sentiment Pie Chart
+new Chart(document.getElementById("sentimentPieChart"), {
+    type: "pie",
+    data: {
+    labels: ["Positive","Neutral","Negative"],
+    datasets: [{
+        data: [sentiment.positive, sentiment.neutral, sentiment.negative],
+        backgroundColor: ["#198754","#ffc107","#dc3545"]
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: { title: { display: true, text: "Sentiment Breakdown" } }
+    }
+});
+}
+
+renderFeedback();
+</script>
+<script>
+function filterFeedback() {
+const searchTerm = document.getElementById("feedbackSearch").value.toLowerCase();
+const rows = document.querySelectorAll("#feedbackBody tr");
+
+rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(searchTerm) ? "" : "none";
+});
+}
+
+document.getElementById("feedbackSearch").addEventListener("keyup", filterFeedback);
+</script>
+
+</body>
+</html>
