@@ -1,252 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Retailer Purchases</title>
+  <title>Retailer Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       background-color: #f4f6f9;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       overflow-x: hidden;
     }
     .sidebar {
-      width: 250px; height: 100vh;
-      background: #343a40; color: white;
-      position: fixed; top: 0; left: 0;
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
       padding: 20px 0;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
     .sidebar a {
-      padding: 12px 20px; color: #ccc;
-      text-decoration: none; display: flex;
-      align-items: center; border-left: 3px solid transparent;
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
     }
     .sidebar a:hover, .sidebar a.active {
-      color: white; background-color: #495057;
-      font-weight: bold; border-left: 3px solid #fff;
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
     }
-    .dashboard-container {
+    .main-content {
       margin-left: 250px;
       padding: 30px;
-      width: calc(100% - 250px);
+      background-color: #f4f6f9;
       min-height: 100vh;
+      width: calc(100% - 250px);
     }
-    .due { color: red; font-weight: bold; }
-    .paid { color: green; font-weight: bold; }
-    canvas { width: 100% !important; height: 300px !important; }
+    .table-wrapper {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    .table thead th {
+      background: #343a40;
+      color: white;
+    }
+    .table tfoot {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
     footer {
-      background: #343a40; color: white;
-      text-align: center; padding: 10px;
+      background: #343a40;
+      color: white;
+      text-align: center;
+      padding: 10px;
       margin-left: 250px;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="text-center mb-3">
-      <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
-    </div>
-    <h5 class="text-white px-3"><i class="fas fa-user-tag me-2"></i>Retailer Panel</h5>
-    <a href="Rdashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-    <a href="Rpurchase.html" class="active"><i class="fas fa-shop me-2"></i>Purchase</a>
-    <a href="Rsupply.html"><i class="fas fa-truck-loading me-2"></i>Supplier</a>
-    <a href="Rinventory.html"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
+  <h5 class="text-white px-3"><i class="fas fa-user-tag me-2"></i>Retailer Panel</h5>
+  <a href="Rdashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="#" class="active"><i class="fas fa-shop me-2"></i>Purchase</a>
+  <a href="Rsupply.html"><i class="fas fa-truck-loading me-2"></i>Supplier</a>
+  <a href="Rinventory.html"><i class="fas fa-boxes-stacked me-2"></i>Inventory</a>
+</div>
 
-  <!-- Main Container -->
-  <div class="dashboard-container">
+<!-- Main Content -->
+<div class="main-content">
+  <div class="container-fluid">
+    <h2>Retailer Customer Purchases</h2>
 
-    <h2 class="mb-4">Retailer Customer Purchases</h2>
-
-    <!-- Add New Purchase Form -->
+    <!-- Purchase Form -->
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Add New Purchase</h5>
-        <div class="row g-3 align-items-end">
-          <div class="col-md-3">
-            <label class="form-label">Customer Name</label>
-            <input id="customer" class="form-control" placeholder="Customer Name">
+        <form id="purchaseForm">
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label>Purchase ID</label>
+              <input type="text" class="form-control" id="purchaseID" required>
+            </div>
+            <div class="col-md-3">
+              <label>Consumer ID</label>
+              <input type="text" class="form-control" id="consumerID" required>
+            </div>
+            <div class="col-md-3">
+              <label>Purchase Date</label>
+              <input type="date" class="form-control" id="purchaseDate" required>
+            </div>
           </div>
-          <div class="col-md-2">
-            <label class="form-label">Product</label>
-            <input id="product" class="form-control" placeholder="Product">
+
+          <h6>Add Product</h6>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <select class="form-select" id="productDropdown">
+                <option value="">Select Product</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" placeholder="Qty (kg)" id="quantity">
+            </div>
+            <div class="col-md-2">
+              <input type="number" class="form-control" placeholder="Price/kg" id="pricePerKg">
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-success w-100" onclick="addItem()">Add Item</button>
+            </div>
           </div>
-          <div class="col-md-2">
-            <label class="form-label">Date</label>
-            <input id="date" type="date" class="form-control">
+
+          <!-- Item List Table -->
+          <div class="table-responsive mb-3">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Product ID</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Price/kg</th>
+                  <th>Total</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="itemList"></tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4" class="text-end">Total Amount</td>
+                  <td colspan="2" id="totalAmount">0</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
-          <div class="col-md-1">
-            <label class="form-label">kg</label>
-            <input id="quantity" type="number" class="form-control" placeholder="kg">
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary">Submit Purchase</button>
           </div>
-          <div class="col-md-2">
-            <label class="form-label">Amount Paid</label>
-            <input id="paid" type="number" class="form-control" placeholder="Paid">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Total Price</label>
-            <input id="price" type="number" class="form-control" placeholder="Price">
-          </div>
-          <div class="col-md-12 text-end mt-2">
-            <button class="btn btn-success" onclick="addPurchase()">
-              <i class="fas fa-plus me-1"></i> Add Purchase
-            </button>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
 
-    <!-- Purchases Table -->
+    <!-- Purchase Table -->
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Purchase Records</h5>
-        <div class="table-responsive">
+        <div class="table-wrapper">
           <table class="table table-bordered">
-            <thead class="table-dark">
+            <thead>
               <tr>
-                <th>Customer</th>
+                <th>Purchase ID</th>
+                <th>Consumer ID</th>
+                <th>Product ID</th>
                 <th>Product</th>
-                <th>Date</th>
                 <th>Quantity</th>
-                <th>Paid</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>Total</th>
+                <th>Date</th>
+                <th>Action</th>
               </tr>
             </thead>
-            <tbody id="purchaseBody"></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3">Totals</td>
-                <td id="totalQty">0</td>
-                <td id="totalPaid">0</td>
-                <td id="totalDue">0</td>
-                <td></td>
-              </tr>
-            </tfoot>
+            <tbody id="purchaseTableBody"></tbody>
           </table>
         </div>
       </div>
     </div>
-
-    <!-- Monthly Chart -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Monthly Purchase Summary</h5>
-        <canvas id="monthlyChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Due Summary -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5 class="card-title">Total Due Summary</h5>
-        <p><strong>Total Purchased:</strong> <span id="summaryQty">0</span> kg</p>
-        <p><strong>Total Paid:</strong> <span id="summaryPaid">0</span> TK</p>
-        <p><strong>Total Due:</strong> <span id="summaryDue">0</span> TK</p>
-      </div>
-    </div>
-
   </div>
+</div>
 
-  <!-- Footer -->
-  <footer>&copy; 2025 Meat Grid. All Rights Reserved.</footer>
 
-  <!-- Scripts -->
-  <script>
-    let purchases = [
-      { customer:"Local Buyer 1", product:"T-Bone", date:"2025-01-10", quantity:8, amountPaid:1600, totalPrice:2000 },
-      { customer:"Local Buyer 2", product:"Liver",   date:"2025-02-15", quantity:4, amountPaid:800,  totalPrice:1000 }
-    ];
 
-    function renderPurchases(){
-      const tbody = document.getElementById('purchaseBody');
-      let totalQty=0, totalPaid=0, totalDue=0;
-      tbody.innerHTML = '';
-      purchases.forEach((p,i)=>{
-        const due = p.totalPrice - p.amountPaid;
-        totalQty += p.quantity;
-        totalPaid += p.amountPaid;
-        totalDue += due;
-        tbody.innerHTML += `
-          <tr>
-            <td>${p.customer}</td>
-            <td>${p.product}</td>
-            <td>${p.date}</td>
-            <td>${p.quantity}</td>
-            <td>${p.amountPaid}</td>
-            <td class="${due>0?'due':'paid'}">${due>0?'Due '+due:'Paid'}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-1" onclick="editPurchase(${i})">
-                <i class="fas fa-pen"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deletePurchase(${i})">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>`;
-      });
-      document.getElementById('totalQty').innerText = totalQty;
-      document.getElementById('totalPaid').innerText= totalPaid;
-      document.getElementById('totalDue').innerText = totalDue;
-      document.getElementById('summaryQty').innerText = totalQty;
-      document.getElementById('summaryPaid').innerText= totalPaid;
-      document.getElementById('summaryDue').innerText = totalDue;
-      renderMonthlyChart();
-    }
+<script>
+const inventory = [
+  { id: "P001", name: "T-Bone" },
+  { id: "P002", name: "Liver" },
+  { id: "P003", name: "Drumstick" },
+  { id: "P004", name: "Ribs" },
+  { id: "P005", name: "Wing" }
+];
 
-    function addPurchase(){
-      const c=document.getElementById('customer').value,
-            pr=document.getElementById('product').value,
-            dt=document.getElementById('date').value,
-            q=+document.getElementById('quantity').value,
-            paid=+document.getElementById('paid').value,
-            tp=+document.getElementById('price').value;
-      if(!c||!pr||!dt||!q||!paid||!tp){ return alert('Fill all fields'); }
-      purchases.push({customer:c,product:pr,date:dt,quantity:q,amountPaid:paid,totalPrice:tp});
-      ['customer','product','date','quantity','paid','price'].forEach(id=>document.getElementById(id).value='');
-      renderPurchases();
-    }
+let purchases = [];
+let productItems = [];
 
-    function deletePurchase(i){
-      if(confirm('Delete?')){ purchases.splice(i,1); renderPurchases(); }
-    }
+// Populate dropdown
+function populateDropdown() {
+  const dropdown = document.getElementById('productDropdown');
+  inventory.forEach(item => {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = `${item.name} (${item.id})`;
+    dropdown.appendChild(option);
+  });
+}
 
-    function editPurchase(i){
-      const p = purchases.splice(i,1)[0];
-      document.getElementById('customer').value = p.customer;
-      document.getElementById('product').value  = p.product;
-      document.getElementById('date').value     = p.date;
-      document.getElementById('quantity').value = p.quantity;
-      document.getElementById('paid').value     = p.amountPaid;
-      document.getElementById('price').value    = p.totalPrice;
-      renderPurchases();
-    }
+populateDropdown();
 
-    function renderMonthlyChart(){
-      const totals = {};
-      purchases.forEach(p=>{
-        const m=new Date(p.date).toLocaleString('default',{month:'short'});
-        totals[m] = (totals[m]||0)+p.quantity;
-      });
-      const ctx = document.getElementById('monthlyChart');
-      if(window.chart) window.chart.destroy();
-      window.chart = new Chart(ctx,{ type:'bar',
-        data:{ labels:Object.keys(totals), datasets:[{
-          label:'Total Qty (kg)', data:Object.values(totals),
-          backgroundColor:'#0d6efd'
-        }]},
-        options:{responsive:true, scales:{y:{beginAtZero:true}}}
-      });
-    }
+function addItem() {
+  const productId = document.getElementById('productDropdown').value;
+  const product = inventory.find(p => p.id === productId);
+  const qty = parseFloat(document.getElementById('quantity').value);
+  const price = parseFloat(document.getElementById('pricePerKg').value);
 
-    renderPurchases();
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  if (!product || isNaN(qty) || isNaN(price)) {
+    alert('Please select a product and enter valid quantity and price.');
+    return;
+  }
+
+  const total = qty * price;
+  productItems.push({
+    id: product.id,
+    name: product.name,
+    qty,
+    price,
+    total
+  });
+
+  renderItems();
+
+  document.getElementById('productDropdown').value = '';
+  document.getElementById('quantity').value = '';
+  document.getElementById('pricePerKg').value = '';
+}
+
+function renderItems() {
+  const tbody = document.getElementById('itemList');
+  tbody.innerHTML = '';
+  let totalAmount = 0;
+
+  productItems.forEach((item, index) => {
+    totalAmount += item.total;
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.id}</td>
+        <td>${item.name}</td>
+        <td>${item.qty}</td>
+        <td>${item.price}</td>
+        <td>${item.total.toFixed(2)}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="removeItem(${index})"><i class="fas fa-trash-alt"></i></button></td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+}
+
+function removeItem(index) {
+  productItems.splice(index, 1);
+  renderItems();
+}
+
+document.getElementById('purchaseForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  if (productItems.length === 0) {
+    alert('Please add at least one product');
+    return;
+  }
+
+  const purchaseID = document.getElementById('purchaseID').value;
+  const consumerID = document.getElementById('consumerID').value;
+  const date = document.getElementById('purchaseDate').value;
+  const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+
+  purchases.push({
+    purchaseID,
+    consumerID,
+    date,
+    total: totalAmount,
+    items: [...productItems]
+  });
+
+  this.reset();
+  productItems = [];
+  renderItems();
+  renderPurchaseTable();
+});
+
+function renderPurchaseTable() {
+  const tbody = document.getElementById('purchaseTableBody');
+  tbody.innerHTML = '';
+
+  purchases.forEach((purchase, index) => {
+    purchase.items.forEach(item => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${purchase.purchaseID}</td>
+          <td>${purchase.consumerID}</td>
+          <td>${item.id}</td>
+          <td>${item.name}</td>
+          <td>${item.qty}</td>
+          <td>${item.total.toFixed(2)}</td>
+          <td>${purchase.date}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="deletePurchase(${index})"><i class="fas fa-trash-alt"></i></button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+}
+
+function deletePurchase(index) {
+  if (confirm("Are you sure you want to delete this purchase?")) {
+    purchases.splice(index, 1);
+    renderPurchaseTable();
+  }
+}
+</script>
+
 </body>
 </html>
