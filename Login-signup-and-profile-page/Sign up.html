@@ -10,10 +10,10 @@
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="../Logo/Logo white.png" alt="Meat Grid Logo" height="40" class="me-2">
-      <span>Meat Grid</span>
-    </a>
+      <a class="navbar-brand d-flex align-items-center" href="../Home-page/frontpage.html">
+        <img src="../Logo/Logo white.png" alt="Meat Grid Logo" height="40" class="me-2">
+        <span>Meat Grid</span>
+      </a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="Login page.html">Login</a></li>
@@ -24,27 +24,39 @@
 
   <div class="container mt-5 mb-5">
     <h2 class="mb-4 text-center">Sign Up</h2>
-    <form>
+
+    <!-- ✅ Form now posts to signup.php -->
+    <form action="signup.php" method="POST">
       <div class="row">
+        <!-- Full Name -->
         <div class="col-md-6 mb-3">
           <label for="fullName" class="form-label">Full Name</label>
-          <input type="text" class="form-control" id="fullName" required>
+          <input type="text" class="form-control" id="fullName" name="full_name" required>
         </div>
+
+        <!-- Email -->
         <div class="col-md-6 mb-3">
           <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email" required>
+          <input type="email" class="form-control" id="email" name="email" required>
         </div>
+
+        <!-- Username -->
         <div class="col-md-6 mb-3">
           <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" required>
+          <input type="text" class="form-control" id="username" name="username" required>
         </div>
+
+        <!-- Password -->
         <div class="col-md-6 mb-3">
           <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" required>
+          <input type="password" class="form-control" id="password" name="password" required>
         </div>
+
+        <!-- Region -->
         <div class="col-md-6 mb-3">
           <label for="region" class="form-label">Region</label>
-          <select class="form-select" id="region">
+          <select class="form-select" id="region" name="region" required>
+            <option value="">Select Region</option>
             <option>Dhaka</option>
             <option>Chattogram</option>
             <option>Rajshahi</option>
@@ -55,60 +67,58 @@
             <option>Mymensingh</option>
           </select>
         </div>
+
+        <!-- Full Address -->
         <div class="col-md-6 mb-3">
           <label for="fullAddress" class="form-label">Full Address</label>
-          <input type="text" class="form-control" id="fullAddress" required>
+          <input type="text" class="form-control" id="fullAddress" name="address" required>
         </div>
+
+        <!-- Gender -->
         <div class="col-md-6 mb-3">
           <label for="gender" class="form-label">Gender</label>
-          <select class="form-select" id="gender">
+          <select class="form-select" id="gender" name="gender" required>
+            <option value="">Select Gender</option>
             <option>Male</option>
             <option>Female</option>
-            <option>Other</option>
           </select>
         </div>
+
+        <!-- Contact Info -->
         <div class="col-md-6 mb-3">
           <label for="contact" class="form-label">Contact Info</label>
-          <input type="text" class="form-control" id="contact" required>
+          <input type="text" class="form-control" id="contact" name="contact" required>
         </div>
+
+        <!-- User Type -->
         <div class="col-md-6 mb-3">
           <label for="userType" class="form-label">User Type</label>
-          <select class="form-select" id="userType" onchange="handleUserType(this.value)">
+          <select class="form-select" id="userType" name="user_type" onchange="handleUserType(this.value)" required>
             <option value="">Select Type</option>
             <option value="farmer">Farmer</option>
             <option value="slaughterhouse">Slaughterhouse</option>
             <option value="wholesale">Wholesale</option>
             <option value="retailer">Retailer</option>
-            <option value="consumer">Consumer</option>
             <option value="researcher">Researcher</option>
             <option value="policy_maker">Policy Maker</option>
             <option value="health_authority">Health Authority</option>
             <option value="manager">Manager</option>
           </select>
         </div>
-        <!-- Conditional Farmer Section -->
-        <div class="col-md-6 mb-3" id="farmerExtra" style="display: none;">
-          <label for="farmType" class="form-label">Farm Type</label>
-          <select class="form-select" id="farmType">
-            <option value="cattle">Cattle</option>
-            <option value="goat">Goat</option>
-            <option value="poultry">Poultry</option>
-            <option value="mixed">Mixed</option>
-          </select>
-        </div>
-      </div>
+
+      <!-- Register Button -->
       <button type="submit" class="btn btn-success w-100">Register</button>
     </form>
   </div>
 
-  
-
   <script>
+    // Show farm type only if user selects "farmer"
     function handleUserType(type) {
       const farmerSection = document.getElementById("farmerExtra");
       farmerSection.style.display = type === "farmer" ? "block" : "none";
     }
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
