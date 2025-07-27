@@ -32,7 +32,7 @@ $sql = "INSERT INTO users (full_name, email, username, password, region, address
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssssssssss",
     $full_name, $email, $username, $password, $region,
-    $address, $gender, $contact, $user_type, $farm_type
+    $address, $gender, $contact, $user_type
 );
 
 if ($stmt->execute()) {
