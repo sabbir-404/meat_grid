@@ -1,17 +1,20 @@
 <?php
 session_start();
+require_once "../Project-root/db_connect.php"; // DB connection
 
-// ✅ Include database connection
-require_once "../Project-root/db_connect.php";  // adjust path if needed
+// ✅ If already logged in, redirect to profile
+if (isset($_SESSION['user_id'])) {
+    header("Location: profile.php");
+    exit;
+}
 
-// ✅ Check if form was submitted
+// ✅ Process login when form submitted
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // ✅ Prepare query
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    // ✅ Fetch user by username
+    $stmt = $conn->prepare("SELECT id, username, password, user_type FROM users WHERE username=? LIMIT 1");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -21,54 +24,47 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // ✅ Verify password
         if (password_verify($password, $row['password'])) {
-            
-            // ✅ Store session
+            // ✅ Set session
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['user_type'] = $row['user_type'];
 
-            // ✅ Redirect based on user_type
+            // ✅ Redirect based on user type
             switch ($row['user_type']) {
-                case 'farmer':
+                case "farmer":
                     header("Location: ../Farmer/Dashboard.html");
                     break;
-                case 'retailer':
+                case "retailer":
                     header("Location: ../Retailer/Rdashboard.html");
                     break;
-                case 'slaughterhouse':
-                    header("Location: ../Slaughterhouse/Dashboard.html");
-                    break;
-                case 'wholesale':
+                case "wholesale":
                     header("Location: ../Wholesale/dashboard.html");
                     break;
-                case 'policy_maker':
+                case "slaughterhouse":
+                    header("Location: ../Slaughterhouse/Dashboard.html");
+                    break;
+                case "policy_maker":
                     header("Location: ../Policy-Maker/Dashboard.html");
                     break;
-                case 'health_authority':
+                case "health_authority":
                     header("Location: ../Health-Authority/Dashboard.html");
                     break;
-                case 'manager':
+                case "manager":
                     header("Location: ../Admin-page/admin-dashboard.html");
                     break;
-                case 'researcher':
-                    header("Location: ../Analyst/Dashboard.html");
-                    break;
                 default:
-                    // If unknown type, go to profile
+                    // If no dashboard → show profile page
                     header("Location: profile.php");
             }
             exit;
         } else {
-            echo "<script>alert('❌ Incorrect password'); window.history.back();</script>";
+            $error = "❌ Invalid password!";
         }
-
     } else {
-        echo "<script>alert('❌ User not found'); window.history.back();</script>";
+        $error = "❌ Username not found!";
     }
 
     $stmt->close();
-    $conn->close();
-} else {
-    echo "<script>alert('Invalid request!'); window.location.href='Login page.html';</script>";
 }
+$conn->close();
 ?>
