@@ -1,104 +1,151 @@
 <?php
 session_start();
+require_once "../Project-root/db_connect.php";  // database connection
 
-// ✅ Redirect if not logged in
+// ✅ If user is NOT logged in, redirect to login
 if (!isset($_SESSION['user_id'])) {
 header("Location: Login page.html");
-exit();
+exit;
 }
 
-// ✅ DB Connection
-$conn = new mysqli("localhost", "root", "", "meat_grid");
-if ($conn->connect_error) {
-die("DB Connection Failed: " . $conn->connect_error);
-}
-
-// ✅ Fetch user info
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT full_name, email, username, gender, contact, address FROM users WHERE id = ?");
+
+// ✅ Fetch user info from database
+$stmt = $conn->prepare("SELECT full_name, email, username, region, address, gender, contact, user_type FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-
 $stmt->close();
+
+// ✅ Update user profile if form submitted
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+$full_name = $_POST['full_name'];
+$email = $_POST['email'];
+$region = $_POST['region'];
+$address = $_POST['address'];
+$gender = $_POST['gender'];
+$contact = $_POST['contact'];
+
+$update = $conn->prepare("UPDATE users SET full_name=?, email=?, region=?, address=?, gender=?, contact=? WHERE id=?");
+$update->bind_param("ssssssi", $full_name, $email, $region, $address, $gender, $contact, $user_id);
+
+if ($update->execute()) {
+    echo "<script>alert('✅ Profile updated successfully!'); window.location.href='profile.php';</script>";
+} else {
+    echo "<script>alert('❌ Error updating profile');</script>";
+}
+$update->close();
+}
+
+// ✅ Re-fetch updated info
+$stmt = $conn->prepare("SELECT full_name, email, username, region, address, gender, contact, user_type FROM users WHERE id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>User Profile - Meat Grid</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<meta charset="UTF-8">
+<title>User Profile</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body { background-color: #f4f6f9; margin:0; }
-.profile-header { display:flex; gap:30px; padding:30px; background:#fff; border-bottom:1px solid #ddd; }
-.profile-img { width:150px; height:150px; border-radius:50%; object-fit:cover; border:4px solid #ddd; }
-.info-section { background:white; padding:30px; }
-.info-group { margin-bottom:20px; }
-footer { background:#343a40; color:white; text-align:center; padding:1rem; margin-top:auto; }
+body { background: #f4f6f9; }
+.profile-container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #343a40;
+    color: white;
+    margin-top: 20px;
+}
 </style>
 </head>
 <body>
 
-<!-- ✅ Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-<div class="container-fluid d-flex justify-content-between align-items-center">
-<a href="../Home-page/front page.html" class="navbar-brand d-flex align-items-center">
-    <i class="fas fa-arrow-left me-2"></i> Back to Home
-</a>
-<a class="navbar-brand" href="#">
-    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" height="40" />
-</a>
-<a href="logout.php" class="btn btn-outline-light">Logout</a>
-</div>
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark px-4">
+<a class="navbar-brand" href="#">Meat Grid</a>
+<a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
 </nav>
 
-<!-- ✅ Profile Header -->
-<div class="profile-header">
-<img id="profileImage" class="profile-img" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Profile Picture">
-<div class="user-info">
-<h3><?= htmlspecialchars($user['full_name']); ?></h3>
-<p class="text-muted mb-1"><?= htmlspecialchars($user['email']); ?></p>
-<p class="text-muted"><?= htmlspecialchars($user['gender']); ?></p>
-</div>
+<div class="profile-container">
+<h2 class="mb-4 text-center">My Profile</h2>
+
+<!-- ✅ User Profile Form -->
+<form method="POST">
+<div class="mb-3">
+    <label class="form-label">Full Name</label>
+    <input type="text" class="form-control" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>" required>
 </div>
 
-<!-- ✅ Profile Info Section -->
-<div class="info-section">
-<div class="row">
-<div class="col-md-6 info-group">
-    <label>Email</label>
-    <p class="info-value"><?= htmlspecialchars($user['email']); ?></p>
-</div>
-<div class="col-md-6 info-group">
-    <label>Phone Number</label>
-    <p class="info-value"><?= htmlspecialchars($user['contact']); ?></p>
-</div>
-<div class="col-md-6 info-group">
-    <label>Gender</label>
-    <p class="info-value"><?= htmlspecialchars($user['gender']); ?></p>
-</div>
-<div class="col-md-6 info-group">
-    <label>Address</label>
-    <p class="info-value"><?= htmlspecialchars($user['address']); ?></p>
-</div>
-<div class="col-md-6 info-group">
-    <label>Username</label>
-    <p class="info-value"><?= htmlspecialchars($user['username']); ?></p>
-</div>
+<div class="mb-3">
+    <label class="form-label">Username (cannot change)</label>
+    <input type="text" class="form-control" value="<?= htmlspecialchars($user['username']) ?>" disabled>
 </div>
 
-<!-- ✅ Edit button (optional future update) -->
-<div class="text-center mt-3">
-<a href="#" class="btn btn-primary">Edit Profile (coming soon)</a>
-</div>
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
 </div>
 
-<footer>&copy; 2025 Meat Grid. All Rights Reserved.</footer>
+<div class="mb-3">
+    <label class="form-label">Contact</label>
+    <input type="text" class="form-control" name="contact" value="<?= htmlspecialchars($user['contact']) ?>" required>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div class="mb-3">
+    <label class="form-label">Region</label>
+    <select class="form-select" name="region" required>
+    <?php
+    $regions = ["Dhaka","Chattogram","Rajshahi","Khulna","Barisal","Sylhet","Rangpur","Mymensingh"];
+    foreach ($regions as $r) {
+        $selected = ($user['region'] === $r) ? "selected" : "";
+        echo "<option $selected>$r</option>";
+    }
+    ?>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Address</label>
+    <input type="text" class="form-control" name="address" value="<?= htmlspecialchars($user['address']) ?>" required>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Gender</label>
+    <select class="form-select" name="gender" required>
+    <option <?= $user['gender']=="Male" ? "selected" : "" ?>>Male</option>
+    <option <?= $user['gender']=="Female" ? "selected" : "" ?>>Female</option>
+    <option <?= $user['gender']=="Other" ? "selected" : "" ?>>Other</option>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">User Type</label>
+    <input type="text" class="form-control" value="<?= htmlspecialchars($user['user_type']) ?>" disabled>
+</div>
+
+<button type="submit" class="btn btn-success w-100">Save Changes</button>
+</form>
+</div>
+
+<footer>
+&copy; 2025 Meat Grid. All rights reserved.
+</footer>
+
 </body>
 </html>
