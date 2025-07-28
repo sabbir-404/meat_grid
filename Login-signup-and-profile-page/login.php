@@ -1,17 +1,11 @@
 <?php
 session_start();
-ini_set('session.cookie_lifetime', 60*60*24*30);
-ini_set('session.gc_maxlifetime', 60*60*24*30);
+ini_set('session.cookie_lifetime', 60 * 60 * 24 * 30);
+ini_set('session.gc_maxlifetime', 60 * 60 * 24 * 30);
 
 require_once "../Project-root/db_connect.php";
 
-// ✅ If already logged in → redirect
-if (isset($_SESSION['user_id'])) {
-    header("Location: profile.php");
-    exit;
-}
-
-$error = ""; // default
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST['username']);
@@ -26,13 +20,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $row = $result->fetch_assoc();
 
         if (password_verify($password, $row['password'])) {
-            $_SESSION['user_id']   = $row['id'];
+            $_SESSION['user_id'] = $row['id'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['user_type'] = strtolower(trim($row['user_type']));
 
             $userType = $_SESSION['user_type'];
-
-            // ✅ Redirect by type
             switch ($userType) {
                 case "farmer":
                     header("Location: ../Farmer/Dashboard.html");
@@ -56,14 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     header("Location: ../Admin-page/admin-dashboard.html");
                     break;
                 default:
-                    header("Location: profile.php");
+                    $error = "Unknown user type!";
             }
             exit;
         } else {
-            $error = "❌ Invalid password!";
+            $error = "Invalid password!";
         }
     } else {
-        $error = "❌ Username not found!";
+        $error = "Username not found!";
     }
     $stmt->close();
 }
