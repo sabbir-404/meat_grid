@@ -60,4 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->close();
 }
 $conn->close();
+
+// Show error as alert
+if (!empty($error)) {
+    echo "<script>alert('". addslashes($error) ."'); window.history.back();</script>";
+    exit;
+}
 ?>
