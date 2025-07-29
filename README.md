@@ -37,3 +37,7 @@
 ### **Policy Maker**
 <img width="4678" height="3309" alt="Policy Maker Dashboard" src="https://github.com/user-attachments/assets/33bab06c-c3cc-433c-9308-b5bdb9d5291f" />
 <a href="https://sabbir-404.github.io/meat_grid/Policy-Maker/Dashboard.html" target="_blank">Open Policy Maker Page</a>
+
+### Login & Signup pages
+<img width="2800" height="1700" alt="Sign Up - Meat Grid" src="https://github.com/user-attachments/assets/1cade03d-269a-4831-b2fe-215f7e004836" />
+<img width="2800" height="1700" alt="Login - Meat Grid" src="https://github.com/user-attachments/assets/70c4a4e8-9746-4899-8998-7eba93f31c9e" />
