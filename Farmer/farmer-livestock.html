@@ -1,78 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Livestock Entry - Farmer Panel</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 <style>
-body {
-    background-color: #f4f6f9;
-}
+body { background-color: #f4f6f9; }
 .dashboard-container {
-    margin-left: 270px;
-    padding: 30px;
-    width: calc(100% - 270px);
-    position: relative;
-    z-index: 1;
+margin-left: 270px; padding: 30px;
+width: calc(100% - 270px); position: relative; z-index: 1;
 }
 .sidebar {
-    width: 250px;
-    height: 100vh;
-    background: #343a40;
-    color: white;
-    position: fixed;
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
+width: 250px; height: 100vh; background: #343a40;
+color: white; position: fixed; padding: 20px 0;
+display: flex; flex-direction: column;
 }
 .sidebar a {
-    padding: 12px 20px;
-    color: #ccc;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    border-left: 3px solid transparent;
+padding: 12px 20px; color: #ccc; text-decoration: none;
+display: flex; align-items: center;
+border-left: 3px solid transparent;
 }
 .sidebar a:hover, .sidebar a.active {
-    color: white;
-    background-color: #495057;
-    font-weight: bold;
-    border-left: 3px solid #fff;
+color: white; background-color: #495057;
+font-weight: bold; border-left: 3px solid #fff;
 }
 .user-dropdown {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    z-index: 9999;
+position: fixed; top: 20px; right: 30px; z-index: 9999;
 }
-.table-wrapper {
-    max-height: 300px;
-    overflow-y: auto;
-}
+.table-wrapper { max-height: 300px; overflow-y: auto; }
 </style>
 </head>
 <body>
 
 <!-- User Profile Dropdown -->
 <div class="user-dropdown">
-    <div class="dropdown">
-    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
-    </ul>
-    </div>
+<div class="dropdown">
+<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <i class="fas fa-user-circle"></i>
+</button>
+<ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+    <li><hr class="dropdown-divider" /></li>
+    <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+</ul>
+</div>
 </div>
 
 <!-- Sidebar -->
 <div class="sidebar">
 <div class="text-center mb-3">
-<img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+<img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;" />
 </div>
 <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Farmer Panel</h5>
 <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
@@ -87,55 +66,50 @@ body {
 <div class="card mb-4">
 <div class="card-body">
     <h5 class="card-title">Enter Livestock Data</h5>
-    <form id="livestockForm" method="POST" action="save_livestock.php">
     <div class="row g-3">
-        <div class="col-md-4">
-            <label class="form-label">Animal Type</label>
-            <select class="form-select" name="animalType" required>
-                <option value="">Select</option>
-                <option>Cattle</option>
-                <option>Goat</option>
-                <option>Chicken</option>
-                <option>Sheep</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Breed</label>
-            <input type="text" class="form-control" name="breed" placeholder="e.g. Brahman, Black Bengal" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Quantity</label>
-            <input type="number" class="form-control" name="quantity" min="1" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Average Weight (kg)</label>
-            <input type="number" class="form-control" name="avgWeight" step="0.1" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Feed Type</label>
-            <input type="text" class="form-control" name="feed" placeholder="e.g. Grass, Commercial feed" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Health Status</label>
-            <select class="form-select" name="health" required>
-                <option value="">Select</option>
-                <option>Healthy</option>
-                <option>Under Observation</option>
-                <option>Sick</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Entry Date</label>
-            <input type="date" class="form-control" name="entryDate" id="entryDate" readonly required>
-        </div>
-        <div class="col-12 mt-3">
-            <button class="btn btn-success" type="submit">Submit to Database</button>
-        </div>
+    <div class="col-md-4">
+        <label class="form-label">Animal Type</label>
+        <select class="form-select" id="animalType">
+        <option>Cattle</option>
+        <option>Goat</option>
+        <option>Chicken</option>
+        <option>Sheep</option>
+        </select>
     </div>
-    </form>
+    <div class="col-md-4">
+        <label class="form-label">Breed</label>
+        <input type="text" class="form-control" id="breed" placeholder="e.g. Brahman, Black Bengal" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Quantity</label>
+        <input type="number" class="form-control" id="quantity" min="1" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Average Weight (kg)</label>
+        <input type="number" class="form-control" id="avgWeight" step="0.1" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Feed Type</label>
+        <input type="text" class="form-control" id="feed" placeholder="e.g. Grass, Commercial feed" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Health Status</label>
+        <select class="form-select" id="health">
+        <option>Healthy</option>
+        <option>Under Observation</option>
+        <option>Sick</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Entry Date</label>
+        <input type="date" class="form-control" id="entryDate" readonly />
+    </div>
+    <div class="col-12 mt-3">
+        <button id="addEntryBtn" type="button" class="btn btn-success">Add Entry</button>
+    </div>
+    </div>
 </div>
 </div>
-
 
 <!-- Table 1: All Entries -->
 <div class="card mb-4">
@@ -152,6 +126,7 @@ body {
             <th>Feed</th>
             <th>Health</th>
             <th>Entry Date</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -181,66 +156,116 @@ body {
 </div>
 </div>
 
-
-
-<script>
-const entryTable = document.querySelector("#entryTable tbody");
-const summaryTable = document.querySelector("#summaryTable tbody");
-const summaryMap = {};
-
-function addEntry() {
-const animalType = document.getElementById("animalType").value;
-const breed = document.getElementById("breed").value.trim();
-const qty = parseInt(document.getElementById("quantity").value);
-const weight = parseFloat(document.getElementById("avgWeight").value);
-const feed = document.getElementById("feed").value.trim();
-const health = document.getElementById("health").value;
-const date = document.getElementById("entryDate").value;
-
-if (!animalType || !breed || !qty || !weight || !feed || !date) {
-    alert("Please fill in all fields.");
-    return;
-}
-
-// Add to entry table
-const newRow = entryTable.insertRow();
-[animalType, breed, qty, weight, feed, health, date].forEach(val => {
-    const cell = newRow.insertCell();
-    cell.textContent = val;
-});
-
-// Update summary
-const key = `${animalType}-${breed}`;
-if (!summaryMap[key]) {
-    summaryMap[key] = { animalType, breed, count: 0, weight: 0 };
-}
-summaryMap[key].count += qty;
-summaryMap[key].weight += qty * weight;
-renderSummary();
-}
-
-function renderSummary() {
-summaryTable.innerHTML = "";
-Object.values(summaryMap).forEach(data => {
-    const row = summaryTable.insertRow();
-    row.insertCell().textContent = data.animalType;
-    row.insertCell().textContent = data.breed;
-    row.insertCell().textContent = data.count;
-    row.insertCell().textContent = data.weight.toFixed(2);
-});
-}
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Set current date in the date input when page loads
-window.onload = function () {
-const today = new Date().toISOString().split('T')[0];
-document.getElementById("entryDate").value = today;
+const addEntryBtn   = document.getElementById('addEntryBtn');
+const entryBody     = document.querySelector('#entryTable tbody');
+const summaryBody   = document.querySelector('#summaryTable tbody');
+let summaryMap      = {};
+
+// Clear form fields
+function clearForm() {
+['breed','quantity','avgWeight','feed'].forEach(id => document.getElementById(id).value = '');
+document.getElementById('health').selectedIndex = 0;
+}
+
+// Render summary table
+function renderSummary() {
+summaryBody.innerHTML = '';
+Object.values(summaryMap).forEach(item => {
+const row = summaryBody.insertRow();
+row.insertCell().textContent = item.animalType;
+row.insertCell().textContent = item.breed;
+row.insertCell().textContent = item.count;
+row.insertCell().textContent = item.weight.toFixed(2);
+});
+}
+
+// Load all entries
+function loadEntries() {
+fetch('fetch_livestock.php')
+.then(r => r.json())
+.then(data => {
+    entryBody.innerHTML = '';
+    summaryMap = {};
+
+    data.forEach(item => {
+    // Add row
+    const r = entryBody.insertRow();
+    r.insertCell().textContent = item.animal_type;
+    r.insertCell().textContent = item.breed;
+    r.insertCell().textContent = item.quantity;
+    r.insertCell().textContent = parseFloat(item.avg_weight).toFixed(2);
+    r.insertCell().textContent = item.feed_type;
+    r.insertCell().textContent = item.health_status;
+    r.insertCell().textContent = item.entry_date;
+    const action = r.insertCell();
+    action.innerHTML = `<button class="btn btn-sm btn-danger" onclick="deleteEntry('${item.product_id}')">Delete</button>`;
+
+    // Build summary
+    const key = `${item.animal_type}-${item.breed}`;
+    if (!summaryMap[key]) summaryMap[key] = { animalType: item.animal_type, breed: item.breed, count:0, weight:0 };
+    summaryMap[key].count  += parseInt(item.quantity);
+    summaryMap[key].weight += parseInt(item.quantity) * parseFloat(item.avg_weight);
+    });
+
+    renderSummary();
+})
+.catch(console.error);
+}
+
+// Add new entry
+function addEntry() {
+const data = {
+animalType: document.getElementById('animalType').value,
+breed:      document.getElementById('breed').value.trim(),
+quantity:   document.getElementById('quantity').value,
+avgWeight:  document.getElementById('avgWeight').value,
+feed:       document.getElementById('feed').value.trim(),
+health:     document.getElementById('health').value,
+entryDate:  document.getElementById('entryDate').value
 };
+if (Object.values(data).some(v=>!v)) return alert('Fill all fields');
 
-// (your existing addEntry and renderSummary functions follow here...)
+addEntryBtn.disabled = true;
+fetch('save_livestock.php', {
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body: JSON.stringify(data)
+})
+.then(r=>r.json())
+.then(res=>{
+if (res.success) {
+    clearForm();
+    loadEntries();
+} else alert('Save failed: '+res.error);
+})
+.catch(e=>alert('Error: '+e))
+.finally(()=>addEntryBtn.disabled=false);
+}
+
+// Delete entry
+function deleteEntry(id) {
+if (!confirm('Delete?')) return;
+fetch('delete_livestock.php', {
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body: JSON.stringify({product_id:id})
+})
+.then(r=>r.json())
+.then(res=>{
+if(res.success) loadEntries();
+else alert('Delete failed: '+res.error);
+})
+.catch(e=>alert('Error: '+e));
+}
+
+// Init
+window.onload = ()=>{
+document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+loadEntries();
+addEntryBtn.onclick = addEntry;
+};
 </script>
-
 </body>
 </html>

@@ -1,60 +1,59 @@
 <?php
 session_start();
 require_once "../Project-root/db_connect.php";
+header('Content-Type: application/json');
 
-// For testing, replace with your real user session id
-$user_id = $_SESSION['user_id'] ?? 1;
+// ensure login
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['success'=>false,'error'=>'Not logged in']);
+    exit;
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $animalType = $_POST['animalType'] ?? '';
-    $breed = $_POST['breed'] ?? '';
-    $quantity = $_POST['quantity'] ?? 0;
-    $avgWeight = $_POST['avgWeight'] ?? 0;
-    $feed = $_POST['feed'] ?? '';
-    $health = $_POST['health'] ?? '';
-    $entryDate = $_POST['entryDate'] ?? '';
+$data = json_decode(file_get_contents('php://input'), true);
+if (!$data) {
+    echo json_encode(['success'=>false,'error'=>'Invalid JSON']);
+    exit;
+}
 
-    if (!$animalType || !$breed || !$quantity || !$avgWeight || !$feed || !$health || !$entryDate) {
-        die('All fields are required.');
-    }
-
-    // Generate product_id like L001, L002...
-    $result = $conn->query("SELECT MAX(CAST(SUBSTRING(product_id, 2) AS UNSIGNED)) AS max_id FROM livestock_entries");
-    if (!$result) {
-        die("Query failed: " . $conn->error);
-    }
-    $row = $result->fetch_assoc();
-    $max = $row['max_id'] ?? 0;
-    $newId = 'L' . str_pad($max + 1, 3, '0', STR_PAD_LEFT);
-
-    $sql = "INSERT INTO livestock_entries 
-            (product_id, user_id, animal_type, breed, quantity, avg_weight, feed_type, health_status, entry_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        die("Prepare failed: " . $conn->error);
-    }
-    $stmt->bind_param(
-        "sisidssss",
-        $newId,
-        $user_id,
-        $animalType,
-        $breed,
-        $quantity,
-        $avgWeight,
-        $feed,
-        $health,
-        $entryDate
-    );
-
-    $success = $stmt->execute();
-    if ($success) {
-        header("Location: farmer-livestock.html?msg=success");
+// validate
+$req = ['animalType','breed','quantity','avgWeight','feed','health','entryDate'];
+foreach($req as $f){
+    if (empty($data[$f])) {
+        echo json_encode(['success'=>false,'error'=>"Missing $f"]);
         exit;
-    } else {
-        die("Failed to save entry: " . $stmt->error);
     }
+}
+
+// generate product_id
+$user = (int)$_SESSION['user_id'];
+$res = $conn->query(
+    "SELECT MAX(CAST(SUBSTRING(product_id,2) AS UNSIGNED)) AS m 
+     FROM livestock_entries WHERE user_id=$user"
+);
+$row = $res->fetch_assoc();
+$next = $row['m']? $row['m']+1:1;
+$pid = 'L'.str_pad($next,3,'0',STR_PAD_LEFT);
+
+// insert
+$stmt = $conn->prepare(
+    "INSERT INTO livestock_entries
+     (product_id,user_id,animal_type,breed,quantity,avg_weight,feed_type,health_status,entry_date)
+     VALUES(?,?,?,?,?,?,?,?,?)"
+);
+$stmt->bind_param(
+    "sissidsss",
+    $pid,$user,
+    $data['animalType'],
+    $data['breed'],
+    $data['quantity'],
+    $data['avgWeight'],
+    $data['feed'],
+    $data['health'],
+    $data['entryDate']
+);
+
+if ($stmt->execute()) {
+    echo json_encode(['success'=>true]);
 } else {
-    die("Invalid request method.");
+    echo json_encode(['success'=>false,'error'=>$stmt->error]);
 }

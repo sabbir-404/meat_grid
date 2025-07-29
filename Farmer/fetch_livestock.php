@@ -1,12 +1,20 @@
 <?php
 session_start();
 require_once "../Project-root/db_connect.php";
-
-$user_id = $_SESSION['user_id'] ?? 1;
-
-$stmt = $conn->prepare("SELECT * FROM livestock_entries WHERE user_id = ? ORDER BY created_at DESC");
-$stmt->execute([$user_id]);
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 header('Content-Type: application/json');
-echo json_encode($data);
+
+if (!isset($_SESSION['user_id'])) {
+    echo "[]"; exit;
+}
+$user = (int)$_SESSION['user_id'];
+$stmt = $conn->prepare(
+    "SELECT * FROM livestock_entries 
+     WHERE user_id=? ORDER BY created_at DESC"
+);
+$stmt->bind_param("i",$user);
+$stmt->execute();
+$res = $stmt->get_result();
+
+$out = [];
+while($r = $res->fetch_assoc()) $out[] = $r;
+echo json_encode($out);
