@@ -8,27 +8,72 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { background-color: #f4f6f9; }
+    /* Prevent any horizontal page scroll */
+    body {
+      background-color: #f4f6f9;
+      overflow-x: hidden;
+    }
+
+    /* Fixed, vertical-only sidebar */
     .sidebar {
-      width: 250px; height: 100vh; background: #343a40; color:white;
-      padding:20px 0; position:fixed; display:flex; flex-direction:column;
+      width: 250px;
+      height: 100vh;
+      background: #343a40;
+      color: white;
+      position: fixed;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;      /* allow vertical scroll */
+      overflow-x: hidden;    /* prevent horizontal scroll */
+    }
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .sidebar .logo img {
+      max-width: 120px;
     }
     .sidebar a {
-      padding:12px 20px; display:flex; align-items:center;
-      color:#ccc; text-decoration:none; border-left:3px solid transparent;
+      padding: 12px 20px;
+      color: #ccc;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      border-left: 3px solid transparent;
+      white-space: nowrap;
     }
-    .sidebar a:hover, .sidebar a.active {
-      color:white; background:#495057; border-left:3px solid #fff; font-weight:bold;
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #495057;
+      font-weight: bold;
+      border-left: 3px solid #fff;
     }
+
+    /* Offset main content by exactly 250px */
     .dashboard-container {
-      margin-left: 270px; padding:30px; width:calc(100% - 270px);
+      margin-left: 250px;
+      padding: 30px;
+      width: calc(100% - 250px);
     }
-    .user-dropdown { position:fixed; top:20px; right:30px; z-index:9999; }
-    .table-wrapper { overflow:auto; max-height:400px; }
+
+    .user-dropdown {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      z-index: 9999;
+    }
+
+    /* Make sure tables don’t force horizontal scrolling */
+    .table-responsive {
+      overflow-x: auto;
+    }
   </style>
 </head>
 <body>
-  <!-- User dropdown (unchanged) -->
+
+  <!-- User Dropdown -->
   <div class="user-dropdown">
     <div class="dropdown">
       <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown">
@@ -42,12 +87,11 @@
     </div>
   </div>
 
-  <!-- Sidebar (unchanged) -->
+  <!-- Sidebar -->
   <div class="sidebar">
-    <div class="text-center mb-3">
-      <img src="Logo/Logo white.png" style="max-width:100px;">
+    <div class="logo">
+      <img src="../Logo/Logo white.png" alt="Meat Grid Logo">
     </div>
-    <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
     <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
     <a href="admin-farmers.html" class="active"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
     <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
@@ -57,202 +101,221 @@
     <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
   </div>
 
+  <!-- Main Content -->
   <div class="dashboard-container container-fluid">
     <h2 class="mb-4">Farmer & Livestock Records</h2>
 
     <div class="d-flex justify-content-end mb-2">
-      <button class="btn btn-success" onclick="addNewRow()"><i class="fas fa-plus"></i> Add</button>
+      <button class="btn btn-success" onclick="addNewRow()">
+        <i class="fas fa-plus"></i> Add
+      </button>
     </div>
 
     <div class="mb-3 d-flex">
       <select id="columnSelect" class="form-select w-auto me-2">
-        <option value="0">Farmer Name</option>
-        <option value="1">Farmer ID</option>
-        <option value="2">Farmer Type</option>
-        <option value="3">Date</option>
-        <option value="4">Livestock ID</option>
-        <option value="5">Breed Type</option>
+        <option value="0">Name</option>
+        <option value="1">ID</option>
+        <option value="2">Date</option>
+        <option value="3">Livestock ID</option>
+        <option value="4">Breed</option>
       </select>
-      <input type="text" id="searchInput" class="form-control" placeholder="Search selected column...">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search...">
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-responsive mb-4">
       <table class="table table-bordered table-striped" id="farmerTable">
         <thead class="table-dark">
           <tr>
-            <th>Farmer Name</th>
-            <th>Farmer ID</th>
-            <th>Farmer Type</th>
-            <th>Date</th>
-            <th>Livestock ID</th>
-            <th>Breed Type</th>
-            <th>Count</th>
-            <th>Weight (kg)</th>
-            <th>Actions</th>
+            <th>Name</th><th>ID</th><th>Date</th><th>Livestock ID</th>
+            <th>Breed</th><th>Count</th><th>Weight (kg)</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="farmerTableBody"></tbody>
       </table>
     </div>
 
-    <h4 class="mt-5">Total Breed Count</h4>
-    <table class="table table-bordered" id="summaryTable">
-      <thead class="table-secondary"><tr><th>Breed</th><th>Total Count</th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <h4>Total Breed Count</h4>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered" id="summaryTable">
+        <thead class="table-secondary"><tr><th>Breed</th><th>Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-    <div class="row mt-5">
-      <div class="col-md-6"><canvas id="breedChart"></canvas></div>
-      <div class="col-md-6"><canvas id="farmerTypeChart"></canvas></div>
+    <div class="row">
+      <div class="col-md-6 mb-4"><canvas id="breedChart"></canvas></div>
+      <div class="col-md-6 mb-4"><canvas id="typeChart"></canvas></div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    let breedChart, farmerChart;
+    let breedChart, typeChart;
 
-    // Fetch all entries including farmer info
     function loadData() {
       fetch('fetch_admin_livestock.php')
-        .then(r=>r.json())
-        .then(rows=>{
+        .then(r => r.json())
+        .then(rows => {
           const tbody = document.getElementById('farmerTableBody');
-          tbody.innerHTML='';
-          rows.forEach(r=>addRow(r,false));
+          tbody.innerHTML = '';
+          rows.forEach(r => renderRow(r, false));
           updateSummaryAndCharts();
-        });
+        })
+        .catch(console.error);
     }
 
-    function addRow(data, editing) {
-      const tbody = document.getElementById('farmerTableBody');
+    function renderRow(data, editing) {
       const tr = document.createElement('tr');
-      const cols = [
-        data.username, data.user_id, data.user_type,
-        data.entry_date, data.product_id, data.breed,
-        data.quantity, data.avg_weight
+      const fields = [
+        data.username,
+        data.user_id,
+        data.entry_date,
+        data.product_id,
+        data.breed,
+        data.quantity,
+        data.avg_weight
       ];
-      cols.forEach((v,i)=>{
+
+      fields.forEach((val, idx) => {
         const td = tr.insertCell();
-        if (editing && (i===2||i===5||i===6||i===7)) {
-          // editable fields: farmer type, breed, count, weight
-          if (i===2) { // farmer type
-            td.innerHTML = `<select class="form-select"><option>Small</option><option>Medium</option><option>Large</option></select>`;
-            td.firstChild.value=v;
-          } else if (i===5) {
-            td.innerHTML = `<select class="form-select"><option>Cattle</option><option>Goat</option><option>Chicken</option><option>Sheep</option></select>`;
-            td.firstChild.value=v;
-          } else {
-            td.innerHTML = `<input class="form-control" value="${v}">`;
-          }
+        if (editing && idx >= 4 && idx <= 6) {
+          td.innerHTML = `<input class="form-control" value="${val}">`;
         } else {
-          td.textContent = v;
+          td.textContent = val;
         }
       });
-      const act = tr.insertCell();
+
+      const actionTd = tr.insertCell();
       if (editing) {
-        act.innerHTML = `
-          <button class="btn btn-sm btn-success me-1" onclick="saveEdit(this,'${data.product_id}')"><i class="fas fa-save"></i></button>
-          <button class="btn btn-sm btn-secondary" onclick="loadData()"><i class="fas fa-times"></i></button>`;
+        actionTd.innerHTML = `
+          <button class="btn btn-sm btn-success me-1" onclick="saveEdit(this,'${data.product_id}')">
+            <i class="fas fa-save"></i>
+          </button>
+          <button class="btn btn-sm btn-secondary" onclick="loadData()">
+            <i class="fas fa-times"></i>
+          </button>`;
       } else {
-        act.innerHTML = `
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow('${data.product_id}', this)"><i class="fas fa-pen"></i></button>
-          <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry('${data.product_id}')"><i class="fas fa-trash"></i></button>`;
+        actionTd.innerHTML = `
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow('${data.product_id}', this)">
+            <i class="fas fa-pen"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry('${data.product_id}')">
+            <i class="fas fa-trash"></i>
+          </button>`;
       }
-      tbody.appendChild(tr);
+
+      document.getElementById('farmerTableBody').appendChild(tr);
     }
 
-    function addNewRow(){
+    function addNewRow() {
       const today = new Date().toISOString().split('T')[0];
-      const data={ username:'', user_id:'', user_type:'Small',
-        entry_date:today, product_id:'', breed:'Cattle',
-        quantity:1, avg_weight:0 };
-      addRow(data,true);
+      const blank = { username:'', user_id:'', entry_date:today, product_id:'', breed:'', quantity:0, avg_weight:0 };
+      renderRow(blank, true);
     }
 
-    function editRow(pid,btn){
+    function editRow(pid, btn) {
       fetch(`fetch_admin_livestock.php?product_id=${pid}`)
-        .then(r=>r.json())
-        .then(data=>{
-          const tr=btn.closest('tr');
-          tr.remove();
-          addRow(data,true);
-        });
+        .then(r => r.json())
+        .then(arr => {
+          if (!arr.length) return;
+          btn.closest('tr').remove();
+          renderRow(arr[0], true);
+        })
+        .catch(console.error);
     }
 
-    function saveEdit(btn,pid){
-      const tr=btn.closest('tr');
-      const tds=tr.cells;
-      const payload={
+    function saveEdit(btn, pid) {
+      const cells = btn.closest('tr').cells;
+      const payload = {
         product_id: pid,
-        user_type: tds[2].firstChild.value,
-        breed: tds[5].firstChild.value,
-        quantity: tds[6].firstChild.value,
-        avg_weight: tds[7].firstChild.value
+        breed: cells[4].querySelector('input').value,
+        quantity: parseInt(cells[5].querySelector('input').value, 10),
+        avg_weight: parseFloat(cells[6].querySelector('input').value)
       };
-      fetch('admin_update_livestock.php',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
+      console.log('Saving:', payload);
+      fetch('admin_update_livestock.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       })
-      .then(r=>r.json())
-      .then(res=>{
-        if(res.success) loadData();
-        else alert(res.error);
+      .then(r => r.json())
+      .then(res => {
+        console.log('Response:', res);
+        if (res.success) loadData();
+        else alert('Update failed: ' + res.error);
+      })
+      .catch(err => { 
+        console.error(err);
+        alert('Request error');
       });
     }
 
-    function deleteEntry(pid){
-      if(!confirm('Delete?')) return;
-      fetch('admin_delete_livestock.php',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({product_id:pid})
+    function deleteEntry(pid) {
+      if (!confirm('Are you sure?')) return;
+      fetch('admin_delete_livestock.php', {
+        method: 'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ product_id: pid })
       })
-      .then(r=>r.json())
-      .then(res=>{
-        if(res.success) loadData();
-        else alert(res.error);
-      });
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) loadData();
+        else alert('Delete failed: ' + res.error);
+      })
+      .catch(console.error);
     }
 
-    function updateSummaryAndCharts(){
-      // summary
-      const counts={};
-      document.querySelectorAll('#farmerTableBody tr').forEach(tr=>{
-        const b=tr.cells[5].textContent;
-        const c=parseInt(tr.cells[6].textContent)||0;
-        counts[b]=(counts[b]||0)+c;
+    function updateSummaryAndCharts() {
+      const counts = {};
+      document.querySelectorAll('#farmerTableBody tr').forEach(tr => {
+        const b = tr.cells[4].textContent;
+        const q = parseInt(tr.cells[5].textContent,10) || 0;
+        counts[b] = (counts[b] || 0) + q;
       });
-      const sb=document.querySelector('#summaryTable tbody');
-      sb.innerHTML='';
-      Object.entries(counts).forEach(([b,c])=>{
-        const r=sb.insertRow(); r.insertCell().textContent=b; r.insertCell().textContent=c;
-      });
-      // charts
-      const breeds=Object.keys(counts), vals=Object.values(counts);
+
+      // Summary
+      const sb = document.querySelector('#summaryTable tbody');
+      sb.innerHTML = '';
+      for (let breed in counts) {
+        const row = sb.insertRow();
+        row.insertCell().textContent = breed;
+        row.insertCell().textContent = counts[breed];
+      }
+
+      // Breed chart
       breedChart?.destroy();
-      breedChart=new Chart(document.getElementById('breedChart'),{
-        type:'bar', data:{labels:breeds,datasets:[{label:'Count',data:vals,backgroundColor:'#007bff'}]},
-        options:{responsive:true,plugins:{title:{display:true,text:'Breed Count'}}}
+      breedChart = new Chart(document.getElementById('breedChart'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(counts),
+          datasets: [{ label:'Count', data: Object.values(counts) }]
+        },
+        options:{ plugins:{ title:{ display:true, text:'Breed Count' } }, responsive:true }
       });
-      const types={};
-      document.querySelectorAll('#farmerTableBody tr').forEach(tr=>{
-        const t=tr.cells[2].textContent;
-        types[t]=(types[t]||0)+1;
+
+      // Entries per farmer
+      const perFarmer = {};
+      document.querySelectorAll('#farmerTableBody tr').forEach(tr => {
+        const id = tr.cells[1].textContent;
+        perFarmer[id] = (perFarmer[id]||0) + 1;
       });
-      const tlabels=Object.keys(types), tdata=Object.values(types);
-      farmerChart?.destroy();
-      farmerChart=new Chart(document.getElementById('farmerTypeChart'),{
-        type:'bar', data:{labels:tlabels,datasets:[{label:'Farmers',data:tdata,backgroundColor:'#28a745'}]},
-        options:{responsive:true,plugins:{title:{display:true,text:'Farmer Type Distribution'}}}
+      typeChart?.destroy();
+      typeChart = new Chart(document.getElementById('typeChart'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(perFarmer),
+          datasets: [{ label:'Entries', data: Object.values(perFarmer) }]
+        },
+        options:{ plugins:{ title:{ display:true, text:'Entries per Farmer' } }, responsive:true }
       });
     }
 
-    document.getElementById('searchInput').addEventListener('input',()=>{
-      const idx=+document.getElementById('columnSelect').value;
-      const v=document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('#farmerTableBody tr').forEach(tr=>{
-        tr.style.display = tr.cells[idx].textContent.toLowerCase().includes(v)? '' : 'none';
+    document.getElementById('searchInput').addEventListener('input', e => {
+      const idx = +document.getElementById('columnSelect').value;
+      const v = e.target.value.toLowerCase();
+      document.querySelectorAll('#farmerTableBody tr').forEach(tr => {
+        tr.style.display = tr.cells[idx].textContent.toLowerCase().includes(v)? '':'none';
       });
     });
 
