@@ -95,10 +95,5 @@ if ($product_id === '') {
         echo json_encode(['success'=>true,'action'=>'update','product_id'=>$product_id,'rows_affected'=>$stmt->affected_rows]);
     } else {
         echo json_encode(['success'=>false,'error'=>$stmt->error]);
-<<<<<<< Updated upstream
-    }
-}
-=======
     }
 }
->>>>>>> Stashed changes
