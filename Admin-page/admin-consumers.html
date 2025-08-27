@@ -83,6 +83,7 @@
   <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
   <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
   <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
   <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
   <a href="admin-consumers.html" class="active"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
   <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
@@ -145,7 +146,7 @@
 <script>
   function filterTable(input, tableId) {
     const filter = input.value.toLowerCase();
-    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    const rows = document.querySelectorAll(#${tableId} tbody tr);
     rows.forEach(row => {
       row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
     });
