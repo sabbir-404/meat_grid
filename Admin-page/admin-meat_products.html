@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin - Processed Meat Products</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body { background-color:#f4f6f9; }
+    .sidebar { width:250px; height:100vh; background:#343a40; color:white; position:fixed; padding:20px 0; display:flex; flex-direction:column; }
+    .sidebar .logo { text-align:center; margin-bottom:1rem; }
+    .sidebar .logo img { max-width:120px; }
+    .sidebar a { padding:12px 20px; color:#ccc; text-decoration:none; display:flex; align-items:center; border-left:3px solid transparent; white-space:nowrap; }
+    .sidebar a:hover, .sidebar a.active { color:white; background:#495057; font-weight:bold; border-left:3px solid #fff; }
+    .dashboard-container { margin-left:250px; padding:30px; width:calc(100% - 250px); }
+    .card { margin-bottom:15px; }
+    .table-responsive { max-height:560px; overflow:auto; }
+    .modal-lg { max-width: 1000px; }
+  </style>
+</head>
+<body>
+  <!-- User dropdown -->
+  <div class="user-dropdown" style="position:fixed; top:20px; right:30px; z-index:9999;">
+    <div class="dropdown">
+      <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i></button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo"><img src="Logo/Logo white.png" alt="Meat Grid"></div>
+    <h5 class="text-white px-3 mb-2"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+    <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+    <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+    <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+    <a href="#" class="active"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+    <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+    <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+    <a href="admin-meat-products.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Products</a>
+  </div>
+
+  <!-- Main -->
+  <div class="dashboard-container container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">Processed Meat — Products</h2>
+      <div>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editProductModal"><i class="fas fa-plus"></i> Add Processed Product</button>
+      </div>
+    </div>
+
+    <!-- Product catalog -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Processed Products Catalog</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped" id="processedTable">
+            <thead class="table-dark">
+              <tr>
+                <th>SKU</th><th>Name</th><th>Category</th><th>Base Meat</th><th>Packaging</th>
+                <th>Unit wt (g)</th><th>Shelf-life (days)</th><th>Cold chain</th><th>Price Tk/kg</th><th>Protein/100g</th><th>Fat/100g</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <small class="text-muted">Manage processed-product metadata: packaging, shelf-life, nutrition, and price.</small>
+      </div>
+    </div>
+
+    <!-- <footer class="mt-3 text-muted">Note: Price-history and batch analytics are intentionally removed from this page.</footer> -->
+  </div>
+
+  <!-- Edit/Add Processed Product Modal -->
+  <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add / Edit Processed Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="productForm" onsubmit="return false;">
+            <input type="hidden" id="procSku" />
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label class="form-label">Product Name</label>
+                <input id="procName" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Category</label>
+                <select id="procCategory" class="form-select"><option>Minced</option><option>Sausage</option><option>Cured</option><option>Smoked</option><option>Ready Meal</option></select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Base Meat</label>
+                <select id="procBase" class="form-select"><option>Beef</option><option>Chicken</option><option>Mutton</option><option>Pork</option></select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Packaging</label>
+                <input id="procPackaging" class="form-control" placeholder="vacuum, tray, MAP" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Avg unit wt (g)</label>
+                <input id="procUnitWt" type="number" step="0.1" class="form-control" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Shelf-life (days)</label>
+                <input id="procShelf" type="number" class="form-control" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Cold chain required</label>
+                <select id="procCold" class="form-select"><option>Yes</option><option>No</option></select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Avg price (Tk/kg)</label>
+                <input id="procPrice" type="number" step="0.01" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Protein /100g</label>
+                <input id="procProtein" type="number" step="0.1" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Fat /100g</label>
+                <input id="procFat" type="number" step="0.1" class="form-control" />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Notes</label>
+                <textarea id="procNotes" class="form-control" rows="2"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button id="saveProcBtn" class="btn btn-success">Save</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  // endpoints used by this page (must be in same folder)
+  const API = {
+    fetchProcessedProducts: 'fetch_processed_products.php',        // GET ?sku=...
+    saveProcessedProduct:  'admin_save_processed_product.php',    // POST JSON
+    deleteProcessedProduct:'admin_delete_processed_product.php'   // POST JSON { sku }
+  };
+
+  async function fetchJson(url, opts) {
+    try {
+      const r = await fetch(url, opts);
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      return await r.json();
+    } catch (err) {
+      console.warn('fetch failed', url, err);
+      return null;
+    }
+  }
+
+  function formatNumber(v, digits=2) {
+    if (v === null || v === undefined || v === '' || isNaN(v)) return '-';
+    return (+v).toLocaleString(undefined, {minimumFractionDigits:digits, maximumFractionDigits:digits});
+  }
+
+  // Load and render product catalog
+  async function loadProcessedProducts() {
+    const rows = await fetchJson(API.fetchProcessedProducts) || [];
+    const tbody = document.querySelector('#processedTable tbody');
+    tbody.innerHTML = '';
+    rows.forEach(r => {
+      const sku = r.sku || r.product_ID || r.product_id || r.id || '';
+      const tr = tbody.insertRow();
+      tr.insertCell().textContent = sku;
+      tr.insertCell().textContent = r.name || '';
+      tr.insertCell().textContent = r.category || '';
+      tr.insertCell().textContent = r.base_meat || '';
+      tr.insertCell().textContent = r.packaging || '';
+      const aw = r.avg_unit_weight_g ?? r.avg_unit_wt ?? r.avg_unit_wt_g ?? r.avg_unit_wt;
+      tr.insertCell().textContent = aw ? formatNumber(aw,1) : '';
+      tr.insertCell().textContent = r.shelf_life_days ?? '';
+      tr.insertCell().textContent = (r.cold_chain_required === 0 || r.cold_chain_required === '0') ? 'No' : 'Yes';
+      tr.insertCell().textContent = r.price_per_kg ? formatNumber(r.price_per_kg,2) : '';
+      tr.insertCell().textContent = r.protein_per_100g ? formatNumber(r.protein_per_100g,1) : '';
+      tr.insertCell().textContent = r.fat_per_100g ? formatNumber(r.fat_per_100g,1) : '';
+      const actions = tr.insertCell();
+      actions.innerHTML = `<button class="btn btn-sm btn-outline-primary me-1" onclick="openEditProduct('${escapeHtml(sku)}')"><i class="fas fa-pen"></i></button>
+                           <button class="btn btn-sm btn-outline-danger" onclick="deleteProcessed('${escapeHtml(sku)}')"><i class="fas fa-trash"></i></button>`;
+    });
+  }
+
+  async function openEditProduct(sku='') {
+    // defaults
+    document.getElementById('procSku').value = sku || '';
+    document.getElementById('procName').value = '';
+    document.getElementById('procCategory').value = 'Minced';
+    document.getElementById('procBase').value = 'Beef';
+    document.getElementById('procPackaging').value = '';
+    document.getElementById('procUnitWt').value = '';
+    document.getElementById('procShelf').value = '';
+    document.getElementById('procCold').value = 'Yes';
+    document.getElementById('procPrice').value = '';
+    document.getElementById('procProtein').value = '';
+    document.getElementById('procFat').value = '';
+    document.getElementById('procNotes').value = '';
+
+    if (!sku) { new bootstrap.Modal(document.getElementById('editProductModal')).show(); return; }
+
+    const res = await fetchJson(API.fetchProcessedProducts + '?sku=' + encodeURIComponent(sku));
+    const p = (res && Array.isArray(res) && res[0]) ? res[0] : (res && res.sku ? res : null);
+    if (!p) { alert('Product not found'); return; }
+    // fill form
+    document.getElementById('procSku').value = p.sku || p.product_ID || p.product_id || p.id || '';
+    document.getElementById('procName').value = p.name || '';
+    document.getElementById('procCategory').value = p.category || 'Minced';
+    document.getElementById('procBase').value = p.base_meat || '';
+    document.getElementById('procPackaging').value = p.packaging || '';
+    document.getElementById('procUnitWt').value = p.avg_unit_weight_g ?? p.avg_unit_wt ?? '';
+    document.getElementById('procShelf').value = p.shelf_life_days ?? '';
+    document.getElementById('procCold').value = (p.cold_chain_required === 0 || p.cold_chain_required === '0') ? 'No' : 'Yes';
+    document.getElementById('procPrice').value = p.price_per_kg ?? '';
+    document.getElementById('procProtein').value = p.protein_per_100g ?? '';
+    document.getElementById('procFat').value = p.fat_per_100g ?? '';
+    document.getElementById('procNotes').value = p.notes ?? '';
+    new bootstrap.Modal(document.getElementById('editProductModal')).show();
+  }
+
+  async function saveProcessed() {
+    const payload = {
+      sku: document.getElementById('procSku').value || '',
+      name: document.getElementById('procName').value.trim(),
+      category: document.getElementById('procCategory').value,
+      base_meat: document.getElementById('procBase').value,
+      packaging: document.getElementById('procPackaging').value.trim(),
+      avg_unit_weight_g: document.getElementById('procUnitWt').value ? parseFloat(document.getElementById('procUnitWt').value) : null,
+      shelf_life_days: document.getElementById('procShelf').value ? parseInt(document.getElementById('procShelf').value,10) : null,
+      cold_chain_required: document.getElementById('procCold').value === 'Yes' ? 1 : 0,
+      price_per_kg: document.getElementById('procPrice').value ? parseFloat(document.getElementById('procPrice').value) : null,
+      protein_per_100g: document.getElementById('procProtein').value ? parseFloat(document.getElementById('procProtein').value) : null,
+      fat_per_100g: document.getElementById('procFat').value ? parseFloat(document.getElementById('procFat').value) : null,
+      notes: document.getElementById('procNotes').value.trim()
+    };
+    if (!payload.name) { alert('Please enter product name'); return; }
+
+    const res = await fetchJson(API.saveProcessedProduct, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res && res.success) {
+      bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
+      await loadProcessedProducts();
+    } else {
+      alert('Save failed: ' + (res ? (res.error || JSON.stringify(res)) : 'network error'));
+    }
+  }
+
+  async function deleteProcessed(sku) {
+    if (!confirm('Delete processed product?')) return;
+    const res = await fetchJson(API.deleteProcessedProduct, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ sku })
+    });
+    if (res && res.success) loadProcessedProducts();
+    else alert('Delete failed: ' + (res ? (res.error || JSON.stringify(res)) : 'network error'));
+  }
+
+  // helpers
+  function escapeHtml(s) { return (s||'').replace(/'/g,"\\'").replace(/"/g,'\\"'); }
+
+  // wiring
+  document.getElementById('saveProcBtn').addEventListener('click', saveProcessed);
+
+  window.onload = async function(){
+    await loadProcessedProducts();
+  };
+  </script>
+</body>
+</html>

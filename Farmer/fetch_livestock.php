@@ -8,9 +8,14 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user = (int)$_SESSION['user_id'];
 $stmt = $conn->prepare(
-    "SELECT * FROM livestock_entries 
+    "SELECT product_id, user_id, animal_type, breed, quantity, avg_weight, feed_type, health_status, entry_date, slaughter_weight, fcr, rearing_days, created_at
+     FROM livestock_entries 
      WHERE user_id=? ORDER BY created_at DESC"
 );
+if (!$stmt) {
+    // return empty array on prepare error to avoid breaking frontend
+    echo "[]"; exit;
+}
 $stmt->bind_param("i",$user);
 $stmt->execute();
 $res = $stmt->get_result();

@@ -9,25 +9,25 @@
 <style>
 body { background-color: #f4f6f9; }
 .dashboard-container {
-margin-left: 270px; padding: 30px;
-width: calc(100% - 270px); position: relative; z-index: 1;
+  margin-left: 270px; padding: 30px;
+  width: calc(100% - 270px); position: relative; z-index: 1;
 }
 .sidebar {
-width: 250px; height: 100vh; background: #343a40;
-color: white; position: fixed; padding: 20px 0;
-display: flex; flex-direction: column;
+  width: 250px; height: 100vh; background: #343a40;
+  color: white; position: fixed; padding: 20px 0;
+  display: flex; flex-direction: column;
 }
 .sidebar a {
-padding: 12px 20px; color: #ccc; text-decoration: none;
-display: flex; align-items: center;
-border-left: 3px solid transparent;
+  padding: 12px 20px; color: #ccc; text-decoration: none;
+  display: flex; align-items: center;
+  border-left: 3px solid transparent;
 }
 .sidebar a:hover, .sidebar a.active {
-color: white; background-color: #495057;
-font-weight: bold; border-left: 3px solid #fff;
+  color: white; background-color: #495057;
+  font-weight: bold; border-left: 3px solid #fff;
 }
 .user-dropdown {
-position: fixed; top: 20px; right: 30px; z-index: 9999;
+  position: fixed; top: 20px; right: 30px; z-index: 9999;
 }
 .table-wrapper { max-height: 300px; overflow-y: auto; }
 </style>
@@ -36,124 +36,150 @@ position: fixed; top: 20px; right: 30px; z-index: 9999;
 
 <!-- User Profile Dropdown -->
 <div class="user-dropdown">
-<div class="dropdown">
-<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
-    <i class="fas fa-user-circle"></i>
-</button>
-<ul class="dropdown-menu dropdown-menu-end">
-    <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-    <li><hr class="dropdown-divider" /></li>
-    <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
-</ul>
-</div>
+  <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <i class="fas fa-user-circle"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+    </ul>
+  </div>
 </div>
 
 <!-- Sidebar -->
 <div class="sidebar">
-<div class="text-center mb-3">
-<img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;" />
-</div>
-<h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Farmer Panel</h5>
-<a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-<a href="farmer-livestock.html" class="active"><i class="fas fa-paw me-2"></i>Livestock & Farm Entry</a>
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;" />
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Farmer Panel</h5>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="farmer-livestock.html" class="active"><i class="fas fa-paw me-2"></i>Livestock & Farm Entry</a>
 </div>
 
 <!-- Main Content -->
 <div class="dashboard-container container-fluid">
-<h2 class="mb-4">Livestock & Farm Entry</h2>
+  <h2 class="mb-4">Livestock & Farm Entry</h2>
 
-<!-- Input Form -->
-<div class="card mb-4">
-<div class="card-body">
-    <h5 class="card-title">Enter Livestock Data</h5>
-    <div class="row g-3">
-    <div class="col-md-4">
-        <label class="form-label">Animal Type</label>
-        <select class="form-select" id="animalType">
-        <option>Cattle</option>
-        <option>Goat</option>
-        <option>Chicken</option>
-        <option>Sheep</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Breed</label>
-        <input type="text" class="form-control" id="breed" placeholder="e.g. Brahman, Black Bengal" />
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Quantity</label>
-        <input type="number" class="form-control" id="quantity" min="1" />
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Average Weight (kg)</label>
-        <input type="number" class="form-control" id="avgWeight" step="0.1" />
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Feed Type</label>
-        <input type="text" class="form-control" id="feed" placeholder="e.g. Grass, Commercial feed" />
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Health Status</label>
-        <select class="form-select" id="health">
-        <option>Healthy</option>
-        <option>Under Observation</option>
-        <option>Sick</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Entry Date</label>
-        <input type="date" class="form-control" id="entryDate" readonly />
-    </div>
-    <div class="col-12 mt-3">
-        <button id="addEntryBtn" type="button" class="btn btn-success">Add Entry</button>
-    </div>
-    </div>
-</div>
-</div>
+  <!-- Input Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Enter Livestock Data</h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Animal Type</label>
+          <select class="form-select" id="animalType">
+            <option>Cattle</option>
+            <option>Goat</option>
+            <option>Chicken</option>
+            <option>Sheep</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Breed</label>
+          <input type="text" class="form-control" id="breed" placeholder="e.g. Brahman, Black Bengal" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Quantity</label>
+          <input type="number" class="form-control" id="quantity" min="1" />
+        </div>
 
-<!-- Table 1: All Entries -->
-<div class="card mb-4">
-<div class="card-body">
-    <h5 class="card-title">Entered Records</h5>
-    <div class="table-wrapper">
-    <table class="table table-bordered table-hover" id="entryTable">
-        <thead class="table-dark">
-        <tr>
-            <th>Animal Type</th>
-            <th>Breed</th>
-            <th>Quantity</th>
-            <th>Avg Weight</th>
-            <th>Feed</th>
-            <th>Health</th>
-            <th>Entry Date</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    </div>
-</div>
-</div>
+        <div class="col-md-4">
+          <label class="form-label">Average Weight (kg)</label>
+          <input type="number" class="form-control" id="avgWeight" step="0.1" />
+        </div>
 
-<!-- Table 2: Summary -->
-<div class="card mb-4">
-<div class="card-body">
-    <h5 class="card-title">Summary by Breed</h5>
-    <div class="table-wrapper">
-    <table class="table table-bordered" id="summaryTable">
-        <thead class="table-secondary">
-        <tr>
-            <th>Animal Type</th>
-            <th>Breed</th>
-            <th>Total Count</th>
-            <th>Total Weight (kg)</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <div class="col-md-4">
+          <label class="form-label">Feed Type</label>
+          <input type="text" class="form-control" id="feed" placeholder="e.g. Grass, Commercial feed" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Health Status</label>
+          <select class="form-select" id="health">
+            <option>Healthy</option>
+            <option>Under Observation</option>
+            <option>Sick</option>
+          </select>
+        </div>
+
+        <!-- New fields added: Slaughter Weight, FCR, Rearing Days -->
+        <div class="col-md-4">
+          <label class="form-label">Slaughter Weight (kg)</label>
+          <input type="number" class="form-control" id="slaughterWeight" step="0.1" placeholder="optional" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">FCR (feed conversion ratio)</label>
+          <input type="number" class="form-control" id="fcr" step="0.01" placeholder="e.g. 2.5" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Rearing Period (days)</label>
+          <input type="number" class="form-control" id="rearingDays" min="0" placeholder="e.g. 120" />
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Entry Date</label>
+          <input type="date" class="form-control" id="entryDate" readonly />
+        </div>
+
+        <div class="col-12 mt-3">
+          <button id="addEntryBtn" type="button" class="btn btn-success">Add Entry</button>
+        </div>
+      </div>
     </div>
-</div>
-</div>
+  </div>
+
+  <!-- Table 1: All Entries -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Entered Records</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="entryTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Animal Type</th>
+              <th>Breed</th>
+              <th>Quantity</th>
+              <th>Avg Weight</th>
+              <th>Feed</th>
+              <th>Health</th>
+              <th>Entry Date</th>
+              <!-- new columns -->
+              <th>Slaughter Weight</th>
+              <th>FCR</th>
+              <th>Rearing Days</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table 2: Summary -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Summary by Breed</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered" id="summaryTable">
+          <thead class="table-secondary">
+            <tr>
+              <th>Animal Type</th>
+              <th>Breed</th>
+              <th>Total Count</th>
+              <th>Total Weight (kg)</th>
+              <th>Total Slaughter Weight (kg)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -165,106 +191,134 @@ let summaryMap      = {};
 
 // Clear form fields
 function clearForm() {
-['breed','quantity','avgWeight','feed'].forEach(id => document.getElementById(id).value = '');
-document.getElementById('health').selectedIndex = 0;
+  ['breed','quantity','avgWeight','feed','slaughterWeight','fcr','rearingDays'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('health').selectedIndex = 0;
 }
 
 // Render summary table
 function renderSummary() {
-summaryBody.innerHTML = '';
-Object.values(summaryMap).forEach(item => {
-const row = summaryBody.insertRow();
-row.insertCell().textContent = item.animalType;
-row.insertCell().textContent = item.breed;
-row.insertCell().textContent = item.count;
-row.insertCell().textContent = item.weight.toFixed(2);
-});
+  summaryBody.innerHTML = '';
+  Object.values(summaryMap).forEach(item => {
+    const row = summaryBody.insertRow();
+    row.insertCell().textContent = item.animalType;
+    row.insertCell().textContent = item.breed;
+    row.insertCell().textContent = item.count;
+    row.insertCell().textContent = item.weight.toFixed(2);
+    row.insertCell().textContent = item.slaughterWeight.toFixed(2);
+  });
 }
 
 // Load all entries
 function loadEntries() {
-fetch('fetch_livestock.php')
-.then(r => r.json())
-.then(data => {
-    entryBody.innerHTML = '';
-    summaryMap = {};
+  fetch('fetch_livestock.php')
+    .then(r => r.json())
+    .then(data => {
+      entryBody.innerHTML = '';
+      summaryMap = {};
 
-    data.forEach(item => {
-    // Add row
-    const r = entryBody.insertRow();
-    r.insertCell().textContent = item.animal_type;
-    r.insertCell().textContent = item.breed;
-    r.insertCell().textContent = item.quantity;
-    r.insertCell().textContent = parseFloat(item.avg_weight).toFixed(2);
-    r.insertCell().textContent = item.feed_type;
-    r.insertCell().textContent = item.health_status;
-    r.insertCell().textContent = item.entry_date;
-    const action = r.insertCell();
-    action.innerHTML = `<button class="btn btn-sm btn-danger" onclick="deleteEntry('${item.product_id}')">Delete</button>`;
+      data.forEach(item => {
+        // Add row
+        const r = entryBody.insertRow();
+        r.insertCell().textContent = item.animal_type;
+        r.insertCell().textContent = item.breed;
+        r.insertCell().textContent = item.quantity;
+        r.insertCell().textContent = (item.avg_weight !== null && item.avg_weight !== undefined) ? parseFloat(item.avg_weight).toFixed(2) : '';
+        r.insertCell().textContent = item.feed_type;
+        r.insertCell().textContent = item.health_status;
+        r.insertCell().textContent = item.entry_date;
 
-    // Build summary
-    const key = `${item.animal_type}-${item.breed}`;
-    if (!summaryMap[key]) summaryMap[key] = { animalType: item.animal_type, breed: item.breed, count:0, weight:0 };
-    summaryMap[key].count  += parseInt(item.quantity);
-    summaryMap[key].weight += parseInt(item.quantity) * parseFloat(item.avg_weight);
-    });
+        // new columns (show if available)
+        r.insertCell().textContent = (item.slaughter_weight !== null && item.slaughter_weight !== undefined) ? parseFloat(item.slaughter_weight).toFixed(2) : '';
+        r.insertCell().textContent = (item.fcr !== null && item.fcr !== undefined) ? parseFloat(item.fcr).toFixed(2) : '';
+        r.insertCell().textContent = (item.rearing_days !== null && item.rearing_days !== undefined) ? item.rearing_days : '';
 
-    renderSummary();
-})
-.catch(console.error);
+        const action = r.insertCell();
+        action.innerHTML = `<button class="btn btn-sm btn-danger" onclick="deleteEntry('${item.product_id}')">Delete</button>`;
+
+        // Build summary
+        const key = `${item.animal_type}-${item.breed}`;
+        if (!summaryMap[key]) summaryMap[key] = { animalType: item.animal_type, breed: item.breed, count:0, weight:0, slaughterWeight:0 };
+        summaryMap[key].count  += parseInt(item.quantity || 0);
+        summaryMap[key].weight += (parseInt(item.quantity || 0) * parseFloat(item.avg_weight || 0));
+        // total slaughter weight uses slaughter_weight if present, else 0
+        summaryMap[key].slaughterWeight += (parseInt(item.quantity || 0) * parseFloat(item.slaughter_weight || 0));
+      });
+
+      renderSummary();
+    })
+    .catch(console.error);
 }
 
 // Add new entry
 function addEntry() {
-const data = {
-animalType: document.getElementById('animalType').value,
-breed:      document.getElementById('breed').value.trim(),
-quantity:   document.getElementById('quantity').value,
-avgWeight:  document.getElementById('avgWeight').value,
-feed:       document.getElementById('feed').value.trim(),
-health:     document.getElementById('health').value,
-entryDate:  document.getElementById('entryDate').value
-};
-if (Object.values(data).some(v=>!v)) return alert('Fill all fields');
+  const data = {
+    animalType: document.getElementById('animalType').value,
+    breed:      document.getElementById('breed').value.trim(),
+    quantity:   document.getElementById('quantity').value,
+    avgWeight:  document.getElementById('avgWeight').value,
+    feed:       document.getElementById('feed').value.trim(),
+    health:     document.getElementById('health').value,
+    entryDate:  document.getElementById('entryDate').value,
+    // new fields:
+    slaughterWeight: document.getElementById('slaughterWeight').value || 0,
+    fcr: document.getElementById('fcr').value || 0,
+    rearingDays: document.getElementById('rearingDays').value || 0
+  };
 
-addEntryBtn.disabled = true;
-fetch('save_livestock.php', {
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body: JSON.stringify(data)
-})
-.then(r=>r.json())
-.then(res=>{
-if (res.success) {
-    clearForm();
-    loadEntries();
-} else alert('Save failed: '+res.error);
-})
-.catch(e=>alert('Error: '+e))
-.finally(()=>addEntryBtn.disabled=false);
+  // require main fields (slaughter/fcr/rearing are optional but included)
+  if (Object.values({
+    animalType: data.animalType,
+    breed: data.breed,
+    quantity: data.quantity,
+    avgWeight: data.avgWeight,
+    feed: data.feed,
+    health: data.health,
+    entryDate: data.entryDate
+  }).some(v => v === '' || v === null || v === undefined)) {
+    return alert('Fill all required fields');
+  }
+
+  addEntryBtn.disabled = true;
+  fetch('save_livestock.php', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if (res.success) {
+      clearForm();
+      loadEntries();
+    } else alert('Save failed: '+res.error);
+  })
+  .catch(e=>alert('Error: '+e))
+  .finally(()=>addEntryBtn.disabled=false);
 }
 
 // Delete entry
 function deleteEntry(id) {
-if (!confirm('Delete?')) return;
-fetch('delete_livestock.php', {
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body: JSON.stringify({product_id:id})
-})
-.then(r=>r.json())
-.then(res=>{
-if(res.success) loadEntries();
-else alert('Delete failed: '+res.error);
-})
-.catch(e=>alert('Error: '+e));
+  if (!confirm('Delete?')) return;
+  fetch('delete_livestock.php', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({product_id:id})
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.success) loadEntries();
+    else alert('Delete failed: '+res.error);
+  })
+  .catch(e=>alert('Error: '+e));
 }
 
 // Init
 window.onload = ()=>{
-document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
-loadEntries();
-addEntryBtn.onclick = addEntry;
+  document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+  loadEntries();
+  addEntryBtn.onclick = addEntry;
 };
 </script>
 </body>
