@@ -64,7 +64,6 @@ footer {
 .dropdown-menu {
     z-index: 9999 !important;
 }
-/* Modal overlay for farmer details */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
@@ -136,31 +135,16 @@ footer {
             <th>Breed</th>
             <th>Farmer Name</th>
             <th>Farmer ID</th>
+            <th>Farm Type</th>
             <th>Quantity</th>
-            <th>Contact Details</th>
+            <th>Contact</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>Cattle</td><td>Local Breed</td><td>Hasan Ali</td><td>F001</td><td>25</td>
-            <td><button class="btn btn-sm btn-info" onclick="showFarmerDetails('F001')"><i class="fas fa-eye"></i> View</button></td>
-        </tr>
-        <tr>
-            <td>Goat</td><td>Black Bengal</td><td>Rahima Khatun</td><td>F002</td><td>15</td>
-            <td><button class="btn btn-sm btn-info" onclick="showFarmerDetails('F002')"><i class="fas fa-eye"></i> View</button></td>
-        </tr>
-        <tr>
-            <td>Poultry</td><td>Broiler</td><td>Nurul Islam</td><td>F003</td><td>100</td>
-            <td><button class="btn btn-sm btn-info" onclick="showFarmerDetails('F003')"><i class="fas fa-eye"></i> View</button></td>
-        </tr>
-        <tr>
-            <td>Sheep</td><td>Deshi Breed</td><td>Shamima</td><td>F004</td><td>20</td>
-            <td><button class="btn btn-sm btn-info" onclick="showFarmerDetails('F004')"><i class="fas fa-eye"></i> View</button></td>
-        </tr>
+        <tbody id="livestockBody">
+        <!-- Dynamic rows here -->
         </tbody>
     </table>
     </div>
-
     </div>
 </div>
 </div>
@@ -170,55 +154,50 @@ footer {
 <div class="modal-box">
     <span class="close-btn" onclick="hideFarmerDetails()">&times;</span>
     <h5>Farmer Details</h5>
-    <p><strong>Person ID:</strong> <span id="personId"></span></p>
+    <p><strong>User ID:</strong> <span id="farmerId"></span></p>
     <p><strong>Name:</strong> <span id="farmerName"></span></p>
     <p><strong>Gender:</strong> <span id="farmerGender"></span></p>
     <p><strong>Contact Info:</strong> <span id="farmerContact"></span></p>
     <p><strong>Email:</strong> <span id="farmerEmail"></span></p>
+    <p><strong>Farm Type:</strong> <span id="farmerFarmType"></span></p>
 </div>
 </div>
-
-
 
 <script>
-const farmerDetails = {
-    F001: {
-    personId: "F001",
-    name: "Hasan Ali",
-    gender: "Male",
-    contact: "01711-223344",
-    email: "hasan.ali@example.com"
-    },
-    F002: {
-    personId: "F002",
-    name: "Rahima Khatun",
-    gender: "Female",
-    contact: "01822-334455",
-    email: "rahima.khatun@example.com"
-    },
-    F003: {
-    personId: "F003",
-    name: "Nurul Islam",
-    gender: "Male",
-    contact: "01933-445566",
-    email: "nurul.islam@example.com"
-    },
-    F004: {
-    personId: "F004",
-    name: "Shamima",
-    gender: "Female",
-    contact: "01644-556677",
-    email: "shamima@example.com"
+// Load livestock data
+fetch("get_livestock.php")
+.then(response => response.json())
+.then(data => {
+    if (data.error) {
+        alert("Error: " + data.error);
+        return;
     }
-};
+    const tbody = document.getElementById("livestockBody");
+    tbody.innerHTML = "";
+    data.forEach(item => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${item.animal_type}</td>
+            <td>${item.breed || '-'}</td>
+            <td>${item.name}</td>
+            <td>${item.user_id}</td>
+            <td>${item.farm_type || '-'}</td>
+            <td>${item.quantity}</td>
+            <td><button class="btn btn-sm btn-info" onclick='showFarmerDetails(${JSON.stringify(item)})'>
+                <i class="fas fa-eye"></i> View</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+})
+.catch(err => alert("Failed to load livestock data: " + err));
 
-function showFarmerDetails(id) {
-    const data = farmerDetails[id];
-    document.getElementById("personId").innerText = data.personId;
+function showFarmerDetails(data) {
+    document.getElementById("farmerId").innerText = data.user_id;
     document.getElementById("farmerName").innerText = data.name;
     document.getElementById("farmerGender").innerText = data.gender;
-    document.getElementById("farmerContact").innerText = data.contact;
+    document.getElementById("farmerContact").innerText = data.contact_info;
     document.getElementById("farmerEmail").innerText = data.email;
+    document.getElementById("farmerFarmType").innerText = data.farm_type;
 
     document.getElementById("farmerModal").style.display = "flex";
 }
@@ -231,10 +210,11 @@ function filterTable(input, tableId) {
     const filter = input.value.toLowerCase();
     const rows = document.querySelectorAll(`#${tableId} tbody tr`);
     rows.forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
     });
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
