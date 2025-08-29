@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Health Guidelines</title>
+  <title>Nutritional Intake - Admin Panel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
-    body {
-      background-color: #f4f6f9;
+    html, body {
+      height: 100%;
       margin: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: #f4f6f9;
     }
     .sidebar {
       width: 250px;
@@ -18,6 +21,8 @@
       color: white;
       position: fixed;
       padding: 20px 0;
+      display: flex;
+      flex-direction: column;
     }
     .sidebar a {
       padding: 12px 20px;
@@ -34,6 +39,7 @@
       border-left: 3px solid #fff;
     }
     .dashboard-container {
+      flex: 1;
       margin-left: 270px;
       padding: 30px;
       width: calc(100% - 270px);
@@ -42,33 +48,41 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0,0,0,0.6);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 1050;
+      z-index: 9999;
     }
     .modal-box {
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
+      padding: 25px;
+      border-radius: 8px;
       max-width: 600px;
-      max-height: 80vh;
+      width: 90%;
+      max-height: 80%;
       overflow-y: auto;
       position: relative;
     }
     .close-btn {
       position: absolute;
-      right: 15px;
       top: 10px;
-      font-size: 18px;
+      right: 15px;
+      font-size: 24px;
       cursor: pointer;
     }
-    .badge {
-      margin: 2px;
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
     }
-        .user-dropdown {
+    footer {
+      background-color: #343a40;
+      color: white;  
+      text-align: center;
+      padding: 1rem;
+      margin-left: 270px;  
+    }
+    .user-dropdown {
       z-index: 9999 !important;
       position: fixed;
       top: 20px;
@@ -95,192 +109,383 @@
     </ul>
     </div>
 </div>
+
 <!-- Sidebar -->
 <div class="sidebar">
   <div class="text-center mb-3">
-    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
   </div>
-  <h5 class="text-white px-3"><i class="fas fa-user-md me-2"></i>Health Panel</h5>
-  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="#" class="active"><i class="fas fa-notes-medical me-2"></i>Health Guidelines</a>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html" class="active"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
 </div>
 
 <!-- Main Content -->
-<div class="dashboard-container">
-  <h2 class="mb-4">Health Guideline Entry</h2>
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Nutritional Intake Guidelines</h2>
 
-  <!-- Form -->
-  <form id="guidelineForm" class="bg-white p-4 rounded shadow mb-5">
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Guideline Title</label>
-        <input type="text" class="form-control" id="title" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Issue Date</label>
-        <input type="date" class="form-control" id="issueDate" required>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Target Age Group</label>
-        <select class="form-select" id="ageGroup" required>
-          <option value="">Select</option>
-          <option>0–12 (Children)</option>
-          <option>13–25 (Youth)</option>
-          <option>26–45 (Adults)</option>
-          <option>46+ (Elderly)</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Nutrition Selector -->
-    <div class="mb-3">
-      <label class="form-label">Nutrition Type</label>
-      <div class="input-group mb-2">
-        <select class="form-select" id="nutritionSelect">
-          <option value="">Select</option>
-          <option>Protein</option>
-          <option>Iron</option>
-          <option>Vitamin B12</option>
-          <option>Omega-3</option>
-          <option>Calcium</option>
-        </select>
-        <button class="btn btn-outline-primary" type="button" onclick="addNutrition()">Add</button>
-      </div>
-      <div id="nutritionList"></div>
-    </div>
-
-    <!-- Recommended Quantity -->
-    <div class="mb-3">
-      <label class="form-label">Recommended Meat Quantity</label>
-      <input type="text" class="form-control" id="meatQty" placeholder="e.g. 150g/day">
-    </div>
-
-    <!-- Breed Selector -->
-    <div class="mb-3">
-      <label class="form-label">Recommended Breeds</label>
-      <div class="input-group mb-2">
-        <input type="text" class="form-control" id="breedInput" placeholder="e.g. Local Cattle, Broiler">
-        <button class="btn btn-outline-primary" type="button" onclick="addBreed()">Add</button>
-      </div>
-      <div id="breedList"></div>
-    </div>
-
-    <!-- Guideline Text -->
-    <div class="mb-3">
-      <label class="form-label">Guideline Description</label>
-      <textarea class="form-control" id="guidelineText" rows="4" required></textarea>
-    </div>
-
-    <div class="text-end">
-      <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Save Guideline</button>
-    </div>
-  </form>
-
-  <!-- Table -->
-  <div class="card shadow mb-5">
+  <div class="card">
     <div class="card-body">
-      <h5 class="card-title">Saved Guidelines</h5>
-      <div class="table-responsive">
-        <table class="table table-bordered" id="guidelineTable">
+      <h5 class="card-title">
+        Health Guidelines Table
+        <button class="btn btn-sm btn-success top-right-btn" id="btnAddRow"><i class="fas fa-plus"></i> Add</button>
+      </h5>
+      <input class="form-control mb-2" id="searchInput" type="text" placeholder="Search guidelines..." onkeyup="filterTable(this, 'guidelineTable')">
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="guidelineTable">
           <thead class="table-dark">
             <tr>
-              <th>Title</th>
-              <th>Date</th>
-              <th>Age Group</th>
-              <th>Action</th>
+              <th>Guideline ID</th>
+              <th>Guideline Title</th>
+              <th>Issue Date</th>
+              <th>Nutritional Intake</th>
+              <th>Issued By</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+            <!-- original static rows (kept as fallback) -->
+            <tr>
+              <td>GL001</td><td>Balanced Meat Diet</td><td>2025-07-01</td><td>Protein: 50g/day</td><td>Ministry of Health</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL001')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GL002</td><td>Children's Nutrition</td><td>2025-07-05</td><td>Protein: 35g/day</td><td>WHO Bangladesh</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL002')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GL003</td><td>Senior Dietary Guidelines</td><td>2025-06-15</td><td>Protein: 45g/day</td><td>National Health Board</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL003')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GL004</td><td>Pregnancy Nutrition</td><td>2025-05-10</td><td>Protein: 60g/day</td><td>UNICEF</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL004')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>GL005</td><td>Iron-Rich Diet Plan</td><td>2025-04-20</td><td>Iron: 15mg/day</td><td>Nutrition Council</td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-primary" onclick="showModal('GL005')"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <!-- end fallback rows -->
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
-<div class="modal-overlay" id="guidelineModal">
+<!-- Modal Box -->
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
-    <span class="close-btn" onclick="document.getElementById('guidelineModal').style.display='none'">&times;</span>
-    <h5 id="modalTitle"></h5>
-    <p><strong>Issue Date:</strong> <span id="modalDate"></span></p>
-    <p><strong>Age Group:</strong> <span id="modalAge"></span></p>
-    <p><strong>Nutrition Types:</strong> <span id="modalNutrition"></span></p>
-    <p><strong>Meat Quantity:</strong> <span id="modalQty"></span></p>
-    <p><strong>Recommended Breeds:</strong> <span id="modalBreed"></span></p>
-    <p><strong>Description:</strong></p>
-    <p id="modalDesc"></p>
+    <span class="close-btn" onclick="hideModal()">&times;</span>
+    <h5 id="modalTitle">Guideline Details</h5>
+    <p><strong>Guidelines:</strong> <span id="guidelineText"></span></p>
+    <h6 class="mt-3">Nutritional Intake by Age Group</h6>
+    <ul id="ageRangeList"></ul>
   </div>
 </div>
 
+<!-- Scripts -->
 <script>
-  const form = document.getElementById("guidelineForm");
-  const tableBody = document.querySelector("#guidelineTable tbody");
-  const nutritionArray = [];
-  const breedArray = [];
-
-  function addNutrition() {
-    const sel = document.getElementById("nutritionSelect");
-    const value = sel.value;
-    if (value && !nutritionArray.includes(value)) {
-      nutritionArray.push(value);
-      const span = document.createElement("span");
-      span.className = "badge bg-primary";
-      span.innerText = value;
-      document.getElementById("nutritionList").appendChild(span);
-    }
+  // --- Utilities ---
+  function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'",'&#039;');
   }
 
-  function addBreed() {
-    const input = document.getElementById("breedInput");
-    const value = input.value.trim();
-    if (value && !breedArray.includes(value)) {
-      breedArray.push(value);
-      const span = document.createElement("span");
-      span.className = "badge bg-info";
-      span.innerText = value;
-      document.getElementById("breedList").appendChild(span);
-      input.value = '';
+  function pad(n, width=3) { return String(n).padStart(width,'0'); }
+
+  // --- Server-backed CRUD endpoints (relative to this file in Admin-page/) ---
+  const ENDPOINTS = {
+    fetch: 'admin_fetch_guidelines.php',
+    get: 'admin_get_guideline.php',
+    add: 'admin_add_guideline.php',
+    edit: 'admin_edit_guideline.php',
+    delete: 'admin_delete_guideline.php'
+  };
+
+  // --- Render functions ---
+  function renderRows(rows) {
+    const tbody = document.querySelector('#guidelineTable tbody');
+    tbody.innerHTML = '';
+    if (!rows || rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center">No health guidelines found.</td></tr>';
+      return;
     }
+    rows.forEach(g => {
+      const tr = document.createElement('tr');
+      tr.dataset.id = g.id;
+      const code = g.guideline_code || ('G' + pad(g.id));
+      tr.innerHTML = `
+        <td>${escapeHtml(code)}</td>
+        <td>${escapeHtml(g.title)}</td>
+        <td>${escapeHtml(g.issue_date)}</td>
+        <td>${escapeHtml(g.nutritional_intake)}</td>
+        <td>${escapeHtml(g.issued_by)}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-primary" onclick="showModal(${g.id})"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
   }
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+  // Fetch and render guidelines from server
+  function fetchGuidelinesAndRender() {
+    fetch(ENDPOINTS.fetch)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          renderRows(data.rows);
+        } else {
+          console.error('Failed to fetch guidelines:', data.message);
+        }
+      }).catch(err => {
+        console.error('Error fetching guidelines:', err);
+      });
+  }
 
-    const title = document.getElementById("title").value;
-    const date = document.getElementById("issueDate").value;
-    const age = document.getElementById("ageGroup").value;
-    const qty = document.getElementById("meatQty").value;
-    const desc = document.getElementById("guidelineText").value;
+  // --- Modal (view details) ---
+  function showModal(id) {
+    // if id is non-numeric code (fallback to code-based display), attempt to map to numeric id by searching table rows
+    if (isNaN(Number(id))) {
+      // look for row with matching code in table
+      const rows = document.querySelectorAll('#guidelineTable tbody tr');
+      for (const r of rows) {
+        const codeCell = r.querySelector('td');
+        if (codeCell && codeCell.innerText.trim() === id) {
+          const numeric = r.dataset.id;
+          if (numeric) { id = numeric; break; }
+        }
+      }
+    }
 
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${title}</td>
-      <td>${date}</td>
-      <td>${age}</td>
-      <td><button class="btn btn-sm btn-primary" onclick='showModal(${JSON.stringify({ title, date, age, qty, desc, nutrition: [...nutritionArray], breed: [...breedArray] })})'>View</button></td>
+    fetch(`${ENDPOINTS.get}?id=${encodeURIComponent(id)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) {
+          alert(data.message || 'Guideline not found');
+          return;
+        }
+        const g = data.guideline;
+        document.getElementById('modalTitle').innerText = g.title || 'Guideline Details';
+        document.getElementById('guidelineText').innerText = g.guideline_description || g.nutritional_intake || '';
+        const list = document.getElementById('ageRangeList');
+        list.innerHTML = '';
+        if (Array.isArray(g.age_ranges) && g.age_ranges.length) {
+          g.age_ranges.forEach(ar => {
+            const li = document.createElement('li');
+            li.innerText = `${ar.age_group}: ${ar.intake_text}`;
+            list.appendChild(li);
+          });
+        } else {
+          list.innerHTML = '<li>No age-range data.</li>';
+        }
+        document.getElementById('modalOverlay').style.display = 'flex';
+      }).catch(err => {
+        console.error(err);
+        alert('Error fetching guideline details');
+      });
+  }
+
+  function hideModal() {
+    document.getElementById('modalOverlay').style.display = 'none';
+  }
+
+  // --- Search filter ---
+  function filterTable(input, tableId) {
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+    rows.forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+  }
+
+  // --- Add row (UI then server) ---
+  document.getElementById('btnAddRow').addEventListener('click', addGuidelineRow);
+
+  function addGuidelineRow() {
+    const tbody = document.querySelector('#guidelineTable tbody');
+    // insert a new editable row at the top
+    const tr = document.createElement('tr');
+    tr.classList.add('editing');
+    tr.innerHTML = `
+      <td><input type="text" class="form-control" name="guideline_code" placeholder="GL###"></td>
+      <td><input type="text" class="form-control" name="title" placeholder="Title"></td>
+      <td><input type="date" class="form-control" name="issue_date"></td>
+      <td><input type="text" class="form-control" name="nutritional_intake" placeholder="e.g. Protein: 50g/day"></td>
+      <td><input type="text" class="form-control" name="issued_by" placeholder="Issued by"></td>
+      <td>
+        <button class="btn btn-sm btn-success" onclick="saveNewRow(this)"><i class="fas fa-check"></i></button>
+        <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)"><i class="fas fa-times"></i></button>
+      </td>`;
+    tbody.prepend(tr);
+  }
+
+  function parseAgeRangesFromPrompt(raw) {
+    const arr = [];
+    if (!raw) return arr;
+    raw.split(';').forEach(part => {
+      const [age, ...rest] = part.split(':');
+      if (age && rest.length) {
+        arr.push({ age_group: age.trim(), intake_text: rest.join(':').trim() });
+      }
+    });
+    return arr;
+  }
+
+  function saveNewRow(btn) {
+    const row = btn.closest('tr');
+    const inputs = row.querySelectorAll('input');
+    const payload = {};
+    inputs.forEach(i => payload[i.name] = i.value.trim());
+
+    // request age-ranges via prompt (simple, keeps layout unchanged)
+    const arRaw = prompt('Enter age ranges (format: AgeGroup:Text;Age2:Text2). Example: "Children (4-8 yrs):Protein:20g;Adults:Protein:50g" — leave empty to skip.');
+    const age_ranges = parseAgeRangesFromPrompt(arRaw);
+
+    fetch(ENDPOINTS.add, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ guideline: payload, age_ranges })
+    }).then(r => r.json()).then(res => {
+      if (!res.success) {
+        alert('Failed to add guideline: ' + (res.message || 'unknown'));
+        return;
+      }
+      // re-fetch listing to show new row (keeps ordering consistent)
+      fetchGuidelinesAndRender();
+    }).catch(err => {
+      console.error(err);
+      alert('Error saving guideline');
+    });
+  }
+
+  function cancelRow(btn) {
+    const row = btn.closest('tr');
+    row.remove();
+  }
+
+  // --- Edit row ---
+  function editRow(btn) {
+    const row = btn.closest('tr');
+    const id = row.dataset.id;
+    // convert display cells to inputs (except actions)
+    const cells = row.querySelectorAll('td');
+    for (let i = 0; i < cells.length - 1; i++) {
+      const text = cells[i].innerText.trim();
+      if (i === 2) {
+        cells[i].innerHTML = `<input type="date" class="form-control" value="${text}">`;
+      } else {
+        cells[i].innerHTML = `<input type="text" class="form-control" value="${text}">`;
+      }
+    }
+    cells[cells.length - 1].innerHTML = `
+      <button class="btn btn-sm btn-success" onclick="saveEditedRow(this)"><i class="fas fa-check"></i></button>
+      <button class="btn btn-sm btn-secondary" onclick="cancelEdit(this)"><i class="fas fa-times"></i></button>
     `;
-    tableBody.appendChild(row);
-
-    form.reset();
-    nutritionArray.length = 0;
-    breedArray.length = 0;
-    document.getElementById("nutritionList").innerHTML = '';
-    document.getElementById("breedList").innerHTML = '';
-  });
-
-  function showModal(data) {
-    document.getElementById("modalTitle").innerText = data.title;
-    document.getElementById("modalDate").innerText = data.date;
-    document.getElementById("modalAge").innerText = data.age;
-    document.getElementById("modalNutrition").innerText = data.nutrition.join(", ");
-    document.getElementById("modalQty").innerText = data.qty;
-    document.getElementById("modalBreed").innerText = data.breed.join(", ");
-    document.getElementById("modalDesc").innerText = data.desc;
-    document.getElementById("guidelineModal").style.display = "flex";
   }
+
+  function saveEditedRow(btn) {
+    const row = btn.closest('tr');
+    const id = row.dataset.id;
+    if (!id) { alert('Missing guideline id'); return; }
+    const inputs = row.querySelectorAll('td input');
+    const payload = {
+      guideline_code: inputs[0].value.trim(),
+      title: inputs[1].value.trim(),
+      issue_date: inputs[2].value,
+      nutritional_intake: inputs[3].value.trim(),
+      issued_by: inputs[4].value.trim()
+    };
+
+    const editAge = confirm('Do you want to edit age ranges for this guideline? (OK = yes)');
+    let age_ranges = null;
+    if (editAge) {
+      const arRaw = prompt('Enter age ranges (format: AgeGroup:Text;Age2:Text2). Leave empty to remove all.');
+      age_ranges = parseAgeRangesFromPrompt(arRaw);
+    }
+
+    fetch(ENDPOINTS.edit, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id: id, guideline: payload, age_ranges: age_ranges })
+    }).then(r => r.json()).then(res => {
+      if (!res.success) {
+        alert('Update failed: ' + (res.message || 'unknown'));
+        return;
+      }
+      fetchGuidelinesAndRender();
+    }).catch(err => {
+      console.error(err);
+      alert('Error updating guideline');
+    });
+  }
+
+  function cancelEdit(btn) {
+    // reload listing to restore original values
+    fetchGuidelinesAndRender();
+  }
+
+  // --- Delete row ---
+  function deleteRow(btn) {
+    if (!confirm('Delete this guideline?')) return;
+    const row = btn.closest('tr');
+    const id = row.dataset.id;
+    fetch(ENDPOINTS.delete, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ id })
+    }).then(r => r.json()).then(res => {
+      if (!res.success) {
+        alert('Delete failed: ' + (res.message || 'unknown'));
+        return;
+      }
+      fetchGuidelinesAndRender();
+    }).catch(err => {
+      console.error(err);
+      alert('Error deleting guideline');
+    });
+  }
+
+  // --- Initialize page: replace fallback static rows with server data ---
+  document.addEventListener('DOMContentLoaded', function () {
+    // fetch from server and render (overwrites fallback rows)
+    fetchGuidelinesAndRender();
+  });
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
+
