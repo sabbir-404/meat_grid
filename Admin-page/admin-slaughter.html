@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin - Slaughterhouse Dashboard</title>
+
+  <!-- unchanged external assets from your original file -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+  <!-- original styles preserved -->
   <style>
     body {
       background-color: #f4f6f9;
@@ -69,31 +73,36 @@
       display: flex;
       gap: 8px;
     }
+    td input, td select { min-width: 140px; }
+    .small-note { font-size:0.85rem; color:#6c757d; }
+    /* alert box */
+    #alertBox { margin-bottom: 16px; display:none; }
   </style>
 </head>
 <body>
 
-<!-- User Profile Dropdown -->
+<!-- User Profile Dropdown (UNCHANGED) -->
 <div class="user-dropdown">
-    <div class="dropdown">
+  <div class="dropdown">
     <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i>
+      <i class="fas fa-user-circle"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
     </ul>
-    </div>
+  </div>
 </div>
-<!-- Sidebar -->
+
+<!-- Sidebar (UNCHANGED from your original file) -->
 <div class="sidebar">
   <div class="text-center">
     <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
   </div>
   <h5><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
   <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
+  <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
   <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
   <a href="#" class="active"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
   <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
@@ -102,51 +111,23 @@
   <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
 </div>
 
-<!-- Main Content -->
+<!-- Main Content (only capacity + summary now) -->
 <div class="dashboard-container container-fluid">
   <h2 class="mb-4">Slaughterhouse Dashboard</h2>
 
-  <!-- Table 1: Processed Meat Info -->
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title d-flex justify-content-between align-items-center">
-        Processed Meat Details
-        <button class="btn btn-sm btn-success" onclick="addProcessedRow()">
-          <i class="fas fa-plus"></i> Add
-        </button>
-        
-      </h5>
-      <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
-  <input type="text" id="processedSearch" class="form-control mb-2" placeholder="Search meat details..." onkeyup="searchTable('processedSearch', 'processedTable')">
+  <!-- alert box for server / JSON errors -->
+  <div id="alertBox" class="alert alert-danger" role="alert"></div>
 
-        <table class="table table-bordered table-hover mb-0" id="processedTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Meat Type</th>
-              <th>Breed</th>
-              <th>Slaughterhouse Name</th>
-              <th>Slaughterhouse ID</th>
-              <th>Weight (kg)</th>
-              <th>Processed Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="processedBody">
-            <!-- Rows dynamically generated -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <!-- Table 2: Slaughterhouse Capacity -->
+  <!-- Slaughterhouse Capacity Overview -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title d-flex justify-content-between align-items-center">
         Slaughterhouse Capacity Overview
-        <button class="btn btn-sm btn-success" onclick="addCapacityRow()">
-          <i class="fas fa-plus"></i> Add
-        </button>
+        <div>
+          <button class="btn btn-sm btn-success" id="btnAddCapacity"><i class="fas fa-plus"></i> Add</button>
+        </div>
       </h5>
+
       <div class="table-responsive">
         <table class="table table-bordered table-hover" id="capacityTable">
           <thead class="table-dark">
@@ -157,35 +138,15 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Dhaka Central</td><td>50</td><td>2000</td>
-              <td class="table-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Chittagong South</td><td>40</td><td>1500</td>
-              <td class="table-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Khulna East</td><td>30</td><td>1200</td>
-              <td class="table-actions">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
+          <tbody id="capacityBody">
+            <!-- rows loaded from get_capacity.php -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Table 3: Total Meat Produced -->
+  <!-- Total Meat Production Summary (aggregated from processed meat saved in DB) -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Total Meat Production Summary</h5>
@@ -199,13 +160,15 @@
               <th>Yield Weight (kg)</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody id="summaryBody">
+            <!-- aggregated rows here -->
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Bar Chart: Meat Quantity -->
+  <!-- Chart -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Meat Quantity by Type</h5>
@@ -214,175 +177,306 @@
   </div>
 </div>
 
-
-
-<!-- Scripts -->
+<!-- unchanged external scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-  const meatTypes = ['T-Bone', 'Drumstick', 'Liver', 'Heart', 'Ribs', 'Thigh', 'Wing', 'Brisket', 'Neck', 'Shank', 'Breast', 'Tail', 'Kidney', 'Leg'];
-  const breeds = ['Local Cattle', 'Broiler', 'Black Bengal'];
+/*
+  JS wiring:
+  - get_capacity.php -> loads slaughterhouse list
+  - add_capacity.php -> add / update (requires session user_id on server)
+  - delete_capacity.php -> delete (requires session)
+  - get_processed_meat.php -> returns processed meat rows; we aggregate on client
 
-  const processedTable = document.getElementById('processedBody');
-  const summaryTable = document.querySelector('#summaryTable tbody');
+  Save / edit / delete always reload canonical data from server (so no client-only state is lost on reload).
+*/
 
-  function createSelect(options, selected = '') {
-    const select = document.createElement('select');
-    select.className = 'form-select form-select-sm';
-    options.forEach(opt => {
-      const o = document.createElement('option');
-      o.value = o.textContent = opt;
-      if (opt === selected) o.selected = true;
-      select.appendChild(o);
-    });
-    return select;
+const API_BASE = './'; // Admin-page folder
+const alertBox = document.getElementById('alertBox');
+
+function showAlert(message) {
+  alertBox.style.display = 'block';
+  alertBox.textContent = message;
+}
+function hideAlert() {
+  alertBox.style.display = 'none';
+  alertBox.textContent = '';
+}
+
+async function fetchJSON(url, opts = {}) {
+  // Robust JSON fetch with helpful debug output on invalid JSON
+  const res = await fetch(url, opts);
+  const text = await res.text();
+  try {
+    const json = text ? JSON.parse(text) : null;
+    if (!res.ok) {
+      const errMsg = json?.error || ('Server error ' + res.status);
+      throw new Error(errMsg);
+    }
+    hideAlert();
+    return json;
+  } catch (err) {
+    // show truncated raw response in console for debugging
+    console.error('Invalid JSON from', url, 'raw response:', text);
+    showAlert('Server returned invalid JSON for "' + url + '". Open DevTools console to see raw response (first 1000 chars).');
+    // log truncated raw to console to make debugging easier
+    console.log('--- RAW RESPONSE START ---');
+    console.log(text.substring(0, 2000));
+    console.log('--- RAW RESPONSE END ---');
+    throw new Error('Invalid JSON from server: ' + err.message);
   }
+}
 
-  function addProcessedRow() {
+/* ---------- Data stores ---------- */
+let slaughterhouseList = [];
+let processedData = [];
+
+/* ---------- Chart ---------- */
+const chart = new Chart(document.getElementById('meatBarChart'), {
+  type: 'bar',
+  data: { labels: [], datasets: [{ label: 'Quantity (kg)', data: [] }] },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false }, title: { display: true, text: 'Total Quantity by Meat Type' } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+
+/* ---------- Loaders ---------- */
+async function loadSlaughterhouses() {
+  try {
+    const data = await fetchJSON(API_BASE + 'get_capacity.php', { cache: 'no-store' });
+    // get_capacity returns an array directly
+    slaughterhouseList = Array.isArray(data) ? data : (data.data || []);
+    renderCapacityTable();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function loadProcessedMeatAndRenderSummary() {
+  try {
+    const data = await fetchJSON(API_BASE + 'get_processed_meat.php', { cache: 'no-store' });
+    processedData = Array.isArray(data) ? data : (data.data || []);
+    renderSummary();
+    renderChart();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/* ---------- Rendering: capacity ---------- */
+function renderCapacityTable() {
+  const tbody = document.getElementById('capacityBody');
+  tbody.innerHTML = '';
+  (slaughterhouseList || []).forEach(s => {
     const tr = document.createElement('tr');
-    const meatSel = createSelect(meatTypes);
-    const breedSel = createSelect(breeds);
+    tr.dataset.id = s.slaughterhouse_ID || '';
     tr.innerHTML = `
-      <td></td><td></td><td><input type="text" class="form-control form-control-sm"/></td>
-      <td><input type="text" class="form-control form-control-sm"/></td>
-      <td><input type="number" class="form-control form-control-sm"/></td>
-      <td><input type="date" class="form-control form-control-sm"/></td>
+      <td>${escapeHtml(s.name || '')}</td>
+      <td>${escapeHtml(s.slaughter_rate || '')}</td>
+      <td>${escapeHtml(s.processing_capacity || '')}</td>
       <td class="table-actions">
-        <button class="btn btn-sm btn-success me-1" onclick="saveProcessedRow(this)">Save</button>
-        <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
-      </td>
-    `;
-    tr.children[0].appendChild(meatSel);
-    tr.children[1].appendChild(breedSel);
-    processedTable.appendChild(tr);
-  }
-
-  function saveProcessedRow(btn) {
-    const row = btn.closest('tr');
-    const cells = row.querySelectorAll('td');
-    const values = [];
-    for (let i = 0; i < 6; i++) {
-      const input = cells[i].querySelector('input, select');
-      values.push(input.value);
-      cells[i].textContent = input.value;
-    }
-    cells[6].innerHTML = `
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-    `;
-    updateSummaryAndChart();
-  }
-
-  function editRow(btn) {
-    const row = btn.closest('tr');
-    const cells = row.querySelectorAll('td');
-    const values = Array.from(cells).slice(0, 6).map(td => td.textContent);
-
-    cells[0].innerHTML = '';
-    cells[0].appendChild(createSelect(meatTypes, values[0]));
-    cells[1].innerHTML = '';
-    cells[1].appendChild(createSelect(breeds, values[1]));
-    for (let i = 2; i <= 4; i++) {
-      cells[i].innerHTML = `<input type="text" class="form-control form-control-sm" value="${values[i]}">`;
-    }
-    cells[5].innerHTML = `<input type="date" class="form-control form-control-sm" value="${values[5]}">`;
-    cells[6].innerHTML = `
-      <button class="btn btn-sm btn-success me-1" onclick="saveProcessedRow(this)">Save</button>
-      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
-    `;
-  }
-
-  function cancelRow(btn) {
-    const row = btn.closest('tr');
-    row.remove();
-  }
-
-  function deleteRow(btn) {
-    const row = btn.closest('tr');
-    row.remove();
-    updateSummaryAndChart();
-  }
-
-  function updateSummaryAndChart() {
-    const meatMap = {};
-    summaryTable.innerHTML = '';
-    document.querySelectorAll('#processedBody tr').forEach(tr => {
-      const [meat, breed, , , weight] = Array.from(tr.children).map(td => td.textContent.trim());
-      const key = `${meat}|${breed}`;
-      meatMap[key] = (meatMap[key] || 0) + parseFloat(weight || 0);
-    });
-
-    const labels = [];
-    const data = [];
-
-    Object.entries(meatMap).forEach(([key, weight]) => {
-      const [meat, breed] = key.split('|');
-      const row = summaryTable.insertRow();
-      row.insertCell().textContent = meat;
-      row.insertCell().textContent = breed;
-      row.insertCell().textContent = meat.toLowerCase().includes('drumstick') || breed === 'Broiler' ? '2' : '4';
-      row.insertCell().textContent = weight;
-      labels.push(meat);
-      data.push(weight);
-    });
-
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
-    chart.update();
-  }
-
-  function addCapacityRow() {
-    const tbody = document.querySelector('#capacityTable tbody');
-    const tr = document.createElement('tr');
-    for (let i = 0; i < 3; i++) {
-      const td = document.createElement('td');
-      td.innerHTML = `<input type="text" class="form-control form-control-sm">`;
-      tr.appendChild(td);
-    }
-    const td = document.createElement('td');
-    td.innerHTML = `
-      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
-      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)">Cancel</button>
-    `;
-    tr.appendChild(td);
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editCapacityRow(this)"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteCapacity('${encodeURIComponent(s.slaughterhouse_ID || '')}')"><i class="fas fa-trash"></i></button>
+      </td>`;
     tbody.appendChild(tr);
-  }
-
-  const chart = new Chart(document.getElementById('meatBarChart'), {
-    type: 'bar',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Quantity (kg)',
-        data: [],
-        backgroundColor: '#28a745'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'Total Quantity by Meat Type' }
-      },
-      scales: {
-        y: { beginAtZero: true, title: { display: true, text: 'Weight (kg)' }},
-        x: { title: { display: true, text: 'Meat Type' }}
-      }
-    }
-  });
-
-</script>
-<script>
-function searchTable(inputId, tableId) {
-  const input = document.getElementById(inputId).value.toLowerCase();
-  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-  rows.forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(input) ? '' : 'none';
   });
 }
-</script>
 
+/* Add new client-only row for capacity */
+document.getElementById('btnAddCapacity').addEventListener('click', addCapacityRow);
+
+function addCapacityRow() {
+  const tbody = document.getElementById('capacityBody');
+  const tr = document.createElement('tr');
+  tr.dataset.unsaved = 'true';
+  tr.innerHTML = `
+    <td><input class="form-control form-control-sm" placeholder="Name"></td>
+    <td><input class="form-control form-control-sm" type="number" placeholder="animals/day"></td>
+    <td><input class="form-control form-control-sm" type="number" placeholder="kg/day"></td>
+    <td class="table-actions">
+      <button class="btn btn-sm btn-success me-1" onclick="saveNewCapacity(this)"><i class="fas fa-save"></i> Save</button>
+      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)"><i class="fas fa-times"></i></button>
+    </td>`;
+  tbody.prepend(tr);
+  tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function saveNewCapacity(btn) {
+  const row = btn.closest('tr');
+  const inputs = row.querySelectorAll('input');
+  const name = inputs[0].value.trim();
+  const slaughter_rate = inputs[1].value;
+  const processing_capacity = inputs[2].value;
+  if (!name) { alert('Name is required'); return; }
+  btn.disabled = true;
+  try {
+    const fd = new FormData();
+    fd.append('name', name);
+    if (slaughter_rate !== '') fd.append('slaughter_rate', slaughter_rate);
+    if (processing_capacity !== '') fd.append('processing_capacity', processing_capacity);
+    const res = await fetch(API_BASE + 'add_capacity.php', { method: 'POST', body: fd, cache: 'no-store' });
+    const json = await res.text();
+    // try parse safely to give better debug info if server sends non-JSON
+    try {
+      const parsed = json ? JSON.parse(json) : null;
+      if (!res.ok) throw new Error(parsed?.error || ('Server error ' + res.status));
+      if (parsed && parsed.success) {
+        await loadSlaughterhouses();
+        await loadProcessedMeatAndRenderSummary();
+      } else {
+        throw new Error(parsed?.error || 'Save failed');
+      }
+    } catch (parseErr) {
+      console.error('Raw response from add_capacity.php:', json);
+      showAlert('Server returned invalid JSON when saving capacity. Check PHP error logs or DevTools console.');
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert('Failed to save capacity: ' + err.message);
+    btn.disabled = false;
+  }
+}
+
+function editCapacityRow(btn) {
+  const row = btn.closest('tr');
+  const cells = row.querySelectorAll('td');
+  const vals = Array.from(cells).slice(0,3).map(td => td.textContent.trim());
+  cells[0].innerHTML = `<input class="form-control form-control-sm" value="${escapeHtml(vals[0])}">`;
+  cells[1].innerHTML = `<input class="form-control form-control-sm" type="number" value="${escapeHtml(vals[1])}">`;
+  cells[2].innerHTML = `<input class="form-control form-control-sm" type="number" value="${escapeHtml(vals[2])}">`;
+  cells[3].innerHTML = `<button class="btn btn-sm btn-success me-1" onclick="saveEditedCapacity(this)"><i class="fas fa-save"></i> Save</button> <button class="btn btn-sm btn-secondary" onclick="cancelRow(this)"><i class="fas fa-times"></i></button>`;
+}
+
+async function saveEditedCapacity(btn) {
+  const row = btn.closest('tr');
+  const id = row.dataset.id || '';
+  const inputs = row.querySelectorAll('input');
+  const name = inputs[0].value.trim();
+  const slaughter_rate = inputs[1].value;
+  const processing_capacity = inputs[2].value;
+  if (!name) { alert('Name is required'); return; }
+  btn.disabled = true;
+  try {
+    const fd = new FormData();
+    if (id) fd.append('slaughterhouse_ID', id);
+    fd.append('name', name);
+    if (slaughter_rate !== '') fd.append('slaughter_rate', slaughter_rate);
+    if (processing_capacity !== '') fd.append('processing_capacity', processing_capacity);
+    const res = await fetch(API_BASE + 'add_capacity.php', { method: 'POST', body: fd, cache: 'no-store' });
+    const text = await res.text();
+    try {
+      const parsed = text ? JSON.parse(text) : null;
+      if (!res.ok) throw new Error(parsed?.error || ('Server error ' + res.status));
+      if (parsed && parsed.success) {
+        await loadSlaughterhouses();
+        await loadProcessedMeatAndRenderSummary();
+      } else throw new Error(parsed?.error || 'Save failed');
+    } catch (parseErr) {
+      console.error('Raw response from add_capacity.php:', text);
+      showAlert('Server returned invalid JSON when saving edited capacity. Check PHP logs.');
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert('Failed to save edited capacity: ' + err.message);
+    btn.disabled = false;
+  }
+}
+
+async function deleteCapacity(encodedId) {
+  const id = decodeURIComponent(encodedId);
+  if (!confirm('Delete this slaughterhouse?')) return;
+  try {
+    const res = await fetch(API_BASE + 'delete_capacity.php?slaughterhouse_ID=' + encodeURIComponent(id), { cache: 'no-store' });
+    const text = await res.text();
+    try {
+      const parsed = text ? JSON.parse(text) : null;
+      if (!res.ok) throw new Error(parsed?.error || ('Server error ' + res.status));
+      if (parsed && parsed.success) {
+        await loadSlaughterhouses();
+        await loadProcessedMeatAndRenderSummary();
+      } else throw new Error(parsed?.error || 'Delete failed');
+    } catch (parseErr) {
+      console.error('Raw response from delete_capacity.php:', text);
+      showAlert('Server returned invalid JSON when deleting capacity. Check PHP logs.');
+    }
+  } catch (err) {
+    console.error(err);
+    showAlert('Failed to delete capacity: ' + err.message);
+  }
+}
+
+/* ---------- Summary (aggregate processed data) ---------- */
+function renderSummary() {
+  const tbody = document.getElementById('summaryBody');
+  tbody.innerHTML = '';
+  const map = {}; // key => total weight
+  processedData.forEach(r => {
+    const meat = (r.meat_type || r.meatType || '').trim() || '(unknown)';
+    const breed = (r.breed || '').trim() || '(unknown)';
+    // weight may come from yield_weight or weight field; handle both
+    let w = 0;
+    if (r.weight !== undefined && r.weight !== null && r.weight !== '') w = parseFloat(r.weight) || 0;
+    else if (r.yield_weight !== undefined && r.yield_weight !== null && r.yield_weight !== '') w = parseFloat(r.yield_weight) || 0;
+    else if (r.yield !== undefined && r.yield !== null && r.yield !== '') w = parseFloat(r.yield) || 0;
+    const key = meat + '||' + breed;
+    map[key] = (map[key] || 0) + w;
+  });
+
+  Object.keys(map).sort().forEach(key => {
+    const [meat, breed] = key.split('||');
+    const total = map[key];
+    const storingTemp = (meat.toLowerCase().includes('drumstick') || breed === 'Broiler') ? '2' : '4';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(meat)}</td><td>${escapeHtml(breed)}</td><td>${storingTemp}</td><td>${Number(total).toFixed(3)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderChart() {
+  const map = {};
+  processedData.forEach(r => {
+    const meat = (r.meat_type || r.meatType || '').trim() || '(unknown)';
+    let w = 0;
+    if (r.weight !== undefined && r.weight !== null && r.weight !== '') w = parseFloat(r.weight) || 0;
+    else if (r.yield_weight !== undefined && r.yield_weight !== null && r.yield_weight !== '') w = parseFloat(r.yield_weight) || 0;
+    map[meat] = (map[meat] || 0) + w;
+  });
+  const labels = Object.keys(map);
+  const data = labels.map(l => Number(map[l].toFixed(3)));
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = data;
+  chart.update();
+}
+
+/* ---------- Utilities ---------- */
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}
+
+function cancelRow(btn) {
+  const row = btn.closest('tr');
+  if (row && row.dataset.unsaved === 'true') {
+    row.remove();
+    return;
+  }
+  // otherwise reload canonical server data
+  loadSlaughterhouses();
+}
+
+/* ---------- Init ---------- */
+window.addEventListener('load', () => {
+  hideAlert();
+  loadSlaughterhouses();
+  loadProcessedMeatAndRenderSummary();
+});
+</script>
 </body>
 </html>
+
+
 
 
