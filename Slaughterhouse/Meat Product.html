@@ -7,89 +7,36 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <style>
-    body {
-      background-color: #f4f6f9;
-    }
-    .sidebar {
-      width: 250px;
-      height: 100vh;
-      background: #343a40;
-      color: white;
-      position: fixed;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar a {
-      padding: 12px 20px;
-      color: #ccc;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      border-left: 3px solid transparent;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      color: white;
-      background-color: #495057;
-      font-weight: bold;
-      border-left: 3px solid #fff;
-    }
-    .dashboard-container {
-      margin-left: 270px;
-      padding: 30px;
-    }
-    .table-wrapper {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    footer {
-      background: #343a40;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-left: 270px;
-      margin-top: 20px;
-    }
-    .form-section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    .dashboard-container {
-    margin-left: 270px;
-    padding: 30px;
-    width: calc(100% - 270px);
-}
-      .user-dropdown {
-      z-index: 9999 !important;
-      position: fixed;
-      top: 20px;
-      right: 30px;
-    }
-    .dropdown-menu {
-      z-index: 9999 !important;
-    }
-    .action-buttons button { margin-right: 5px; }
-    .top-right-btn { float:right; margin-bottom:10px; }
+    body { background-color: #f4f6f9; }
+    .sidebar { width: 250px; height: 100vh; background: #343a40; color: white; position: fixed; padding: 20px 0; display: flex; flex-direction: column; }
+    .sidebar a { padding: 12px 20px; color: #ccc; text-decoration: none; display: flex; align-items: center; border-left: 3px solid transparent; }
+    .sidebar a:hover, .sidebar a.active { color: white; background-color: #495057; font-weight: bold; border-left: 3px solid #fff; }
+    .dashboard-container { margin-left: 270px; padding: 30px; width: calc(100% - 270px); }
+    .table-wrapper { max-height: 360px; overflow-y: auto; }
+    .form-section { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .user-dropdown { z-index: 9999 !important; position: fixed; top: 20px; right: 30px; }
+    .dropdown-menu { z-index: 9999 !important; }
+    td input[type="number"] { width: 110px; }
+    .small-note { font-size: .85rem; color: #6c757d; }
   </style>
 </head>
 <body>
+
 <!-- User Profile Dropdown -->
 <div class="user-dropdown">
-    <div class="dropdown">
+  <div class="dropdown">
     <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i>
+      <i class="fas fa-user-circle"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
     </ul>
-    </div>
+  </div>
 </div>
-<!-- Sidebar -->
+
+<!-- Sidebar (unchanged) -->
 <div class="sidebar">
   <div class="text-center mb-3">
     <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
@@ -102,89 +49,78 @@
   <a href="Analyst Feedback.html"><i class="fas fa-comment-alt me-2"></i>Analyst Feedback</a>
 </div>
 
-<!-- Dashboard Container -->
+<!-- Main -->
 <div class="dashboard-container container-fluid">
   <h2 class="mb-4">Meat Product Information</h2>
 
-  <!-- Input Form -->
+  <!-- Form -->
   <div class="form-section">
-    <h5>Enter New Meat Product</h5>
-    <form id="meatForm" class="row g-3">
+    <h5>Enter New Meat Product <span class="small-note">(stored in <code>meat_product</code>)</span></h5>
+    <form id="meatForm" class="row g-3" autocomplete="off">
       <div class="col-md-2">
         <label class="form-label">Product ID</label>
-        <input type="text" id="productID" class="form-control" required>
+        <input type="text" id="productID" name="product_ID" class="form-control" required>
       </div>
+
       <div class="col-md-2">
         <label class="form-label">Meat Type</label>
-        <select id="meatType" class="form-select" required>
-          <option value="">Select</option>
-          <option value="T-Bone">T-Bone</option>
-          <option value="Drumstick">Drumstick</option>
-          <option value="Liver">Liver</option>
-          <option value="Ribs">Ribs</option>
-          <option value="Wing">Wing</option>
-        </select>
+        <input type="text" id="meatType" name="meat_type" class="form-control" required>
       </div>
+
       <div class="col-md-2">
         <label class="form-label">Yield Weight (kg)</label>
-        <input type="number" id="yieldWeight" class="form-control" required>
+        <input type="number" step="0.001" id="yieldWeight" name="yield_weight" class="form-control" required>
       </div>
+
       <div class="col-md-2">
         <label class="form-label">Processing Date</label>
-        <!-- Auto-filled with today, disabled -->
-        <input type="text" id="processingDate" class="form-control" readonly>
+        <input type="date" id="processingDate" name="processing_date" class="form-control" required>
       </div>
+
       <div class="col-md-2">
         <label class="form-label">Storage Temp (°C)</label>
-        <input type="number" id="storageTemp" class="form-control" required>
+        <input type="number" step="0.01" id="storageTemp" name="storage_temperature" class="form-control" required>
       </div>
+
       <div class="col-md-2 d-flex align-items-end">
         <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Add</button>
       </div>
     </form>
+
+    <div id="formMessage" style="display:none;" class="mt-2"></div>
   </div>
 
   <!-- Search -->
-  <input class="form-control mb-2" type="text" placeholder="Search product..." onkeyup="filterTable(this, 'productTable')">
+  <input class="form-control mb-2" id="productSearch" type="text" placeholder="Search product..." onkeyup="filterTable(this, 'productTable')">
 
-  <!-- Table 1: Product Info -->
+  <!-- Products Table -->
   <div class="card mb-4">
     <div class="card-body">
-      <h5 class="card-title">Meat Products Entered</h5>
+      <h5 class="card-title d-flex justify-content-between align-items-center">
+        Meat Products Entered
+        <small class="text-muted">List from database</small>
+      </h5>
       <div class="table-wrapper">
         <table class="table table-bordered table-hover" id="productTable">
           <thead class="table-dark">
             <tr>
               <th>Product ID</th>
               <th>Meat Type</th>
-              <th>Yield Weight</th>
+              <th>Yield Weight (kg)</th>
               <th>Processing Date</th>
-              <th>Storage Temp</th>
+              <th>Storage Temp (°C)</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="productBody">
-            <tr>
-              <td>P001</td><td>T-Bone</td><td>50</td><td>2025-07-17</td><td>4</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>P002</td><td>Drumstick</td><td>60</td><td>2025-07-17</td><td>2</td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
+            <!-- Filled by JS -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Table 2: Meat Type Summary -->
+  <!-- Summary Table -->
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Total Meat Type Summary</h5>
@@ -197,8 +133,8 @@
               <th>Total Weight (kg)</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Filled dynamically -->
+          <tbody id="summaryBody">
+            <!-- Filled by JS -->
           </tbody>
         </table>
       </div>
@@ -207,136 +143,178 @@
 
 </div>
 
-
-
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const productBody = document.getElementById("productBody");
-  const summaryTable = document.querySelector("#summaryTable tbody");
+/* Configuration: endpoints placed in Slaughterhouse folder */
+const API_PREFIX = '../Slaughterhouse/';
 
-  // Auto-fill processing date
-  document.getElementById("processingDate").value = new Date().toISOString().split("T")[0];
+const productBody = document.getElementById('productBody');
+const summaryBody = document.getElementById('summaryBody');
+const formMessage = document.getElementById('formMessage');
+const meatForm = document.getElementById('meatForm');
 
-  // Form Submit
-  document.getElementById("meatForm").addEventListener("submit", function(e){
-    e.preventDefault();
+function showMessage(text, ok = true) {
+  formMessage.style.display = 'block';
+  formMessage.className = ok ? 'alert alert-success' : 'alert alert-danger';
+  formMessage.textContent = text;
+  setTimeout(()=> formMessage.style.display = 'none', 3500);
+}
+function escapeHtml(s){ if (s==null) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
 
-    const pid = document.getElementById("productID").value.trim();
-    const type = document.getElementById("meatType").value;
-    const weight = document.getElementById("yieldWeight").value;
-    const date = document.getElementById("processingDate").value; // fixed system date
-    const temp = document.getElementById("storageTemp").value;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${pid}</td>
-      <td>${type}</td>
-      <td>${weight}</td>
-      <td>${date}</td>
-      <td>${temp}</td>
-      <td>
-        <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-        <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-      </td>
-    `;
-    productBody.appendChild(row);
-
+/* Load products from DB and render table */
+async function loadProducts(){
+  try {
+    const res = await fetch(API_PREFIX + 'get_meat_products.php', {cache:'no-store'});
+    const data = await res.json();
+    productBody.innerHTML = '';
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.dataset.id = row.product_ID;
+      tr.innerHTML = `
+        <td>${escapeHtml(row.product_ID)}</td>
+        <td>${escapeHtml(row.meat_type)}</td>
+        <td>${row.yield_weight !== null ? Number(row.yield_weight).toFixed(3) : ''}</td>
+        <td>${escapeHtml(row.processing_date)}</td>
+        <td>${row.storage_temperature !== null ? Number(row.storage_temperature).toFixed(2) : ''}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="startEdit(this)"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${encodeURIComponent(row.product_ID)}')"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+      productBody.appendChild(tr);
+    });
     updateSummary();
-    this.reset();
-    // Reset date to system date again
-    document.getElementById("processingDate").value = new Date().toISOString().split("T")[0];
+  } catch (err) {
+    console.error('loadProducts error', err);
+    showMessage('Failed to load products (open console).', false);
+  }
+}
+
+/* Add product via POST to PHP */
+meatForm.addEventListener('submit', async function(e){
+  e.preventDefault();
+  const fd = new FormData(meatForm);
+  try {
+    const res = await fetch(API_PREFIX + 'add_meat_product.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (json.success) {
+      showMessage('Product added');
+      meatForm.reset();
+      document.getElementById('processingDate').value = new Date().toISOString().slice(0,10);
+      loadProducts();
+    } else {
+      showMessage(json.error || 'Add failed', false);
+    }
+  } catch (err) {
+    console.error('add error', err);
+    showMessage('Server error when adding product', false);
+  }
+});
+
+/* Delete */
+async function deleteProduct(encodedID){
+  const id = decodeURIComponent(encodedID);
+  if (!confirm('Delete product ' + id + '?')) return;
+  try {
+    const body = new URLSearchParams(); body.append('product_ID', id);
+    const res = await fetch(API_PREFIX + 'delete_meat_product.php', { method: 'POST', body: body });
+    const json = await res.json();
+    if (json.success) {
+      showMessage('Deleted');
+      loadProducts();
+    } else showMessage(json.error || 'Delete failed', false);
+  } catch (err) {
+    console.error('delete error', err);
+    showMessage('Server error when deleting', false);
+  }
+}
+
+/* Start inline edit - product_ID is not editable */
+function startEdit(btn){
+  const tr = btn.closest('tr');
+  const cells = tr.querySelectorAll('td');
+  const id = tr.dataset.id;
+
+  const meatType = cells[1].textContent.trim();
+  const yieldWeight = cells[2].textContent.trim();
+  const processingDate = cells[3].textContent.trim();
+  const storageTemp = cells[4].textContent.trim();
+
+  cells[1].innerHTML = `<input class="form-control form-control-sm" name="meat_type" value="${escapeHtml(meatType)}">`;
+  cells[2].innerHTML = `<input class="form-control form-control-sm" name="yield_weight" type="number" step="0.001" value="${escapeHtml(yieldWeight)}">`;
+  cells[3].innerHTML = `<input class="form-control form-control-sm" name="processing_date" type="date" value="${escapeHtml(processingDate)}">`;
+  cells[4].innerHTML = `<input class="form-control form-control-sm" name="storage_temperature" type="number" step="0.01" value="${escapeHtml(storageTemp)}">`;
+  cells[5].innerHTML = `
+    <button class="btn btn-sm btn-success me-1" onclick="saveEdit('${encodeURIComponent(id)}', this)"><i class="fas fa-save"></i></button>
+    <button class="btn btn-sm btn-secondary" onclick="cancelEdit('${encodeURIComponent(id)}')"><i class="fas fa-times"></i></button>
+  `;
+}
+
+/* Save edit */
+async function saveEdit(encodedID, btn){
+  const id = decodeURIComponent(encodedID);
+  const tr = btn.closest('tr');
+  const meat_type = tr.querySelector('input[name="meat_type"]').value;
+  const yield_weight = tr.querySelector('input[name="yield_weight"]').value;
+  const processing_date = tr.querySelector('input[name="processing_date"]').value;
+  const storage_temperature = tr.querySelector('input[name="storage_temperature"]').value;
+
+  const body = new URLSearchParams();
+  body.append('product_ID', id);
+  body.append('meat_type', meat_type);
+  body.append('yield_weight', yield_weight);
+  body.append('processing_date', processing_date);
+  body.append('storage_temperature', storage_temperature);
+
+  try {
+    const res = await fetch(API_PREFIX + 'update_meat_product.php', { method: 'POST', body: body });
+    const json = await res.json();
+    if (json.success) {
+      showMessage('Updated');
+      loadProducts();
+    } else showMessage(json.error || 'Update failed', false);
+  } catch (err) {
+    console.error('update error', err);
+    showMessage('Server error when updating', false);
+  }
+}
+
+/* Cancel edit: reload row by reloading whole table (simple & safe) */
+function cancelEdit(){
+  loadProducts();
+}
+
+/* Summary */
+async function updateSummary(){
+  try {
+    const res = await fetch(API_PREFIX + 'get_meat_summary.php', {cache:'no-store'});
+    const data = await res.json();
+    summaryBody.innerHTML = '';
+    data.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${escapeHtml(r.meat_type)}</td><td>${r.total_count}</td><td>${Number(r.total_weight).toFixed(3)}</td>`;
+      summaryBody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error('summary error', err);
+  }
+}
+
+/* Search utility */
+function filterTable(input, tableId){
+  const filter = input.value.toLowerCase();
+  document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=> {
+    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
   });
+}
 
-  // Update Meat Type Summary
-  function updateSummary(){
-    const counts = {};
-    const weights = {};
-
-    productBody.querySelectorAll("tr").forEach(tr=>{
-      const meat = tr.children[1].textContent.trim();
-      const weight = parseFloat(tr.children[2].textContent.trim()) || 0;
-      counts[meat] = (counts[meat] || 0) + 1;
-      weights[meat] = (weights[meat] || 0) + weight;
-    });
-
-    summaryTable.innerHTML = "";
-    Object.keys(counts).forEach(type=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${type}</td><td>${counts[type]}</td><td>${weights[type]}</td>`;
-      summaryTable.appendChild(tr);
-    });
-  }
-
-  // Filter
-  function filterTable(input, tableId){
-    const filter = input.value.toLowerCase();
-    document.querySelectorAll(`#${tableId} tbody tr`).forEach(row=>{
-      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
-    });
-  }
-
-  // Edit Row (but keep Processing Date fixed)
-  function editRow(btn){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    const original = [];
-
-    for(let i=0; i<5; i++){
-      original.push(cells[i].textContent.trim());
-      if(i === 3){ 
-        // Processing Date is fixed, not editable
-        continue;
-      }
-      let input = document.createElement("input");
-      input.className = "form-control";
-      input.value = cells[i].textContent.trim();
-      cells[i].innerHTML = "";
-      cells[i].appendChild(input);
-    }
-
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-success me-1" onclick="saveRow(this)">Save</button>
-      <button class="btn btn-sm btn-secondary" onclick='cancelRow(this, ${JSON.stringify(original)})'>Cancel</button>
-    `;
-  }
-
-  function saveRow(btn){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    for(let i=0; i<5; i++){
-      if(i === 3){ 
-        // Processing date stays same
-        continue;
-      }
-      cells[i].textContent = cells[i].querySelector("input")?.value || cells[i].textContent;
-    }
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-    `;
-    updateSummary();
-  }
-
-  function cancelRow(btn, data){
-    const row = btn.closest("tr");
-    const cells = row.querySelectorAll("td");
-    for(let i=0; i<5; i++){
-      cells[i].textContent = data[i];
-    }
-    cells[5].innerHTML = `
-      <button class="btn btn-sm btn-outline-primary me-1" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-      <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-    `;
-  }
-
-  function deleteRow(btn){
-    btn.closest("tr").remove();
-    updateSummary();
-  }
-
-  updateSummary(); // Initial call
+/* Init */
+window.addEventListener('load', () => {
+  document.getElementById('processingDate').value = new Date().toISOString().slice(0,10);
+  loadProducts();
+});
 </script>
-
 </body>
 </html>
+
