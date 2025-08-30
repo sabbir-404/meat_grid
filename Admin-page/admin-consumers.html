@@ -4,208 +4,255 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Customer Feedback - Admin Panel</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    body {
-      background-color: #f4f6f9;
-    }
-  .dashboard-container {
-  margin-left: 270px;  /* Space for sidebar + margin */
-  padding: 30px;
-  width: calc(100% - 270px);
-  position: relative;
-  z-index: 1;
-}
+    body { background-color: #f4f6f9; }
     .sidebar {
-      width: 250px;
-      height: 100vh;
-      background: #343a40;
-      color: white;
-      position: fixed;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
+      width: 250px; height: 100vh; background: #343a40; color: white; position: fixed;
+      padding: 20px 0; display:flex; flex-direction:column;
     }
-    .sidebar a {
-      padding: 12px 20px;
-      color: #ccc;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      border-left: 3px solid transparent;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      color: white;
-      background-color: #495057;
-      font-weight: bold;
-      border-left: 3px solid #fff;
-    }
-    .dashboard-container {
-      margin-left: 270px;
-      padding: 30px;
-    }
-    .table-wrapper {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .user-dropdown {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  z-index: 9999;
-}
+    .sidebar a { padding:12px 20px; color:#ccc; text-decoration:none; display:flex; align-items:center; border-left:3px solid transparent; }
+    .sidebar a:hover, .sidebar a.active { color:white; background:#495057; font-weight:bold; border-left:3px solid #fff; }
+    .dashboard-container { margin-left:270px; padding:30px; width:calc(100% - 270px); }
+    .table-wrapper { max-height:360px; overflow:auto; }
+    .user-dropdown { position: fixed; top: 20px; right: 30px; z-index:9999; }
+    .small-muted { color:#6c757d; font-size:.9rem; }
+    .btn-delete { min-width:90px; }
   </style>
 </head>
 <body>
-<!-- User Profile Dropdown -->
-<div class="user-dropdown">
+  <!-- User Profile Dropdown -->
+  <div class="user-dropdown">
     <div class="dropdown">
-    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-user-circle"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end">
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
         <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
+        <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
-    </ul>
-    </div>
-</div>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="text-center mb-3">
-    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
-  </div>
-  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
-  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
-  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
-  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
-  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
-  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
-  <a href="#" class="active"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
-  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
-</div>
-
-<!-- Main Content -->
-<div class="dashboard-container container-fluid">
-  <h2 class="mb-4">Customer Feedback & Opinions</h2>
-
-  <!-- Chart 1: Rating by Meat Product -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Average Rating by Meat Product</h5>
-      <canvas id="ratingBarChart" style="max-height: 300px;"></canvas>
+      </ul>
     </div>
   </div>
 
-  <!-- Chart 2: Score Distribution Pie Chart -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Overall Rating Distribution</h5>
-      <canvas id="ratingPieChart" style="max-height: 300px;"></canvas>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="text-center mb-3">
+      <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width:100px;">
     </div>
+    <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+    <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+    <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
+    <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+    <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+    <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+    <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+    <a href="#" class="active"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+    <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
   </div>
 
-  <!-- Feedback Table -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Customer Feedback Submissions</h5>
-      <input class="form-control mb-2" type="text" placeholder="Search feedback..." onkeyup="filterTable(this, 'feedbackTable')">
-      <div class="table-wrapper">
-        <table class="table table-bordered table-hover" id="feedbackTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Feedback ID</th>
-              <th>Meat Product</th>
-              <th>Score</th>
-              <th>Comment</th>
-              <th>Submitted Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>FB001</td><td>Drumstick</td><td>5</td><td>Excellent quality!</td><td>2025-07-10</td></tr>
-            <tr><td>FB002</td><td>T-Bone</td><td>4</td><td>Tender and juicy, loved it.</td><td>2025-07-10</td></tr>
-            <tr><td>FB003</td><td>Liver</td><td>3</td><td>Average, could be better.</td><td>2025-07-11</td></tr>
-            <tr><td>FB004</td><td>Ribs</td><td>2</td><td>Too fatty.</td><td>2025-07-12</td></tr>
-            <tr><td>FB005</td><td>Heart</td><td>1</td><td>Not fresh, disappointed.</td><td>2025-07-12</td></tr>
-            <tr><td>FB006</td><td>Drumstick</td><td>4</td><td>Taste was good but oily.</td><td>2025-07-13</td></tr>
-            <tr><td>FB007</td><td>Liver</td><td>5</td><td>Perfect texture and flavor.</td><td>2025-07-13</td></tr>
-            <tr><td>FB008</td><td>T-Bone</td><td>5</td><td>Fantastic cut, great marbling.</td><td>2025-07-13</td></tr>
-          </tbody>
-        </table>
+  <!-- Main Content -->
+  <div class="dashboard-container container-fluid">
+    <h2 class="mb-2">Customer Feedback & Opinions</h2>
+    <div class="small-muted mb-3">Feedback entries are loaded from the database. Admins can delete inappropriate or test entries here.</div>
+
+    <!-- Charts -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Average Rating by Product</h5>
+            <canvas id="ratingBarChart" style="max-height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Rating Distribution</h5>
+            <canvas id="ratingPieChart" style="max-height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Table -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title d-flex justify-content-between align-items-center">
+          Customer Feedback Submissions
+          <input id="feedbackSearch" class="form-control form-control-sm w-50" type="text" placeholder="Search feedback..." />
+        </h5>
+
+        <div class="table-wrapper">
+          <table class="table table-bordered table-hover" id="feedbackTable">
+            <thead class="table-dark">
+              <tr>
+                <th>Feedback ID</th>
+                <th>Meat Product</th>
+                <th>Score</th>
+                <th>Comment</th>
+                <th>Submitted Date</th>
+                <th style="width:120px">Action</th>
+              </tr>
+            </thead>
+            <tbody id="feedbackBody">
+              <!-- filled dynamically -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Scripts -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+(function(){
+  const feedbackBody = document.getElementById('feedbackBody');
+  const searchInput = document.getElementById('feedbackSearch');
+  let feedbackData = [];
 
-  function filterTable(input, tableId) {
-    const filter = (input.value || '').toLowerCase();
-    // use a proper template literal for the selector
-    const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-    rows.forEach(row => {
-      row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+  // Fetch feedback from server
+  async function fetchFeedback() {
+    try {
+      const res = await fetch('get_feedback.php');
+      if (!res.ok) throw new Error('Network response not ok');
+      feedbackData = await res.json();
+      renderTable(feedbackData);
+      renderCharts(feedbackData);
+    } catch (err) {
+      console.error('Failed to load feedback:', err);
+      feedbackBody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Failed to load feedback</td></tr>';
+    }
+  }
+
+  // render table
+  function renderTable(data) {
+    if (!data || data.length === 0) {
+      feedbackBody.innerHTML = '<tr><td colspan="6" class="text-center">No feedback yet</td></tr>';
+      return;
+    }
+    feedbackBody.innerHTML = '';
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${escapeHtml(row.feedback_ID)}</td>
+        <td>${escapeHtml(row.product_name || row.product_ID || '')}</td>
+        <td>${escapeHtml(row.score)}</td>
+        <td>${escapeHtml(row.comment || '')}</td>
+        <td>${escapeHtml(row.submitted_date || '')}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger btn-delete" onclick="deleteFeedback('${encodeURIComponent(row.feedback_ID)}')"><i class="fas fa-trash"></i> Delete</button>
+        </td>
+      `;
+      feedbackBody.appendChild(tr);
     });
   }
 
-  // Example: if you want to wire an input to filterTable:
-  // const myInput = document.getElementById('myFilterInput');
-  // myInput.addEventListener('input', () => filterTable(myInput, 'myTableId'));
+  // render charts
+  let barChart = null, pieChart = null;
+  function renderCharts(data) {
+    // if no data reset charts
+    if (!data || data.length === 0) {
+      if (barChart) { barChart.destroy(); barChart = null; }
+      if (pieChart) { pieChart.destroy(); pieChart = null; }
+      return;
+    }
 
-  // Create charts only if their canvas elements exist
-  const barCanvas = document.getElementById('ratingBarChart');
-  if (barCanvas) {
-    new Chart(barCanvas, {
+    // Average rating per product
+    const map = {};
+    data.forEach(r => {
+      const p = r.product_name || r.product_ID || 'Unknown';
+      if (!map[p]) map[p] = [];
+      map[p].push(Number(r.score) || 0);
+    });
+    const productLabels = Object.keys(map);
+    const avgRatings = productLabels.map(p => {
+      const arr = map[p];
+      return arr.reduce((a,b)=>a+b,0) / arr.length;
+    });
+
+    // Score distribution
+    const dist = [0,0,0,0,0];
+    data.forEach(r => {
+      const s = Math.round(Number(r.score) || 0);
+      if (s >=1 && s <=5) dist[s-1] += 1;
+    });
+
+    // Bar chart
+    const barCtx = document.getElementById('ratingBarChart');
+    if (barChart) barChart.destroy();
+    barChart = new Chart(barCtx, {
       type: 'bar',
-      data: {
-        labels: ['Drumstick', 'T-Bone', 'Liver', 'Ribs', 'Heart'],
-        datasets: [{
-          label: 'Average Rating',
-          data: [4.5, 4.5, 4, 2, 1],
-          backgroundColor: ['#0d6efd', '#20c997', '#ffc107', '#fd7e14', '#dc3545']
-        }]
-      },
-      options: {
-        plugins: {
-          title: { display: true, text: 'Average Customer Rating per Meat Product' },
-          legend: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 5,
-            title: { display: true, text: 'Rating (1–5)' }
-          }
-        }
-      }
+      data: { labels: productLabels, datasets: [{ label: 'Avg rating', data: avgRatings, backgroundColor: '#0d6efd' }] },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero:true, max:5 } } }
     });
-  }
 
-  const pieCanvas = document.getElementById('ratingPieChart');
-  if (pieCanvas) {
-    new Chart(pieCanvas, {
+    // Pie chart
+    const pieCtx = document.getElementById('ratingPieChart');
+    if (pieChart) pieChart.destroy();
+    pieChart = new Chart(pieCtx, {
       type: 'pie',
-      data: {
-        labels: ['5 - Excellent', '4 - Good', '3 - Average', '2 - Poor', '1 - Bad'],
-        datasets: [{
-          data: [3, 2, 1, 1, 1],
-          backgroundColor: ['#198754', '#0dcaf0', '#ffc107', '#fd7e14', '#dc3545']
-        }]
-      },
-      options: {
-        plugins: {
-          title: { display: true, text: 'Feedback Score Distribution' }
-        }
-      }
+      data: { labels: ['1','2','3','4','5'], datasets: [{ data: dist, backgroundColor: ['#dc3545','#fd7e14','#ffc107','#0dcaf0','#198754'] }] }
     });
   }
 
-});
+  // delete feedback - called from inline onclick
+  window.deleteFeedback = async function(encodedId) {
+    const feedbackID = decodeURIComponent(encodedId);
+    if (!confirm('Delete feedback ' + feedbackID + ' ?')) return;
+    try {
+      const res = await fetch('delete_feedback.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback_ID: feedbackID })
+      });
+      const json = await res.json();
+      if (json.success) {
+        // reload local data and charts
+        feedbackData = feedbackData.filter(r => String(r.feedback_ID) !== String(feedbackID));
+        renderTable(feedbackData);
+        renderCharts(feedbackData);
+      } else {
+        alert('Failed to delete: ' + (json.message || 'unknown'));
+      }
+    } catch (err) {
+      console.error(err); alert('Delete request failed');
+    }
+  };
+
+  // search filter
+  searchInput.addEventListener('input', () => {
+    const q = (searchInput.value || '').toLowerCase().trim();
+    if (!q) renderTable(feedbackData);
+    else {
+      const filtered = feedbackData.filter(r => (Object.values(r).join(' ') || '').toLowerCase().includes(q));
+      renderTable(filtered);
+    }
+  });
+
+  // small helpers
+  function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  // initial load
+  fetchFeedback();
+
+})();
 </script>
+</body>
+</html>
+
