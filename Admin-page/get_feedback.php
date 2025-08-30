@@ -1,39 +1,36 @@
 <?php
-// Admin-page/get_feedback.php
-header('Content-Type: application/json; charset=utf-8');
-require_once __DIR__ . '/../Project-root/db_connect.php';
+require_once "../Project-root/db_connect.php";
 
-// Select feedback rows and try to resolve product name from either meat_product or processed_product
+header('Content-Type: application/json');
+
+// Join feedback with consumer and processed_product
 $sql = "
-  SELECT
-    f.feedback_ID,
-    f.consumer_ID,
-    f.product_ID,
-    COALESCE(mp.meat_type, pp.name, f.product_ID) AS product_name,
-    f.score,
-    f.comment,
-    f.submitted_date
-  FROM feedback f
-  LEFT JOIN meat_product mp ON f.product_ID = mp.product_ID
-  LEFT JOIN processed_product pp ON f.product_ID = pp.sku
-  ORDER BY f.submitted_date DESC, f.feedback_ID DESC
+    SELECT
+        f.feedback_ID,
+        c.name AS consumer_name,
+        p.name AS product_name,
+        f.score,
+        f.comment,
+        f.submitted_date
+    FROM feedback f
+    LEFT JOIN consumer c ON f.consumer_ID = c.consumer_ID
+    LEFT JOIN processed_product p ON f.product_ID = p.sku
+    ORDER BY f.submitted_date DESC
 ";
 
-if (!$res = $conn->query($sql)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'DB query failed: '.$conn->error]);
-    exit;
-}
+$result = $conn->query($sql);
 
-$out = [];
-while ($row = $res->fetch_assoc()) {
-    // Normalise date format
-    if (!empty($row['submitted_date'])) {
-        $row['submitted_date'] = date('Y-m-d', strtotime($row['submitted_date']));
+$feedbacks = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $feedbacks[] = $row;
     }
-    $out[] = $row;
 }
 
-echo json_encode($out);
+echo json_encode(["success" => true, "data" => $feedbacks]);
+
 $conn->close();
+?>
+
+
 
