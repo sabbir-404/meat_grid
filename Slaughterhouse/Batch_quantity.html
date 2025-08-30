@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Batch Quantity - Slaughterhouse</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <style>
+    body { background-color: #f4f6f9; }
+    .sidebar { width: 250px; height: 100vh; background: #343a40; color: white; position: fixed; padding: 20px 0; display: flex; flex-direction: column; }
+    .sidebar a { padding: 12px 20px; color: #ccc; text-decoration: none; display: flex; align-items: center; border-left: 3px solid transparent; }
+    .sidebar a:hover, .sidebar a.active { color: white; background-color: #495057; font-weight: bold; border-left: 3px solid #fff; }
+    .dashboard-container { margin-left: 270px; padding: 30px; width: calc(100% - 270px); }
+    .table-wrapper { max-height: 250px; overflow-y: auto; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 9999; }
+    .modal-box { background: white; padding: 25px; border-radius: 8px; max-width: 700px; width: 90%; max-height: 80%; overflow-y: auto; position: relative; }
+    .close-btn { position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; }
+    html, body { height: 100%; margin: 0; display: flex; flex-direction: column; }
+    .user-dropdown { z-index: 9999 !important; position: fixed; top: 20px; right: 30px; }
+    .dropdown-menu { z-index: 9999 !important; }
+    .action-buttons button { margin-right: 5px; }
+    .top-right-btn { float:right; margin-bottom:10px; }
+    .small-note { font-size:.85rem; color:#6c757d; }
+  </style>
+</head>
+<body>
+<!-- User Profile Dropdown -->
+<div class="user-dropdown">
+  <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-user-circle"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="../Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Slaughterhouse Panel</h5>
+  <a href="Dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="Meat Product.html"><i class="fas fa-drumstick-bite me-2"></i>Meat Product Info</a>
+  <a href="batch-quantity.html" class="active"><i class="fas fa-boxes me-2"></i>Batch Quantity</a>
+  <a href="livestock.html"><i class="fas fa-cow me-2"></i>Livestock Info</a>
+  <a href="feedback.html"><i class="fas fa-comments me-2"></i>Analyst Feedback</a>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Batch Quantity Management</h2>
+
+  <!-- Batch Creation Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Create a New Batch <span class="small-note">— select meat products created previously</span></h5>
+
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label>Batch ID</label>
+          <input type="text" class="form-control" id="batchID" placeholder="Enter Batch ID">
+        </div>
+        <div class="col-md-3">
+          <label>Meat Type</label>
+          <select class="form-select" id="meatTypeSelect">
+            <option value="">Select Meat Type</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label>Processing Date</label>
+          <select class="form-select" id="processDateSelect">
+            <option value="">Select Date</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" id="loadProductsBtn">Load Products</button>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-md-3">
+          <label>Batch Price (BDT per kg)</label>
+          <input type="number" step="0.01" class="form-control" id="batchPrice" placeholder="Optional — override product price">
+        </div>
+        <div class="col-md-3">
+          <label>Expiry Date (optional)</label>
+          <input type="date" class="form-control" id="batchExpiry">
+        </div>
+        <div class="col-md-6 d-flex align-items-end justify-content-end">
+          <small class="text-muted">Price is saved per batch (price_per_kg). If left empty, product's `price_per_kg` from `meat_product` will be used.</small>
+        </div>
+      </div>
+
+      <!-- Product Selection List -->
+      <div id="productSelection" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="mb-0">Available Products</h6>
+          <div>
+            <input type="checkbox" id="selectAllCheckbox"> <label for="selectAllCheckbox">Select All</label>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="table table-bordered table-hover" id="availableProductsTable">
+            <thead class="table-dark">
+              <tr>
+                <th style="width:70px">Select</th>
+                <th>Product ID</th>
+                <th>Meat Type</th>
+                <th>Weight (kg)</th>
+                <th>Price/kg</th>
+                <th>Processing Date</th>
+                <th>Storage Temp</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="mt-3 d-flex justify-content-end gap-2">
+          <button class="btn btn-success" id="createBatchBtn">Create Batch</button>
+          <button class="btn btn-secondary" id="cancelSelectionBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Created Batches Table -->
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Created Batches</h5>
+      <div class="table-wrapper">
+        <table class="table table-bordered table-hover" id="batchTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Batch ID</th>
+              <th>Meat Type(s)</th>
+              <th>Process Date</th>
+              <th>Total Weight (kg)</th>
+              <th>Total Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for View/Edit -->
+<div class="modal-overlay" id="batchModal">
+  <div class="modal-box">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h5 id="modalTitle">Batch Details</h5>
+    <div class="table-wrapper mt-3">
+      <table class="table table-bordered" id="modalProductsTable">
+        <thead class="table-secondary">
+          <tr>
+            <th>Product ID</th>
+            <th>Meat Type</th>
+            <th>Weight (kg)</th>
+            <th>Price/kg</th>
+            <th>Line Price</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="mt-3 d-flex justify-content-end gap-2">
+      <button class="btn btn-primary" id="saveBatchChangesBtn">Save Changes</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API_PREFIX = '../Slaughterhouse/'; // endpoints live in Slaughterhouse/
+const meatTypeSelect = document.getElementById('meatTypeSelect');
+const processDateSelect = document.getElementById('processDateSelect');
+const availableProductsTableBody = document.querySelector('#availableProductsTable tbody');
+const productSelection = document.getElementById('productSelection');
+const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+const batchTableBody = document.querySelector('#batchTable tbody');
+const modal = document.getElementById('batchModal');
+const modalProductsBody = document.querySelector('#modalProductsTable tbody');
+const batchPriceInput = document.getElementById('batchPrice');
+const batchExpiryInput = document.getElementById('batchExpiry');
+
+let unbatchedProducts = []; // loaded from server
+let currentViewBatch = null; // batch id being viewed
+
+// Load initial data: products & batches
+window.addEventListener('load', () => {
+  fetchUnbatchedProducts();
+  loadBatches();
+});
+
+// fetch meat products that are NOT yet assigned to a batch
+async function fetchUnbatchedProducts(){
+  try {
+    const res = await fetch(API_PREFIX + 'get_unbatched_products.php');
+    const data = await res.json();
+    if (data.error) { console.error(data.error); return; }
+    unbatchedProducts = data;
+    populateMeatTypeAndDates();
+  } catch (err) {
+    console.error('fetchUnbatchedProducts', err);
+  }
+}
+
+function populateMeatTypeAndDates(){
+  meatTypeSelect.innerHTML = '<option value="">Select Meat Type</option>';
+  // unique meat types
+  const types = [...new Set(unbatchedProducts.map(p => p.meat_type))].sort();
+  types.forEach(t => meatTypeSelect.innerHTML += `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`);
+  // clear date select
+  processDateSelect.innerHTML = '<option value="">Select Date</option>';
+}
+
+// When meat type changes, populate dates
+meatTypeSelect.addEventListener('change', () => {
+  const selected = meatTypeSelect.value;
+  processDateSelect.innerHTML = '<option value="">Select Date</option>';
+  const dates = [...new Set(unbatchedProducts.filter(p => p.meat_type === selected).map(p => p.processing_date))];
+  dates.sort().forEach(d => processDateSelect.innerHTML += `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`);
+});
+
+// load products button
+document.getElementById('loadProductsBtn').addEventListener('click', () => {
+  const t = meatTypeSelect.value, d = processDateSelect.value;
+  if(!t || !d){ alert('Select meat type and date'); return; }
+  loadAvailableProducts(t,d);
+});
+
+// load available products into table
+function loadAvailableProducts(type, date){
+  const products = unbatchedProducts.filter(p => p.meat_type === type && p.processing_date === date);
+  availableProductsTableBody.innerHTML = '';
+  if(products.length === 0){
+    availableProductsTableBody.innerHTML = `<tr><td colspan="7" class="text-center">No unbatched products found</td></tr>`;
+  } else {
+    products.forEach(p => {
+      availableProductsTableBody.innerHTML += `
+        <tr>
+          <td class="text-center"><input type="checkbox" class="select-product" data-product-id="${escapeHtml(p.product_ID)}" data-weight="${p.yield_weight}" data-price="${p.price_per_kg || ''}"></td>
+          <td>${escapeHtml(p.product_ID)}</td>
+          <td>${escapeHtml(p.meat_type)}</td>
+          <td>${p.yield_weight ?? ''}</td>
+          <td>${p.price_per_kg !== null ? Number(p.price_per_kg).toFixed(2) : ''}</td>
+          <td>${escapeHtml(p.processing_date)}</td>
+          <td>${p.storage_temperature !== null ? Number(p.storage_temperature).toFixed(2) : ''}</td>
+        </tr>`;
+    });
+  }
+  productSelection.style.display = 'block';
+  selectAllCheckbox.checked = false;
+}
+
+// toggle select all
+selectAllCheckbox.addEventListener('change', () => {
+  document.querySelectorAll('#availableProductsTable .select-product').forEach(cb => cb.checked = selectAllCheckbox.checked);
+});
+
+// cancel selection
+document.getElementById('cancelSelectionBtn').addEventListener('click', () => {
+  productSelection.style.display = 'none';
+  availableProductsTableBody.innerHTML = '';
+});
+
+// create batch
+document.getElementById('createBatchBtn').addEventListener('click', async () => {
+  const batchID = document.getElementById('batchID').value.trim();
+  const type = meatTypeSelect.value;
+  const date = processDateSelect.value;
+  const expiry = batchExpiryInput.value || null;
+  const overridePrice = batchPriceInput.value !== '' ? parseFloat(batchPriceInput.value) : null;
+
+  if(!batchID || !type || !date){ alert('Batch ID, Meat Type and Processing Date are required'); return; }
+
+  const selected = Array.from(document.querySelectorAll('#availableProductsTable .select-product:checked'));
+  if(selected.length === 0){ alert('Select at least one product'); return; }
+
+  // product IDs and per-line weights/prices
+  const items = selected.map(cb => ({
+    product_ID: cb.dataset.productId,
+    yield_weight: parseFloat(cb.dataset.weight || 0),
+    price_per_kg: cb.dataset.price !== '' ? parseFloat(cb.dataset.price) : null
+  }));
+
+  // call add_batch endpoint; it will create batch_quantity rows and create batch entry
+  try {
+    const payload = {
+      batch_ID: batchID,
+      production_date: date,
+      expiry_date: expiry,
+      meat_type: type,
+      price_per_kg: overridePrice, // nullable, server will fallback to product price if null
+      items // array
+    };
+    const res = await fetch(API_PREFIX + 'add_batch.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (json.success) {
+      alert('Batch created');
+      // reset UI & reload
+      document.getElementById('batchID').value = '';
+      batchPriceInput.value = '';
+      batchExpiryInput.value = '';
+      productSelection.style.display = 'none';
+      await fetchUnbatchedProducts();
+      loadBatches();
+    } else {
+      alert('Error: ' + (json.error || 'Unknown'));
+      console.error(json);
+    }
+  } catch (err) {
+    console.error('createBatch error', err);
+    alert('Server error when creating batch');
+  }
+});
+
+// load all batches
+async function loadBatches(){
+  try {
+    const res = await fetch(API_PREFIX + 'get_batches.php');
+    const data = await res.json();
+    const tbody = batchTableBody;
+    tbody.innerHTML = '';
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center">No batches yet</td></tr>';
+      return;
+    }
+    data.forEach(b => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${escapeHtml(b.batch_ID)}</td>
+          <td>${escapeHtml(b.meat_types)}</td>
+          <td>${escapeHtml(b.production_date)}</td>
+          <td>${Number(b.total_weight).toFixed(3)}</td>
+          <td>${b.total_price !== null ? Number(b.total_price).toFixed(2) : ''}</td>
+          <td>
+            <button class="btn btn-sm btn-info" onclick="viewBatch('${encodeURIComponent(b.batch_ID)}')"><i class="fas fa-eye"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="deleteBatch('${encodeURIComponent(b.batch_ID)}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    console.error('loadBatches', err);
+  }
+}
+
+// view batch details
+async function viewBatch(encodedBatchID){
+  const batchID = decodeURIComponent(encodedBatchID);
+  currentViewBatch = batchID;
+  try {
+    const res = await fetch(API_PREFIX + 'get_batch_details.php?batch_ID=' + encodeURIComponent(batchID));
+    const data = await res.json();
+    if (data.error) { alert(data.error); return; }
+    modalProductsBody.innerHTML = '';
+    let totalPrice = 0;
+    data.forEach(row => {
+      const linePrice = (row.price_per_kg !== null ? parseFloat(row.price_per_kg) : 0) * (row.batch_yield_kg || 0);
+      totalPrice += linePrice;
+      modalProductsBody.innerHTML += `
+        <tr>
+          <td>${escapeHtml(row.product_ID)}</td>
+          <td>${escapeHtml(row.meat_type)}</td>
+          <td>${Number(row.batch_yield_kg).toFixed(3)}</td>
+          <td>${row.price_per_kg !== null ? Number(row.price_per_kg).toFixed(2) : ''}</td>
+          <td>${Number(linePrice).toFixed(2)}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="removeFromBatch('${encodeURIComponent(batchID)}','${encodeURIComponent(row.product_ID)}')">Remove</button></td>
+        </tr>`;
+    });
+    document.getElementById('modalTitle').innerText = `Batch ${batchID} — Total Price: ${totalPrice.toFixed(2)}`;
+    modal.style.display = 'flex';
+  } catch (err) {
+    console.error('viewBatch', err);
+  }
+}
+
+// remove a product from a batch (call server)
+async function removeFromBatch(encodedBatchID, encodedProductID) {
+  if (!confirm('Remove this product from batch?')) return;
+  const batch_ID = decodeURIComponent(encodedBatchID);
+  const product_ID = decodeURIComponent(encodedProductID);
+  try {
+    const res = await fetch(API_PREFIX + 'delete_batch.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: `batch_ID=${encodeURIComponent(batch_ID)}&product_ID=${encodeURIComponent(product_ID)}&remove_only=1`
+    });
+    const json = await res.json();
+    if (json.success) {
+      viewBatch(encodeURIComponent(batch_ID)); // reload modal
+      fetchUnbatchedProducts();
+      loadBatches();
+    } else alert(json.error || 'Remove failed');
+  } catch (err) {
+    console.error('removeFromBatch', err);
+  }
+}
+
+// delete whole batch
+async function deleteBatch(encodedBatchID) {
+  const id = decodeURIComponent(encodedBatchID);
+  if (!confirm('Delete entire batch ' + id + '?')) return;
+  try {
+    const res = await fetch(API_PREFIX + 'delete_batch.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: 'batch_ID=' + encodeURIComponent(id)
+    });
+    const json = await res.json();
+    if (json.success) {
+      loadBatches();
+      fetchUnbatchedProducts();
+    } else alert(json.error || 'Delete failed');
+  } catch (err) {
+    console.error('deleteBatch', err);
+  }
+}
+
+document.getElementById('saveBatchChangesBtn').addEventListener('click', async () => {
+  // For now, changes (remove) are done via removeFromBatch; saving simply refreshes
+  closeModal();
+  loadBatches();
+  fetchUnbatchedProducts();
+});
+
+function closeModal(){
+  modal.style.display = 'none';
+}
+
+/* helpers */
+function escapeHtml(s){ if (s==null) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+</script>
+</body>
+</html>
+
