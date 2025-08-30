@@ -1,402 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Wholesale Data - Admin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      background-color: #f4f6f9;
-    }
-    .dashboard-container {
-      margin-left: 270px;
-      padding: 30px;
-      width: calc(100% - 270px);
-    }
-    .sidebar {
-      width: 250px;
-      height: 100vh;
-      background: #343a40;
-      color: white;
-      position: fixed;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar a {
-      padding: 12px 20px;
-      color: #ccc;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      border-left: 3px solid transparent;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      color: white;
-      background-color: #495057;
-      font-weight: bold;
-      border-left: 3px solid #fff;
-    }
-    .table-wrapper {
-      max-height: 300px;
-      overflow-y: auto;
-    }
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .modal-content-box {
-      background: #fff;
-      width: 90%;
-      max-width: 700px;
-      max-height: 80%;
-      overflow-y: auto;
-      padding: 20px;
-      border-radius: 8px;
-      position: relative;
-    }
-    .modal-content-box .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .action-buttons button {
-      margin-right: 5px;
-    }
-    .top-right-btn {
-      float: right;
-      margin-bottom: 10px;
-    }
-    .user-dropdown {
-      z-index: 9999 !important;
-      position: fixed;
-      top: 20px;
-      right: 30px;
-    }
-    .dropdown-menu {
-      z-index: 9999 !important;
-    }
+    body { background:#f4f6f9; }
+    .sidebar { width:250px; height:100vh; background:#343a40; color:#fff; position:fixed; padding:20px 0; display:flex; flex-direction:column; }
+    .sidebar a{ padding:12px 20px; color:#ccc; text-decoration:none; display:flex; align-items:center; border-left:3px solid transparent;}
+    .sidebar a.active, .sidebar a:hover { background:#495057; color:#fff; border-left:3px solid #fff; font-weight:600; }
+    .dashboard-container { margin-left:270px; padding:28px; width:calc(100% - 270px); }
+    .table-wrapper{ max-height:330px; overflow:auto; }
+    .user-dropdown{ position:fixed; top:20px; right:30px; z-index:9999; }
+    .card .card-title .btn { float:right; }
+    footer { margin-left:270px; }
+    .chart-wrap { max-height:340px; }
   </style>
 </head>
 <body>
-<!-- User Profile Dropdown -->
-<div class="user-dropdown">
+  <!-- user dropdown -->
+  <div class="user-dropdown">
     <div class="dropdown">
-    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end">
+      <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i></button>
+      <ul class="dropdown-menu dropdown-menu-end">
         <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
+        <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
-    </ul>
-    </div>
-</div>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="text-center mb-3">
-    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
-  </div>
-  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
-  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
-  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
-  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
-  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
-  <a href="#" class="active"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
-  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
-  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
-</div>
-
-<!-- Content -->
-<div class="dashboard-container container-fluid">
-  <h2 class="mb-4">Wholesale Data Overview</h2>
-
-  <!-- Table 1: Wholesale Basic Info -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">
-        Wholesale Information
-        <button class="btn btn-sm btn-success top-right-btn" onclick="addWholesaleRow()"><i class="fas fa-plus"></i> Add</button>
-      </h5>
-      <input class="form-control mb-2" type="text" placeholder="Search wholesale info..." onkeyup="filterTable(this, 'wholesaleTable')">
-      <div class="table-wrapper">
-        <table class="table table-bordered table-hover" id="wholesaleTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Wholesale ID</th>
-              <th>Wholesale Name</th>
-              <th>Address</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>W001</td><td>FreshMeat Ltd</td><td>Dhaka</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'wholesaleTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>W002</td><td>Prime Cuts</td><td>Chittagong</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'wholesaleTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>W003</td><td>Meat World</td><td>Khulna</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'wholesaleTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      </ul>
     </div>
   </div>
 
-  <!-- Table 2: Inventory Summary -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">
-        Meat Inventory Summary
-        <button class="btn btn-sm btn-success top-right-btn" onclick="addInventoryRow()"><i class="fas fa-plus"></i> Add</button>
-      </h5>
-      <input class="form-control mb-2" type="text" placeholder="Search inventory..." onkeyup="filterTable(this, 'inventoryTable')">
-      <div class="table-wrapper">
-        <table class="table table-bordered table-hover" id="inventoryTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Wholesale ID</th>
-              <th>Wholesaler Name</th>
-              <th>Total Meat Products</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>W001</td><td>FreshMeat Ltd</td><td>450</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-primary" onclick="viewModal('FreshMeat Ltd')"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'inventoryTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>W002</td><td>Prime Cuts</td><td>320</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-primary" onclick="viewModal('Prime Cuts')"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'inventoryTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>W003</td><td>Meat World</td><td>280</td>
-              <td class="action-buttons">
-                <button class="btn btn-sm btn-primary" onclick="viewModal('Meat World')"><i class="fas fa-eye"></i></button>
-                <button class="btn btn-sm btn-outline-primary" onclick="editRow(this,'inventoryTable')"><i class="fas fa-pen"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <!-- sidebar (kept same as your layout) -->
+  <div class="sidebar">
+    <div class="text-center mb-3"><img src="Logo/Logo white.png" alt="logo" style="max-width:100px;"></div>
+    <h5 class="px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+    <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+    <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Farmer Data</a>
+    <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+    <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse</a>
+    <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+    <a href="#" class="active"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+    <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+    <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition</a>
   </div>
 
-  <!-- Scatter Plot -->
-  <div class="card mb-5">
-    <div class="card-body">
-      <h5 class="card-title">Price vs Quantity Over Time</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <select class="form-select" id="breedSelect">
-            <option value="">Select Breed</option>
-            <option value="broiler">Broiler</option>
-            <option value="local">Local Cattle</option>
-            <option value="blackBengal">Black Bengal</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <select class="form-select" id="meatTypeSelect">
-            <option value="">Select Meat Type</option>
-            <option value="drumstick">Drumstick</option>
-            <option value="tbone">T-Bone</option>
-            <option value="ribs">Ribs</option>
-            <option value="liver">Liver</option>
-          </select>
+  <!-- main -->
+  <div class="dashboard-container container-fluid">
+    <h2 class="mb-4">Wholesale — Supply & Demand Overview</h2>
+
+    <!-- Wholesalers list (CRUD) -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Wholesalers
+          <button class="btn btn-success btn-sm" id="btnAddWholesale"><i class="fas fa-plus"></i> Add</button>
+        </h5>
+        <input class="form-control mb-2" id="searchWholesaler" placeholder="Search wholesalers..." />
+        <div class="table-wrapper">
+          <table class="table table-bordered table-hover" id="wholesalersTable">
+            <thead class="table-dark">
+              <tr><th>ID</th><th>Name</th><th>Address</th><th>Stock Capacity</th><th>Actions</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-      <canvas id="scatterChart"></canvas>
+    </div>
+
+    <!-- Inventory for selected wholesaler -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Wholesale Inventory
+          <select class="form-select form-select-sm w-auto d-inline-block ms-3" id="selectWholesaleForInventory">
+            <option value="">Select Wholesaler</option>
+          </select>
+          <button class="btn btn-success btn-sm ms-2" id="btnAddInventory"><i class="fas fa-plus"></i> Add Inventory</button>
+        </h5>
+        <input class="form-control mb-2" id="searchInventory" placeholder="Search inventory..." />
+        <div class="table-wrapper">
+          <table class="table table-bordered table-hover" id="inventoryTable">
+            <thead class="table-dark"><tr><th>SKU / Product</th><th>Name</th><th>Qty</th><th>Price/Unit</th><th>Last Updated</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts row: price trends and monthly sales -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Price Trends (processed_price_history)</h5>
+            <div class="mb-2">
+              <select id="priceSkuSelect" class="form-select form-select-sm w-50 d-inline-block">
+                <option value="">Choose SKU</option>
+              </select>
+              <button class="btn btn-sm btn-primary ms-2" id="btnLoadPriceTrend">Load</button>
+            </div>
+            <div class="chart-wrap"><canvas id="priceTrendChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Monthly Sales Summary</h5>
+            <div class="mb-2">
+              <select id="salesEntitySelect" class="form-select form-select-sm w-50 d-inline-block">
+                <option value="">All Buyers</option>
+                <option value="wholesale">Wholesale purchases (as buyer)</option>
+                <option value="retailer">Retailer purchases</option>
+              </select>
+              <button class="btn btn-sm btn-primary ms-2" id="btnLoadMonthlySales">Load</button>
+            </div>
+            <div class="chart-wrap"><canvas id="monthlySalesChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supply vs Demand summary -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Supply vs Demand (by region)</h5>
+        <div class="table-wrapper">
+          <table class="table table-bordered" id="supplyDemandTable">
+            <thead class="table-secondary"><tr><th>Region</th><th>Total Production (kg)</th><th>Estimated Consumption (kg)</th><th>Surplus / Deficit</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modals: Add/Edit wholesaler, Add/Edit inventory -->
+  <div class="modal-overlay" id="modalWrap" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Modal</h5>
+          <button type="button" class="btn-close" id="modalClose"></button>
+        </div>
+        <div class="modal-body">
+          <form id="modalForm">
+            <div id="modalBodyContent"></div>
+            <div class="mt-3 text-end">
+              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-secondary" id="modalCancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Modal Box for Meat Details -->
-<div class="modal-overlay" id="detailsModal">
-  <div class="modal-content-box">
-    <span class="close-btn" onclick="hideDetails()">&times;</span>
-    <h5>Batch Details for <span id="modalTitle">W001</span></h5>
-    <input class="form-control mb-2" type="text" placeholder="Search meat types..." onkeyup="filterTable(this, 'detailTable')">
-    <div class="table-wrapper">
-      <table class="table table-bordered" id="detailTable">
-        <thead class="table-secondary">
-          <tr>
-            <th>Batch ID</th>
-            <th>Meat Type</th>
-            <th>Quantity</th>
-            <th>Price per Unit</th>
-            <th>Total Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>B101</td><td>Drumstick</td><td>40</td><td>120</td><td>4800</td></tr>
-          <tr><td>B102</td><td>Ribs</td><td>20</td><td>200</td><td>4000</td></tr>
-          <tr><td>B103</td><td>Liver</td><td>30</td><td>180</td><td>5400</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Scripts -->
-<script>
-function filterTable(input, tableId) {
-  const filter = input.value.toLowerCase();
-  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
-  rows.forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
-  });
-}
-
-// Modal view
-function viewModal(name) {
-  document.getElementById('modalTitle').innerText = name;
-  document.getElementById('detailsModal').style.display = 'flex';
-}
-function hideDetails() {
-  document.getElementById('detailsModal').style.display = 'none';
-}
-
-// Add/Edit/Delete
-function addWholesaleRow() {
-  const table = document.querySelector("#wholesaleTable tbody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td><input type="text" class="form-control"></td>
-    <td><input type="text" class="form-control"></td>
-    <td><input type="text" class="form-control"></td>
-    <td>
-      <button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-check"></i></button>
-      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this,'wholesaleTable')"><i class="fas fa-times"></i></button>
-    </td>`;
-  table.appendChild(tr);
-}
-function addInventoryRow() {
-  const table = document.querySelector("#inventoryTable tbody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td><input type="text" class="form-control"></td>
-    <td><input type="text" class="form-control"></td>
-    <td><input type="number" class="form-control"></td>
-    <td>
-      <button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-check"></i></button>
-      <button class="btn btn-sm btn-secondary" onclick="cancelRow(this,'inventoryTable')"><i class="fas fa-times"></i></button>
-    </td>`;
-  table.appendChild(tr);
-}
-function editRow(btn, tableId) {
-  const row = btn.closest('tr');
-  const cells = row.querySelectorAll('td');
-  for (let i = 0; i < cells.length - 1; i++) {
-    const value = cells[i].innerText;
-    cells[i].innerHTML = `<input type="text" class="form-control" value="${value}">`;
-  }
-  cells[cells.length - 1].innerHTML = `
-    <button class="btn btn-sm btn-success" onclick="saveRow(this)"><i class="fas fa-check"></i></button>
-    <button class="btn btn-sm btn-secondary" onclick="cancelRow(this,'${tableId}')"><i class="fas fa-times"></i></button>`;
-}
-function saveRow(btn) {
-  const row = btn.closest('tr');
-  const cells = row.querySelectorAll('td');
-  for (let i = 0; i < cells.length - 1; i++) {
-    const val = cells[i].querySelector('input')?.value || cells[i].innerText;
-    cells[i].innerText = val;
-  }
-  cells[cells.length - 1].innerHTML = `
-    <button class="btn btn-sm btn-outline-primary" onclick="editRow(this)"><i class="fas fa-pen"></i></button>
-    <button class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)"><i class="fas fa-trash"></i></button>`;
-}
-function cancelRow(btn, tableId) {
-  const row = btn.closest('tr');
-  row.remove();
-}
-function deleteRow(btn) {
-  btn.closest('tr').remove();
-}
-
-// Scatter chart
-const chartDataMap = {
-  broiler: {
-    drumstick: [{x:20,y:180},{x:30,y:190},{x:40,y:210}],
-    thigh: [{x:10,y:150},{x:25,y:160},{x:35,y:180}]
-  },
-  local: {
-    tbone: [{x:15,y:240},{x:30,y:260},{x:45,y:300}],
-    ribs: [{x:20,y:230},{x:50,y:280}]
-  },
-  blackBengal: {
-    liver: [{x:10,y:130},{x:15,y:150}]
-  }
-};
-const ctx = document.getElementById('scatterChart');
-let scatter = new Chart(ctx, {
-  type: 'scatter',
-  data: {datasets: []},
-  options: {
-    responsive: true,
-    scales: {
-      x: { title: { display: true, text: 'Quantity' }},
-      y: { title: { display: true, text: 'Price (Tk)' }}
+  <!-- scripts -->
+  <script>
+    // helper: fetch JSON
+    async function api(path, method='GET', body=null){
+      const opts = { method, headers:{ 'Accept':'application/json' } };
+      if (body){ opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
+      const res = await fetch(path, opts);
+      if (!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
     }
-  }
-});
-document.getElementById('breedSelect').addEventListener('change', updateChart);
-document.getElementById('meatTypeSelect').addEventListener('change', updateChart);
-function updateChart() {
-  const breed = document.getElementById('breedSelect').value;
-  const meat = document.getElementById('meatTypeSelect').value;
-  if (!breed || !meat || !chartDataMap[breed] || !chartDataMap[breed][meat]) {
-    scatter.data.datasets = [];
-    scatter.update(); return;
-  }
-  const points = chartDataMap[breed][meat];
-  scatter.data.datasets = [
-    { type:'scatter',label:`${meat} Points`,data:points,backgroundColor:'#007bff' },
-    { type:'line',label:'Trend',data:points,borderColor:'#28a745',borderWidth:2,fill:false,tension:0.3,pointRadius:0 }
-  ];
-  scatter.update();
-}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    // populate wholesalers
+    async function loadWholesalers(){
+      try{
+        const rows = await api('get_wholesalers.php');
+        const tbody = document.querySelector('#wholesalersTable tbody'); tbody.innerHTML='';
+        const select = document.getElementById('selectWholesaleForInventory'); select.innerHTML = '<option value="">Select Wholesaler</option>';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.wholesale_ID}</td><td>${r.name||''}</td><td>${r.address||''}</td><td>${r.stock_capacity||''}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" data-id="${r.wholesale_ID}" onclick="openEditWholesale(this)"><i class="fas fa-pen"></i></button>
+              <button class="btn btn-sm btn-outline-danger" data-id="${r.wholesale_ID}" onclick="deleteWholesale(this)"><i class="fas fa-trash"></i></button>
+            </td>`;
+          tbody.appendChild(tr);
+          const opt = document.createElement('option'); opt.value = r.wholesale_ID; opt.textContent = `${r.name ? r.name : r.wholesale_ID}`; select.appendChild(opt);
+        });
+      } catch(e){ console.error(e); alert('Could not load wholesalers'); }
+    }
+
+    // search filter
+    document.getElementById('searchWholesaler').addEventListener('input', e=>{
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('#wholesalersTable tbody tr').forEach(tr=>{
+        tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    // open add wholesaler modal
+    document.getElementById('btnAddWholesale').addEventListener('click', ()=>{
+      showModal('Add Wholesaler', `
+        <div class="mb-2"><label class="form-label">Wholesale ID</label><input name="wholesale_ID" class="form-control" required></div>
+        <div class="mb-2"><label class="form-label">Name</label><input name="name" class="form-control" required></div>
+        <div class="mb-2"><label class="form-label">Address</label><input name="address" class="form-control"></div>
+        <div class="mb-2"><label class="form-label">Stock Capacity (kg)</label><input name="stock_capacity" type="number" step="1" class="form-control"></div>
+      `, async (formData)=>{
+        await api('add_wholesaler.php','POST', Object.fromEntries(formData));
+        await loadWholesalers(); hideModal();
+      });
+    });
+
+    // open edit
+    async function openEditWholesale(btn){
+      const id = btn.dataset.id;
+      try {
+        const r = await api('get_wholesaler.php?wholesale_ID='+encodeURIComponent(id));
+        showModal('Edit Wholesaler', `
+          <input type="hidden" name="original_id" value="${r.wholesale_ID}">
+          <div class="mb-2"><label class="form-label">Wholesale ID</label><input name="wholesale_ID" value="${r.wholesale_ID}" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Name</label><input name="name" value="${r.name||''}" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">Address</label><input name="address" value="${r.address||''}" class="form-control"></div>
+          <div class="mb-2"><label class="form-label">Stock Capacity (kg)</label><input name="stock_capacity" type="number" step="1" class="form-control" value="${r.stock_capacity||''}"></div>
+        `, async (formData)=>{
+          await api('update_wholesaler.php','POST', Object.fromEntries(formData));
+          await loadWholesalers(); hideModal();
+        });
+      } catch(e){ console.error(e); alert('Could not fetch wholesale'); }
+    }
+
+    async function deleteWholesale(btn){
+      if (!confirm('Delete wholesaler?')) return;
+      const id = btn.dataset.id;
+      try { await api('delete_wholesaler.php','POST',{wholesale_ID:id}); await loadWholesalers(); }
+      catch(e){ console.error(e); alert('Delete failed'); }
+    }
+
+    // ---------------- Inventory ----------------
+    document.getElementById('selectWholesaleForInventory').addEventListener('change', loadInventoryForSelected);
+
+    async function loadInventoryForSelected(){
+      const id = document.getElementById('selectWholesaleForInventory').value;
+      await loadInventory(id);
+    }
+
+    async function loadInventory(wholesale_ID){
+      try{
+        const rows = await api('get_inventory.php?wholesale_ID='+encodeURIComponent(wholesale_ID||''));
+        const tbody = document.querySelector('#inventoryTable tbody'); tbody.innerHTML='';
+        rows.forEach(r=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.sku}</td><td>${r.product_name||''}</td><td>${r.quantity}</td><td>${r.price_per_unit===null?'':r.price_per_unit}</td><td>${r.last_updated||''}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="openEditInventory(${r.id})"><i class="fas fa-pen"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteInventory(${r.id})"><i class="fas fa-trash"></i></button>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+      } catch(e){ console.error(e); alert('Could not load inventory'); }
+    }
+
+    // add inventory modal
+    document.getElementById('btnAddInventory').addEventListener('click', ()=>{
+      const w = document.getElementById('selectWholesaleForInventory').value;
+      if (!w){ alert('Select wholesaler first'); return; }
+      showModal('Add Inventory', `
+        <input type="hidden" name="wholesale_ID" value="${w}">
+        <div class="mb-2"><label>SKU</label><input name="sku" class="form-control" required></div>
+        <div class="mb-2"><label>Quantity</label><input name="quantity" type="number" step="0.001" class="form-control" required></div>
+        <div class="mb-2"><label>Price per unit</label><input name="price_per_unit" type="number" step="0.01" class="form-control"></div>
+      `, async (formData)=>{
+        await api('add_inventory.php','POST', Object.fromEntries(formData));
+        await loadInventory(w); hideModal();
+      });
+    });
+
+    // open edit inventory
+    async function openEditInventory(id){
+      try{
+        const r = await api('get_inventory.php?id='+encodeURIComponent(id));
+        showModal('Edit Inventory', `
+          <input type="hidden" name="id" value="${r.id}">
+          <div class="mb-2"><label>Wholesale ID</label><input name="wholesale_ID" class="form-control" value="${r.wholesale_ID}" required></div>
+          <div class="mb-2"><label>SKU</label><input name="sku" class="form-control" value="${r.sku}" required></div>
+          <div class="mb-2"><label>Quantity</label><input name="quantity" type="number" step="0.001" class="form-control" value="${r.quantity||0}"></div>
+          <div class="mb-2"><label>Price per unit</label><input name="price_per_unit" type="number" step="0.01" class="form-control" value="${r.price_per_unit||''}"></div>
+        `, async (formData)=>{
+          await api('update_inventory.php','POST', Object.fromEntries(formData));
+          await loadInventory(document.getElementById('selectWholesaleForInventory').value); hideModal();
+        });
+      } catch(e){ console.error(e); alert('Could not fetch inventory row'); }
+    }
+
+    async function deleteInventory(id){
+      if (!confirm('Delete inventory item?')) return;
+      try{ await api('delete_inventory.php','POST',{id}); await loadInventory(document.getElementById('selectWholesaleForInventory').value); }
+      catch(e){ console.error(e); alert('Delete failed'); }
+    }
+
+    // ---------------- Price Trends / Monthly Sales ----------------
+    // load SKU options
+    async function loadSkuOptions(){
+      try{
+        const rows = await api('get_skus.php');
+        const sel = document.getElementById('priceSkuSelect'); sel.innerHTML='<option value="">Choose SKU</option>';
+        rows.forEach(r=> { const o=document.createElement('option'); o.value=r.sku; o.textContent=`${r.sku} — ${r.name||r.meat_type||''}`; sel.appendChild(o); });
+      } catch(e){ console.error(e); }
+    }
+
+    let priceChart = null, monthlyChart=null;
+    document.getElementById('btnLoadPriceTrend').addEventListener('click', async ()=>{
+      const sku = document.getElementById('priceSkuSelect').value;
+      if (!sku){ alert('Choose a SKU'); return; }
+      try {
+        const data = await api('get_price_trends.php?sku='+encodeURIComponent(sku));
+        const labels = data.map(r=>r.date);
+        const values = data.map(r=>parseFloat(r.retail_price||0));
+        const ctx = document.getElementById('priceTrendChart').getContext('2d');
+        if (priceChart) priceChart.destroy();
+        priceChart = new Chart(ctx, { type:'line', data:{ labels, datasets:[{ label:'Retail Price', data:values, borderColor:'#198754', fill:false }] }, options:{ responsive:true }});
+      } catch(e){ console.error(e); alert('Could not load price trends'); }
+    });
+
+    document.getElementById('btnLoadMonthlySales').addEventListener('click', async ()=>{
+      const entity = document.getElementById('salesEntitySelect').value;
+      try {
+        const data = await api('get_monthly_sales_summary.php?entity='+encodeURIComponent(entity||''));
+        const labels = data.map(r=>r.month);
+        const values = data.map(r=>parseFloat(r.total_sales||0));
+        const ctx = document.getElementById('monthlySalesChart').getContext('2d');
+        if (monthlyChart) monthlyChart.destroy();
+        monthlyChart = new Chart(ctx, { type:'bar', data:{ labels, datasets:[{ label:'Total Sales (TK)', data:values }] }, options:{ responsive:true }});
+      } catch(e){ console.error(e); alert('Could not load monthly sales'); }
+    });
+
+    // supply vs demand
+    async function loadSupplyDemand(){
+      try{
+        const rows = await api('get_supply_demand.php');
+        const tbody = document.querySelector('#supplyDemandTable tbody'); tbody.innerHTML='';
+        rows.forEach(r=>{
+          const diff = (parseFloat(r.production||0) - parseFloat(r.consumption||0));
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${r.region}</td><td>${r.production||0}</td><td>${r.consumption||0}</td><td>${diff>=0?('Surplus '+diff.toFixed(2)):( 'Deficit '+Math.abs(diff).toFixed(2))}</td>`;
+          tbody.appendChild(row);
+        });
+      } catch(e){ console.error(e); }
+    }
+
+    // modal helpers
+    function showModal(title, bodyHtml, onSubmit){
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalBodyContent').innerHTML = bodyHtml;
+      document.getElementById('modalWrap').style.display = 'flex';
+      const form = document.getElementById('modalForm');
+      form.onsubmit = async (ev)=>{
+        ev.preventDefault();
+        const fd = new FormData(form);
+        try{ await onSubmit(fd); } catch(err){ console.error(err); alert('Save failed'); }
+      };
+      document.getElementById('modalCancel').onclick = hideModal;
+      document.getElementById('modalClose').onclick = hideModal;
+    }
+    function hideModal(){ document.getElementById('modalWrap').style.display='none'; document.getElementById('modalForm').onsubmit=null; }
+
+    // page init
+    (async function init(){
+      await loadWholesalers();
+      await loadSkuOptions();
+      await loadSupplyDemand();
+      // inventory empty until wholesaler selected
+      document.getElementById('searchInventory').addEventListener('input', e=>{
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#inventoryTable tbody tr').forEach(tr=>{
+          tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
 
