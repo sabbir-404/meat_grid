@@ -78,10 +78,28 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="feedbackBody">
-            <!-- Filled dynamically via PHP/JS -->
-          </tbody>
+          <tbody id="feedbackBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Average Scores per Product</h5>
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Score Distribution</h5>
+          <canvas id="pieChart"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -97,7 +115,7 @@ function filterTable(input, tableId) {
   });
 }
 
-// Fetch feedback dynamically
+// Load Feedback Table
 document.addEventListener("DOMContentLoaded", () => {
   fetch("get_feedback.php")
     .then(res => res.json())
@@ -121,8 +139,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     });
+
+  // Load Charts
+  fetch("get_feedback_stats.php")
+    .then(res => res.json())
+    .then(stats => {
+      if (stats.success) {
+        renderBarChart(stats.avg_scores);
+        renderPieChart(stats.score_dist);
+      }
+    });
 });
 
+// Delete Feedback
 function deleteFeedback(id) {
   if (!confirm("Are you sure you want to delete this feedback?")) return;
   fetch("delete_feedback.php", {
@@ -140,10 +169,45 @@ function deleteFeedback(id) {
     }
   });
 }
+
+// Chart Functions
+let barChart, pieChart;
+function renderBarChart(avg_scores) {
+  const ctx = document.getElementById("barChart").getContext("2d");
+  if (barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: avg_scores.map(a => a.product_name),
+      datasets: [{
+        label: "Average Score",
+        data: avg_scores.map(a => a.avg_score),
+        backgroundColor: "#007bff"
+      }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 5 } } }
+  });
+}
+function renderPieChart(score_dist) {
+  const ctx = document.getElementById("pieChart").getContext("2d");
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: score_dist.map(s => "Score " + s.score),
+      datasets: [{
+        data: score_dist.map(s => s.count),
+        backgroundColor: ["#28a745","#007bff","#ffc107","#fd7e14","#dc3545"]
+      }]
+    }
+  });
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
 
 
 
