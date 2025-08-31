@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin - Non-Meat Products</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { background-color:#f4f6f9; }
+  .sidebar { width:250px; height:100vh; background:#343a40; color:white; position:fixed; padding:20px 0; display:flex; flex-direction:column; }
+  .sidebar .text-center { margin-bottom:15px; }
+  .sidebar h5 { padding:0 20px; margin-bottom:20px; }
+  .sidebar a { padding:12px 20px; display:flex; align-items:center; color:#ccc; text-decoration:none; border-left:3px solid transparent; }
+  .sidebar a:hover, .sidebar a.active { color:white; background:#495057; border-left:3px solid #fff; font-weight:bold; }
+  .dashboard-container { margin-left:270px; padding:30px; width:calc(100% - 270px); }
+  .table-wrapper { max-height:320px; overflow:auto; }
+  .user-dropdown { z-index:9999 !important; position:fixed; top:20px; right:30px; }
+</style>
+</head>
+<body>
+<!-- user dropdown -->
+<div class="user-dropdown">
+  <div class="dropdown">
+    <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i></button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+      <li><hr class="dropdown-divider"/></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- sidebar (keeps same layout as your dashboard) -->
+<div class="sidebar">
+  <div class="text-center">
+    <img src="../Logo/Logo white.png" alt="Logo" style="max-width:100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
+  <a class="active" href="#"><i class="fas fa-leaf me-2"></i>Non-Meat Products</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+</div>
+
+<div class="dashboard-container container-fluid">
+  <h2 class="mb-4">Non-Meat / Alternative Protein Products</h2>
+
+  <div class="card mb-4">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">Products</h5>
+      <div>
+        <button class="btn btn-success me-2" id="openAddProductBtn"><i class="fas fa-plus"></i> Add Product</button>
+        <select id="productSelect" class="form-select d-inline-block" style="width:260px"></select>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <input class="form-control mb-2" id="productSearch" placeholder="Search products..." onkeyup="filterTable(this,'productsTable')"/>
+      <div class="table-wrapper">
+        <table class="table table-bordered" id="productsTable">
+          <thead class="table-dark">
+            <tr>
+              <th>SKU</th><th>Name</th><th>Category</th><th>Weight (g)</th><th>Price/kg (Tk)</th><th>Protein/100g</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  Price history & chart
+  <div class="row">
+    <div class="col-md-7">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Price History (selected product)</h5>
+          <div class="mb-2 d-flex gap-2">
+            <input id="priceDate" type="date" class="form-control" style="max-width:160px">
+            <input id="wholesalePrice" type="number" step="0.01" placeholder="Wholesale price" class="form-control" style="max-width:180px">
+            <input id="retailPrice" type="number" step="0.01" placeholder="Retail price" class="form-control" style="max-width:180px">
+            <button id="addPriceBtn" class="btn btn-primary">Add Price</button>
+          </div>
+          <canvas id="priceTrendChart" style="max-height:320px"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Recent Price Records</h5>
+          <div class="table-wrapper">
+            <table class="table table-sm table-bordered" id="priceTable">
+              <thead class="table-secondary">
+                <tr><th>Date</th><th>Wholesale</th><th>Retail</th><th>Action</th></tr>
+              </thead>
+              <tbody id="priceBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h6>Average Retail Price (all products)</h6>
+          <ul id="avgPriceList" class="list-unstyled mb-0"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add product modal (simple) -->
+<div class="modal" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="addProductForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Non-Meat Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2"><label class="form-label">SKU</label><input class="form-control" name="sku" required></div>
+        <div class="mb-2"><label class="form-label">Name</label><input class="form-control" name="name" required></div>
+        <div class="mb-2"><label class="form-label">Category</label><input class="form-control" name="category"></div>
+        <div class="row">
+          <div class="col"><label class="form-label">Avg Unit Weight (g)</label><input class="form-control" name="avg_unit_weight_g" type="number" step="0.001"></div>
+          <div class="col"><label class="form-label">Shelf life (days)</label><input class="form-control" name="shelf_life_days" type="number"></div>
+        </div>
+        <div class="row mt-2">
+          <div class="col"><label class="form-label">Price per kg</label><input class="form-control" name="price_per_kg" type="number" step="0.01"></div>
+          <div class="col"><label class="form-label">Protein per 100g</label><input class="form-control" name="protein_per_100g" type="number" step="0.01"></div>
+        </div>
+        <div class="mt-2"><label class="form-label">Notes</label><textarea name="notes" class="form-control"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-success" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const api = {
+  listProducts: 'get_nonmeat_products.php',
+  addProduct: 'add_nonmeat_product.php',
+  deleteProduct: 'delete_nonmeat_product.php',
+  getPrices: 'get_nonmeat_price_trends.php',
+  addPrice: 'add_nonmeat_price.php',
+  stats: 'get_nonmeat_stats.php'
+};
+
+let products = [];
+let activeSKU = null;
+let priceChart = null;
+
+function qs(sel){ return document.querySelector(sel); }
+function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+function filterTable(input, tableId){
+  const s = input.value.toLowerCase();
+  qsa(`#${tableId} tbody tr`).forEach(r => r.style.display = r.textContent.toLowerCase().includes(s) ? '' : 'none');
+}
+
+async function loadProducts(){
+  const res = await fetch(api.listProducts);
+  const j = await res.json();
+  if (!j.success) return alert('Load error: '+(j.error||'unknown'));
+  products = j.data;
+  renderProducts();
+  populateProductSelect();
+  loadAvgPrices();
+}
+
+function renderProducts(){
+  const tbody = qs('#productsBody'); tbody.innerHTML = '';
+  products.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.sku}</td>
+      <td>${p.name}</td>
+      <td>${p.category||''}</td>
+      <td>${p.avg_unit_weight_g||''}</td>
+      <td>${p.price_per_kg||''}</td>
+      <td>${p.protein_per_100g||''}</td>
+      <td class="text-nowrap">
+        <button class="btn btn-sm btn-info me-1" onclick="selectProduct('${p.sku}')"><i class="fas fa-chart-line"></i></button>
+        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.sku}')"><i class="fas fa-trash"></i></button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function populateProductSelect(){
+  const sel = qs('#productSelect');
+  sel.innerHTML = `<option value="">-- Select product to view --</option>`;
+  products.forEach(p => sel.insertAdjacentHTML('beforeend', `<option value="${p.sku}">${p.name} (${p.sku})</option>`));
+  sel.onchange = ()=> {
+    selectProduct(sel.value);
+  };
+}
+
+async function selectProduct(sku){
+  if (!sku) return;
+  activeSKU = sku;
+  // highlight select
+  qs('#productSelect').value = sku;
+  // load price history
+  const res = await fetch(`${api.getPrices}?sku=${encodeURIComponent(sku)}`);
+  const j = await res.json();
+  if (!j.success) { alert('Price load error'); return; }
+  renderPriceHistory(j.data);
+  renderPriceChart(j.data);
+}
+
+function renderPriceHistory(rows){
+  const body = qs('#priceBody'); body.innerHTML = '';
+  rows.slice().reverse().forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.date_recorded}</td><td>${r.wholesale_price ?? ''}</td><td>${r.retail_price ?? ''}</td>
+      <td><button class="btn btn-sm btn-outline-danger" onclick="deletePrice(${r.id})">Delete</button></td>`;
+    body.appendChild(tr);
+  });
+}
+
+function renderPriceChart(rows){
+  const ctx = qs('#priceTrendChart').getContext('2d');
+  const labels = rows.map(r=>r.date_recorded);
+  const retail = rows.map(r=>r.retail_price ? parseFloat(r.retail_price) : null);
+  const wholesale = rows.map(r=>r.wholesale_price ? parseFloat(r.wholesale_price) : null);
+  if (priceChart) priceChart.destroy();
+  priceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Retail Price', data: retail, borderColor:'#007bff', tension:0.2, fill:false },
+        { label:'Wholesale Price', data: wholesale, borderColor:'#28a745', tension:0.2, fill:false }
+      ]
+    },
+    options: { responsive:true, scales:{ y:{ beginAtZero:false, title:{display:true,text:'Price (Tk)'} } } }
+  });
+}
+
+async function addProduct(payload){
+  const res = await fetch(api.addProduct, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const j = await res.json();
+  if (!j.success) return alert('Add product failed: ' + (j.error||''));
+  await loadProducts();
+  bootstrap.Modal.getInstance(qs('#addProductModal')).hide();
+}
+
+async function deleteProduct(sku){
+  if (!confirm('Delete product '+sku+' ? This will remove price history too.')) return;
+  const fd = new FormData(); fd.append('sku', sku);
+  const res = await fetch(api.deleteProduct, { method:'POST', body:fd });
+  const j = await res.json();
+  if (!j.success) return alert('Delete failed: '+(j.error||''));
+  await loadProducts();
+  // clear selected if deleted
+  if (activeSKU === sku) { activeSKU = null; qs('#priceBody').innerHTML=''; if (priceChart) priceChart.destroy(); }
+}
+
+async function addPrice(){
+  if (!activeSKU) return alert('Select a product first');
+  const payload = {
+    sku: activeSKU,
+    date_recorded: qs('#priceDate').value,
+    wholesale_price: qs('#wholesalePrice').value,
+    retail_price: qs('#retailPrice').value,
+    source: 'admin'
+  };
+  if (!payload.date_recorded) return alert('Pick a date');
+  const res = await fetch(api.addPrice, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const j = await res.json();
+  if (!j.success) return alert('Add price failed: '+(j.error||''));
+  qs('#priceDate').value=''; qs('#wholesalePrice').value=''; qs('#retailPrice').value='';
+  await selectProduct(activeSKU);
+  await loadAvgPrices();
+}
+
+async function deletePrice(id){
+  if (!confirm('Delete this price record?')) return;
+  // simple delete by id (we don't have specific endpoint; reuse a small POST to delete via SQL)
+  const res = await fetch('Admin-page/delete_price_record.php', {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'id=' + encodeURIComponent(id)
+  });
+  const j = await res.json();
+  if (!j.success) return alert('Delete failed: ' + (j.error||''));
+  await selectProduct(activeSKU);
+  await loadAvgPrices();
+}
+
+async function loadAvgPrices(){
+  const res = await fetch(api.stats);
+  const j = await res.json();
+  if (!j.success) return;
+  const ul = qs('#avgPriceList'); ul.innerHTML='';
+  j.avg_prices.forEach(p => {
+    ul.insertAdjacentHTML('beforeend', `<li><strong>${p.name}</strong>: ${p.avg_retail_price ?? 'N/A'} Tk</li>`);
+  });
+}
+
+/* small helper to create delete_price_record endpoint on the fly if missing
+   We'll try to call Admin-page/delete_price_record.php — add it server-side if not present.
+*/
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // hookup add product modal
+  const addModal = new bootstrap.Modal(qs('#addProductModal'));
+  qs('#openAddProductBtn').addEventListener('click', ()=> addModal.show());
+
+  qs('#addProductForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fm = e.target;
+    const formData = Object.fromEntries(new FormData(fm).entries());
+    await addProduct(formData);
+  });
+
+  qs('#addPriceBtn').addEventListener('click', addPrice);
+
+  await loadProducts();
+});
+
+// generic simple filter
+function filterTable(inp, tableId){
+  const q = inp.value.toLowerCase();
+  qsa(`#${tableId} tbody tr`).forEach(tr => tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none');
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
