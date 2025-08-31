@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Policy Maker - Demand & Supply Analysis</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body{background:#f4f6f9}
 .sidebar{width:250px;height:100vh;background:#343a40;color:#fff;position:fixed;padding:20px 0}
+.sidebar a{padding:12px 20px;display:flex;align-items:center;color:#ccc;text-decoration:none;border-left:3px solid transparent}
+.sidebar a:hover,.sidebar a.active{color:#fff;background:#495057;border-left:3px solid #fff;font-weight:bold}
 .dashboard-container{margin-left:270px;padding:30px}
 .chart-container{background:#fff;padding:20px;margin-bottom:30px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
 </style>
@@ -21,7 +24,7 @@ body{background:#f4f6f9}
   </div>
   <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
   <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
-  <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
+  <a href="admin-farmers.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
   <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
   <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
   <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
@@ -55,57 +58,90 @@ body{background:#f4f6f9}
     <canvas id="altChart"></canvas>
   </div>
 
-  <!-- Tables loaded via PHP include -->
-  <div id="policy-tables">
-    <?php include("admin-policy-tables.php"); ?>
-  </div>
+  <!-- Tables populated dynamically -->
+  <h3>Supply Records</h3>
+  <table class="table table-bordered table-sm" id="supplyTable">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Division</th><th>Livestock Count</th><th>Slaughter Rate</th><th>Total Yield</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Price Records</h3>
+  <table class="table table-bordered table-sm" id="priceTable">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Product ID</th><th>Name</th><th>Avg Price</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Consumption Records</h3>
+  <table class="table table-bordered table-sm" id="consumptionTable">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Product ID</th><th>Feedback Count</th><th>Avg Score</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Alternative Protein Records</h3>
+  <table class="table table-bordered table-sm" id="altTable">
+    <thead class="table-dark">
+      <tr><th>ID</th><th>Category</th><th>Avg Price</th><th>Avg Qty</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/a2d9d6a52a.js" crossorigin="anonymous"></script>
 <script>
 async function loadData(){
   const res = await fetch('get_policy_data.php');
   const j = await res.json();
   if(!j.success){alert('Error loading data');return;}
 
+  // Charts
   new Chart(document.getElementById('supplyChart'),{
     type:'bar',
-    data:{
-      labels:j.supply.map(x=>x.division),
-      datasets:[{label:'Total Yield (kg)', data:j.supply.map(x=>x.total_yield), backgroundColor:'#0d6efd'}]
-    }
+    data:{labels:j.supply.map(x=>x.division),datasets:[{label:'Total Yield (kg)',data:j.supply.map(x=>x.total_yield),backgroundColor:'#0d6efd'}]}
   });
 
   new Chart(document.getElementById('priceChart'),{
     type:'bar',
-    data:{
-      labels:j.prices.map(x=>x.product_name),
-      datasets:[{label:'Avg Price/kg', data:j.prices.map(x=>x.avg_price), backgroundColor:'#198754'}]
-    }
+    data:{labels:j.prices.map(x=>x.product_name),datasets:[{label:'Avg Price/kg',data:j.prices.map(x=>x.avg_price),backgroundColor:'#198754'}]}
   });
 
   new Chart(document.getElementById('feedbackChart'),{
     type:'bar',
-    data:{
-      labels:j.consumption.map(x=>x.product_ID),
-      datasets:[
-        {label:'Feedback Count', data:j.consumption.map(x=>x.feedback_count), backgroundColor:'#dc3545'},
-        {label:'Avg Score', data:j.consumption.map(x=>x.avg_score), backgroundColor:'#ffc107'}
-      ]
-    }
+    data:{labels:j.consumption.map(x=>x.product_ID),datasets:[
+      {label:'Feedback Count',data:j.consumption.map(x=>x.feedback_count),backgroundColor:'#dc3545'},
+      {label:'Avg Score',data:j.consumption.map(x=>x.avg_score),backgroundColor:'#ffc107'}]}
   });
 
   new Chart(document.getElementById('altChart'),{
     type:'line',
-    data:{
-      labels:j.altProtein.map(x=>x.category),
-      datasets:[
-        {label:'Avg Price/kg', data:j.altProtein.map(x=>x.avg_price), borderColor:'#0dcaf0', fill:false},
-        {label:'Avg Qty', data:j.altProtein.map(x=>x.avg_qty), borderColor:'#6f42c1', fill:false}
-      ]
-    }
+    data:{labels:j.altProtein.map(x=>x.category),datasets:[
+      {label:'Avg Price/kg',data:j.altProtein.map(x=>x.avg_price),borderColor:'#0dcaf0',fill:false},
+      {label:'Avg Qty',data:j.altProtein.map(x=>x.avg_qty),borderColor:'#6f42c1',fill:false}]}
   });
+
+  // Fill tables
+  const fillTable = (id, rows, cols, table) => {
+    let html='';
+    rows.forEach(r=>{
+      html+='<tr>';
+      cols.forEach(c=> html+=`<td>${r[c]??''}</td>`);
+      html+=`<td>
+        <a href="policy_update.php?table=${table}&id=${r.id}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="policy_delete.php?table=${table}&id=${r.id}" class="btn btn-sm btn-danger">Delete</a>
+      </td>`;
+      html+='</tr>';
+    });
+    document.querySelector('#'+id+' tbody').innerHTML=html;
+  };
+
+  fillTable('supplyTable', j.supplyFull, ['id','division','livestock_count','slaughter_rate','total_yield','record_date'], 'policy_supply');
+  fillTable('priceTable', j.pricesFull, ['id','product_ID','product_name','avg_price','record_date'], 'policy_prices');
+  fillTable('consumptionTable', j.consumptionFull, ['id','product_ID','feedback_count','avg_score','record_date'], 'policy_consumption');
+  fillTable('altTable', j.altProteinFull, ['id','category','avg_price','avg_qty','record_date'], 'policy_alt_protein');
 }
 loadData();
 </script>
