@@ -1,10 +1,10 @@
 <?php
-// fetch_admin_demand_supply.php
+// Admin-page/fetch_admin_demand_supply.php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
 
-require_once __DIR__ . '/../Project-root/db_connect.php'; // matches your project layout
+require_once __DIR__ . '/../Project-root/db_connect.php';
 
 try {
     // Accept optional filters
@@ -14,7 +14,6 @@ try {
     $date_from  = isset($_GET['date_from']) && $_GET['date_from'] !== '' ? $conn->real_escape_string($_GET['date_from']) : null;
     $date_to    = isset($_GET['date_to']) && $_GET['date_to'] !== '' ? $conn->real_escape_string($_GET['date_to']) : null;
 
-    // helper to check tables (defensive)
     function table_exists($conn, $table) {
         $t = $conn->real_escape_string($table);
         $res = $conn->query("SHOW TABLES LIKE '$t'");
@@ -22,64 +21,61 @@ try {
     }
 
     $out = [
-        'price_comparison' => [],             // latest price per product/sku
-        'production_rate_timeseries' => [],   // month -> tons
-        'nutritional_intake_timeseries' => [],// month -> nutrient aggregates
-        'percapita_consumption' => [],        // region -> percapita kg
-        'supply_summary' => [],               // policy_supply
-        'alt_protein' => [],                  // policy_alt_protein
-        'elasticity' => []                    // processed_elasticity
+        'product_details' => [],
+        'price_comparison' => [],
+        'price_history' => [],
+        'production_rate_timeseries' => [],
+        'production_by_region' => [],
+        'nutritional_intake_timeseries' => [],
+        'percapita_consumption' => [],
+        'supply_summary' => [],
+        'demand_supply_comparison' => [],
+        'alt_protein' => [],
+        'elasticity' => []
     ];
 
-    // --- PRICE COMPARISON ---
-    // Prefer processed_product.price_per_kg, otherwise latest processed_price_history retail price
+    // ---------- product_details (for dropdown)
     if (table_exists($conn, 'processed_product')) {
-        $sql = "SELECT sku, name, COALESCE(price_per_kg, 0) AS price_per_kg FROM processed_product WHERE 1=1";
+        $sql = "SELECT sku, name, category, price_per_kg FROM processed_product WHERE 1=1";
         if ($sku) $sql .= " AND sku = '" . $conn->real_escape_string($sku) . "'";
+        $sql .= " ORDER BY name ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) {
-                $out['price_comparison'][] = [
-                    'sku' => $r['sku'],
-                    'name' => $r['name'],
-                    'price_per_kg' => $r['price_per_kg'] !== null ? floatval($r['price_per_kg']) : null
-                ];
-            }
+        if ($res) {
+            while ($r = $res->fetch_assoc()) $out['product_details'][] = $r;
         }
     }
-    // supplement with processed_price_history latest retail price where processed_product missing price
+
+    // ---------- price_history and price_comparison
     if (table_exists($conn, 'processed_price_history')) {
-        // get latest price per sku
         $where = " WHERE 1=1 ";
         if ($sku) $where .= " AND sku = '" . $conn->real_escape_string($sku) . "'";
         if ($region) $where .= " AND region = '" . $conn->real_escape_string($region) . "'";
         if ($date_from) $where .= " AND date_recorded >= '" . $conn->real_escape_string($date_from) . "'";
         if ($date_to) $where .= " AND date_recorded <= '" . $conn->real_escape_string($date_to) . "'";
 
-        $sql = "SELECT p.sku, p.region, p.date_recorded, p.retail_price
-                FROM processed_price_history p
+        $sql = "SELECT sku, region, date_recorded, wholesale_price, retail_price, source, notes
+                FROM processed_price_history
                 $where
-                ORDER BY p.sku, p.date_recorded DESC";
+                ORDER BY sku, date_recorded ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            // We'll keep latest seen per sku if not already present
-            $seen = [];
-            while ($r = $res->fetch_assoc()) {
-                $s = $r['sku'];
-                if (isset($seen[$s])) continue;
-                $seen[$s] = true;
-                $out['price_comparison'][] = [
-                    'sku' => $s,
-                    'region' => $r['region'],
-                    'date' => $r['date_recorded'],
-                    'retail_price' => $r['retail_price'] !== null ? floatval($r['retail_price']) : null
-                ];
-            }
+        if ($res) {
+            while ($r = $res->fetch_assoc()) $out['price_history'][] = $r;
+        }
+
+        // build price_comparison = latest retail per sku (simple)
+        $sql2 = "SELECT p.sku, p.region, p.date_recorded, p.retail_price
+                 FROM processed_price_history p
+                 JOIN (
+                    SELECT sku, MAX(date_recorded) AS mx FROM processed_price_history GROUP BY sku
+                 ) latest ON latest.sku = p.sku AND latest.mx = p.date_recorded
+                 ORDER BY p.sku";
+        $res2 = $conn->query($sql2);
+        if ($res2) {
+            while ($r = $res2->fetch_assoc()) $out['price_comparison'][] = $r;
         }
     }
 
-    // --- PRODUCTION RATE TIMESERIES ---
-    // Use processed_batch.batch_yield_kg (processing_date) and batch_quantity.batch_yield_kg (production_date)
+    // ---------- production_rate_timeseries (processed_batch + batch_quantity)
     $timeSeries = [];
     if (table_exists($conn, 'processed_batch')) {
         $where = " WHERE 1=1 ";
@@ -94,10 +90,20 @@ try {
                 GROUP BY ym
                 ORDER BY ym ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
+        if ($res) {
             while ($r = $res->fetch_assoc()) {
                 $timeSeries[$r['ym']] = ($timeSeries[$r['ym']] ?? 0) + floatval($r['tons']);
             }
+        }
+
+        // production_by_region (aggregate)
+        $sql2 = "SELECT region, DATE_FORMAT(processing_date,'%Y-%m') as ym, ROUND(SUM(COALESCE(batch_yield_kg,0))/1000,3) AS tons
+                 FROM processed_batch
+                 GROUP BY region, ym
+                 ORDER BY region, ym";
+        $res2 = $conn->query($sql2);
+        if ($res2) {
+            while ($r = $res2->fetch_assoc()) $out['production_by_region'][] = $r;
         }
     }
     if (table_exists($conn, 'batch_quantity')) {
@@ -113,35 +119,26 @@ try {
                 GROUP BY ym
                 ORDER BY ym ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
+        if ($res) {
             while ($r = $res->fetch_assoc()) {
                 $timeSeries[$r['ym']] = ($timeSeries[$r['ym']] ?? 0) + floatval($r['tons']);
             }
         }
     }
-    // convert to array sorted by month
     ksort($timeSeries);
-    foreach ($timeSeries as $ym => $tons) {
-        $out['production_rate_timeseries'][] = ['period' => $ym, 'tons' => $tons];
-    }
+    foreach ($timeSeries as $ym => $tons) $out['production_rate_timeseries'][] = ['period' => $ym, 'tons' => $tons];
 
-    // --- NUTRITIONAL INTAKE TIMESERIES ---
+    // ---------- nutritional_intake_timeseries
     if (table_exists($conn, 'nutrient_intake_over_time')) {
-        $where = " WHERE 1=1 ";
-        if ($date_from) { /* this table stores month strings; optionally parse */ }
         $sql = "SELECT month, ROUND(AVG(COALESCE(protein,0)),2) AS protein, ROUND(AVG(COALESCE(iron,0)),2) AS iron, ROUND(AVG(COALESCE(vitamin,0)),2) AS vitamin
                 FROM nutrient_intake_over_time
                 GROUP BY month
                 ORDER BY month ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) {
-                $out['nutritional_intake_timeseries'][] = $r;
-            }
-        }
+        if ($res) while ($r = $res->fetch_assoc()) $out['nutritional_intake_timeseries'][] = $r;
     }
 
-    // --- PER-CAPITA CONSUMPTION BY REGION ---
+    // ---------- percapita_consumption
     if (table_exists($conn, 'meat_consumption_by_region')) {
         $where = " WHERE 1=1 ";
         if ($region) $where .= " AND region_name = '" . $conn->real_escape_string($region) . "' ";
@@ -151,34 +148,26 @@ try {
                 GROUP BY region_name
                 ORDER BY region_name ASC";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) {
-                $out['percapita_consumption'][] = $r;
-            }
-        }
+        if ($res) while ($r = $res->fetch_assoc()) $out['percapita_consumption'][] = $r;
     }
 
-    // --- SUPPLY SUMMARY (policy_supply) ---
+    // ---------- supply_summary
     if (table_exists($conn, 'policy_supply')) {
         $where = " WHERE 1=1 ";
         if ($region) $where .= " AND division = '" . $conn->real_escape_string($region) . "' ";
-        $sql = "SELECT division, livestock_count, slaughter_rate, total_yield, record_date FROM policy_supply $where ORDER BY record_date DESC LIMIT 100";
+        $sql = "SELECT division, livestock_count, slaughter_rate, total_yield, record_date FROM policy_supply $where ORDER BY record_date DESC LIMIT 200";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) $out['supply_summary'][] = $r;
-        }
+        if ($res) while ($r = $res->fetch_assoc()) $out['supply_summary'][] = $r;
     }
 
-    // --- ALTERNATIVE PROTEIN (policy_alt_protein) ---
+    // ---------- alt_protein
     if (table_exists($conn, 'policy_alt_protein')) {
-        $sql = "SELECT id, category, avg_price, avg_qty, record_date FROM policy_alt_protein ORDER BY record_date DESC LIMIT 100";
+        $sql = "SELECT id, category, avg_price, avg_qty, record_date FROM policy_alt_protein ORDER BY record_date DESC LIMIT 200";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) $out['alt_protein'][] = $r;
-        }
+        if ($res) while ($r = $res->fetch_assoc()) $out['alt_protein'][] = $r;
     }
 
-    // --- ELASTICITY (processed_elasticity) ---
+    // ---------- elasticity
     if (table_exists($conn, 'processed_elasticity')) {
         $where = " WHERE 1=1 ";
         if ($sku) $where .= " AND sku = '" . $conn->real_escape_string($sku) . "' ";
@@ -189,8 +178,27 @@ try {
                 ORDER BY computed_at DESC
                 LIMIT 200";
         $res = $conn->query($sql);
-        if ($res !== false) {
-            while ($r = $res->fetch_assoc()) $out['elasticity'][] = $r;
+        if ($res) while ($r = $res->fetch_assoc()) $out['elasticity'][] = $r;
+    }
+
+    // ---------- demand_supply_comparison (basic join of supply_summary with percapita if available)
+    // We attempt a simple comparison: for divisions in policy_supply, find percapita (if present) and estimate demand (region pop estimate not available).
+    if (!empty($out['supply_summary'])) {
+        foreach ($out['supply_summary'] as $s) {
+            $entry = [
+                'division' => $s['division'],
+                'total_supply_tons' => floatval($s['total_yield']),
+                'record_date' => $s['record_date'],
+                'region' => $s['division']
+            ];
+            // attempt estimated demand from percapita_consumption table (if same region name exists)
+            foreach ($out['percapita_consumption'] as $pc) {
+                if (strcasecmp(trim($pc['region_name'] ?? $pc['region']), trim($s['division'])) === 0 || strcasecmp(trim($pc['region'] ?? ''), trim($s['division'])) === 0) {
+                    // We don't have population numbers — put the percapita as proxy (kg/person)
+                    $entry['estimated_percapita_kg'] = floatval($pc['percapita_kg'] ?? $pc['percapita'] ?? $pc['consumption'] ?? 0);
+                }
+            }
+            $out['demand_supply_comparison'][] = $entry;
         }
     }
 

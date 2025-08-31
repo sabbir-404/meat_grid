@@ -8,50 +8,45 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-    /* Keep your original layout & styling */
-    body { background-color: #f4f6f9; }
-    .wrapper { display: flex; }
-    .sidebar {
-      width: 250px; height: 100vh; background: #343a40; color: white; padding: 20px 0; position: fixed; display: flex; flex-direction: column;
-    }
-    .sidebar .text-center { margin-bottom: 15px; }
-    .sidebar h5 { padding: 0 20px; margin-bottom: 20px; }
-    .sidebar a { padding: 12px 20px; display: flex; align-items: center; color: #ccc; text-decoration: none; border-left: 3px solid transparent; }
-    .sidebar a:hover, .sidebar a.active { color: white; background-color: #495057; border-left: 3px solid #ffffff; font-weight: bold; }
-    .user-dropdown { z-index: 9999 !important; position: fixed; top: 20px; right: 30px; }
-    .dropdown-menu { z-index: 9999 !important; }
-    .dashboard-container { margin-left: 270px; padding: 30px; width: 100%; position: relative; z-index: 1; }
-    .card { margin-bottom: 15px; padding: 10px; position: relative; z-index: 0; }
-    footer { margin-left: 270px; }
-    .small-muted { font-size: 12px; color: #666; margin-top:6px; }
-    .controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
-    .controls input, .controls select { height:38px; }
-    .insights { background:#fff; border-radius:8px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
-    .table-wrapper { max-height: 360px; overflow:auto; }
+/* your same styles */
+body { background-color: #f4f6f9; }
+.wrapper { display: flex; }
+.sidebar { width: 250px; height: 100vh; background: #343a40; color: white; padding: 20px 0; position: fixed; display: flex; flex-direction: column; }
+.sidebar .text-center { margin-bottom: 15px; }
+.sidebar h5 { padding: 0 20px; margin-bottom: 20px; }
+.sidebar a { padding: 12px 20px; display: flex; align-items: center; color: #ccc; text-decoration: none; border-left: 3px solid transparent; }
+.sidebar a:hover, .sidebar a.active { color: white; background-color: #495057; border-left: 3px solid #ffffff; font-weight: bold; }
+.user-dropdown { z-index: 9999 !important; position: fixed; top: 20px; right: 30px; }
+.dropdown-menu { z-index: 9999 !important; }
+.dashboard-container { margin-left: 270px; padding: 30px; width: 100%; position: relative; z-index: 1; }
+.card { margin-bottom: 15px; padding: 10px; position: relative; z-index: 0; }
+footer { margin-left: 270px; }
+.small-muted { font-size: 12px; color: #666; margin-top:6px; }
+.controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+.controls input, .controls select { height:38px; }
+.insights { background:#fff; border-radius:8px; padding:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.table-wrapper { max-height: 360px; overflow:auto; }
 </style>
 </head>
-
 <body>
 <!-- User Profile Dropdown -->
 <div class="user-dropdown">
-    <div class="dropdown">
+  <div class="dropdown">
     <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="fas fa-user-circle"></i>
+      <i class="fas fa-user-circle"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/profile.php">View Profile</a></li>
+      <li><hr class="dropdown-divider" /></li>
+      <li><a class="dropdown-item" href="../Login-signup-and-profile-page/logout.php">Logout</a></li>
     </ul>
-    </div>
+  </div>
 </div>
 
 <div class="wrapper">
 <!-- Sidebar -->
 <div class="sidebar">
-  <div class="text-center">
-    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;">
-  </div>
+  <div class="text-center"><img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px; height: auto;"></div>
   <h5 class="text-white mt-3 mb-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
   <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
   <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
@@ -161,32 +156,21 @@
 </div>
 
 <script>
-/*
-  Admin Analyst Page JS
-  - Fetches live data from fetch_admin_demand_supply.php
-  - Filters: product, region, date range
-  - Charts: demand vs supply, price trend, production, percapita
-  - Tables: elasticity, details
-  - CSV export
-*/
-const API = 'fetch_admin_demand_supply.php'; // ensure this PHP is in Admin-page/
-let RAW = null; // last API response
+/* Defensive Analyst JS (fixed bar charts) */
+const API = 'fetch_admin_demand_supply.php';
+let RAW = null;
 let currentFilters = { sku:'', product_id:'', region:'', date_from:'', date_to:'' };
 
 const el = id => document.getElementById(id);
-
-// Chart instances
 let chartDemandSupply, chartPriceTrend, chartProduction, chartPerCapita;
 
 async function fetchData() {
-  // build query string from currentFilters
   const params = new URLSearchParams();
   if (currentFilters.sku) params.set('sku', currentFilters.sku);
   if (currentFilters.product_id) params.set('product_id', currentFilters.product_id);
   if (currentFilters.region) params.set('region', currentFilters.region);
   if (currentFilters.date_from) params.set('date_from', currentFilters.date_from + '-01');
   if (currentFilters.date_to) params.set('date_to', currentFilters.date_to + '-31');
-
   const url = API + (params.toString() ? ('?'+params.toString()) : '');
   try {
     const res = await fetch(url, { credentials: 'same-origin' });
@@ -202,22 +186,18 @@ async function fetchData() {
 }
 
 function showErrorState(err) {
-  // clear charts and show messages
-  if (chartDemandSupply) chartDemandSupply.destroy();
-  if (chartPriceTrend) chartPriceTrend.destroy();
-  if (chartProduction) chartProduction.destroy();
-  if (chartPerCapita) chartPerCapita.destroy();
+  if (chartDemandSupply) try { chartDemandSupply.destroy(); } catch(e){}
+  if (chartPriceTrend) try { chartPriceTrend.destroy(); } catch(e){}
+  if (chartProduction) try { chartProduction.destroy(); } catch(e){}
+  if (chartPerCapita) try { chartPerCapita.destroy(); } catch(e){}
   document.getElementById('insightsContent').innerHTML = `<div class="text-danger">Error loading data: ${err.message || err}</div>`;
 }
 
 function populateFilterOptions() {
-  // product select from product_details; region select from percapita or supply
   const prodSel = el('filter-product');
   const regSel = el('filter-region');
-  // clear then add default
   prodSel.innerHTML = '<option value="">All products</option>';
   regSel.innerHTML = '<option value="">All regions</option>';
-
   const products = RAW?.product_details || [];
   products.forEach(p => {
     const label = p.name ? `${p.name}` : (p.sku || p.id || 'Prod');
@@ -226,8 +206,6 @@ function populateFilterOptions() {
     opt.textContent = label + (p.type ? (' — ' + p.type) : '');
     prodSel.appendChild(opt);
   });
-
-  // Regions: union of percapita_consumption + supply_summary regions + price_comparison.region
   const regions = new Set();
   (RAW?.percapita_consumption || []).forEach(r => regions.add(r.region || r.region_name));
   (RAW?.supply_summary || []).forEach(r => regions.add(r.division || r.region));
@@ -251,10 +229,8 @@ function renderAll() {
   computeAndRenderInsights();
 }
 
-/* ---------- Charts ---------- */
-
+/* ---------- Demand vs Supply (fixed) ---------- */
 function renderDemandSupply() {
-  // data: RAW.demand_supply_comparison OR aggregated from production_by_region/percapita
   const ds = RAW?.demand_supply_comparison || [];
   let labels = [], supply = [], demand = [];
 
@@ -263,38 +239,55 @@ function renderDemandSupply() {
       const label = (r.product_id || r.product_name || r.sku || 'Unknown') + ' — ' + (r.region || 'All');
       labels.push(label);
       supply.push(Number(r.total_supply_tons || 0));
-      demand.push(r.estimated_demand_kg ? Number(r.estimated_demand_kg) / 1000 : null);
+      // convert estimated_demand_kg -> tons when numeric, otherwise null
+      const dNum = (r.estimated_demand_kg !== undefined && r.estimated_demand_kg !== null && r.estimated_demand_kg !== '') ? Number(r.estimated_demand_kg)/1000 : null;
+      demand.push(Number.isFinite(dNum) ? dNum : null);
     });
   } else {
-    // fallback: sum from production_by_region grouped by product
+    // fallback aggregation from production_by_region
     const agg = {};
     (RAW?.production_by_region || []).forEach(r => {
       const k = r.product_id ?? r.product_name ?? 'Unknown';
-      agg[k] = agg[k] || { supply:0, demand:0 };
+      agg[k] = agg[k] || { supply:0 };
       agg[k].supply += Number(r.meat_yield_tons || 0);
     });
     labels = Object.keys(agg);
-    supply = labels.map(k => agg[k].supply);
+    supply = labels.map(k => Number(agg[k].supply || 0));
     demand = labels.map(_ => null);
   }
 
-  // destroy old
-  if (chartDemandSupply) chartDemandSupply.destroy();
+  // safety: if no labels or all zero, show a friendly fallback so chart renders
+  if (!labels.length) {
+    labels = ['No data'];
+    supply = [0];
+    demand = null; // don't include demand dataset
+  }
+
+  // prepare datasets: always include supply; include demand only if there's at least one numeric value
+  const datasets = [];
+  datasets.push({ label: 'Supply (tons)', data: supply.map(v => Number.isFinite(Number(v)) ? Number(v) : 0), backgroundColor: 'rgba(54,162,235,0.85)' });
+  const hasDemandNumeric = Array.isArray(demand) && demand.some(v => Number.isFinite(Number(v)));
+  if (hasDemandNumeric) {
+    datasets.push({ label: 'Estimated Demand (tons)', data: demand.map(v => Number.isFinite(Number(v)) ? Number(v) : null), backgroundColor: 'rgba(255,99,132,0.85)' });
+  }
+
+  // destroy previous chart if exists
+  if (chartDemandSupply) try { chartDemandSupply.destroy(); } catch(e) { console.warn(e); }
   const ctx = document.getElementById('chartDemandSupply').getContext('2d');
   chartDemandSupply = new Chart(ctx, {
     type: 'bar',
-    data: { labels, datasets: [
-      { label: 'Supply (tons)', data: supply, backgroundColor: 'rgba(54,162,235,0.8)' },
-      { label: 'Estimated Demand (tons)', data: demand, backgroundColor: 'rgba(255,99,132,0.8)' }
-    ]},
-    options: { responsive:true, interaction:{mode:'index', intersect:false}, scales:{ y:{ beginAtZero:true } } }
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      scales: { y: { beginAtZero: true } }
+    }
   });
 }
 
+/* ---------- Price trend (unchanged but defensive) ---------- */
 function renderPriceTrend() {
-  // price_history has product_id, region, date, avg_retail, avg_wholesale
   const ph = RAW?.price_history || [];
-  // Build per-product timeseries
   const series = {}; const datesSet = new Set();
   ph.forEach(r => {
     const pid = r.product_id ?? r.product_name ?? r.sku ?? 'Unknown';
@@ -305,16 +298,16 @@ function renderPriceTrend() {
     series[pid][date] = Number(r.avg_retail ?? r.avg_wholesale ?? 0);
   });
   const dates = Array.from(datesSet).sort();
-  const labels = dates;
-  const datasets = Object.keys(series).slice(0,6).map((pid, idx) => ({
+  const labels = dates.length ? dates : ['No data'];
+  const datasets = Object.keys(series).slice(0,6).map(pid => ({
     label: pid,
-    data: dates.map(d => series[pid][d] ?? null),
+    data: labels.map(d => (series[pid] && series[pid][d] !== undefined) ? Number(series[pid][d]) : null),
     spanGaps: true,
     tension: 0.2,
     borderWidth: 2
   }));
 
-  if (chartPriceTrend) chartPriceTrend.destroy();
+  if (chartPriceTrend) try { chartPriceTrend.destroy(); } catch(e){ console.warn(e); }
   const ctx = document.getElementById('chartPriceTrend').getContext('2d');
   chartPriceTrend = new Chart(ctx, {
     type: 'line',
@@ -323,38 +316,43 @@ function renderPriceTrend() {
   });
 }
 
+/* ---------- Production chart (fixed) ---------- */
 function renderProduction() {
   const ts = RAW?.production_rate_timeseries || [];
-  const labels = ts.map(r => r.period || r.ym || '');
-  const data = ts.map(r => Number(r.tons || 0));
+  let labels = ts.map(r => r.period || r.ym || '');
+  let data = ts.map(r => Number(r.tons || 0));
 
-  if (chartProduction) chartProduction.destroy();
+  if (!labels.length) {
+    labels = ['No data'];
+    data = [0];
+  }
+
+  if (chartProduction) try { chartProduction.destroy(); } catch(e){ console.warn(e); }
   const ctx = document.getElementById('chartProduction').getContext('2d');
   chartProduction = new Chart(ctx, {
     type: 'bar',
-    data: { labels, datasets: [{ label:'Production (tons)', data, backgroundColor:'rgba(153,102,255,0.8)' }]},
+    data: { labels, datasets: [{ label:'Production (tons)', data: data.map(v=> Number.isFinite(Number(v)) ? Number(v) : 0), backgroundColor:'rgba(153,102,255,0.8)' }]},
     options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
 }
 
+/* ---------- Per-capita & tables (unchanged but defensive) ---------- */
 function renderPerCapita() {
   const pc = RAW?.percapita_consumption || [];
-  // use top 6 regions
   const sorted = (pc.slice()).sort((a,b)=> (Number(b.percapita_kg||b.percapita||0) - Number(a.percapita_kg||a.percapita||0))).slice(0,6);
   const labels = sorted.map(r => (r.region || r.region_name || 'Unknown'));
   const data = sorted.map(r => Number(r.percapita_kg || r.percapita || 0));
-
-  if (chartPerCapita) chartPerCapita.destroy();
+  if (!labels.length) {
+    el('pc-note').textContent = 'No per-capita data available.';
+  } else el('pc-note').textContent = '';
+  if (chartPerCapita) try { chartPerCapita.destroy(); } catch(e){ console.warn(e); }
   const ctx = document.getElementById('chartPerCapita').getContext('2d');
   chartPerCapita = new Chart(ctx, {
     type: 'doughnut',
     data: { labels, datasets: [{ data, backgroundColor: ['#36a2eb','#ff6384','#ffcd56','#4bc0c0','#9966ff','#c9cbcf'] }]},
     options: { responsive:true, plugins:{legend:{position:'right'}} }
   });
-  el('pc-note').textContent = labels.length ? '' : 'No per-capita data available.';
 }
-
-/* ---------- Tables & Export ---------- */
 
 function renderElasticity() {
   const rows = RAW?.elasticity || [];
@@ -368,9 +366,9 @@ function renderElasticity() {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${escapeHtml(r.sku ?? r.product_id ?? r.product_name ?? '')}</td>
                     <td>${escapeHtml(r.region ?? '')}</td>
-                    <td>${r.own_price_elasticity ?? r.own_el ?? ''}</td>
-                    <td>${r.cross_price_elasticity_plant ?? r.cross_el ?? ''}</td>
-                    <td>${escapeHtml(r.notes ?? r.note ?? '')}</td>`;
+                    <td>${r.own_price_elasticity ?? ''}</td>
+                    <td>${r.cross_price_elasticity_plant ?? ''}</td>
+                    <td>${escapeHtml(r.notes ?? '')}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -378,17 +376,14 @@ function renderElasticity() {
 function renderDetailsTable() {
   const tbody = document.querySelector('#detailsTable tbody');
   tbody.innerHTML = '';
-  // Create rows by merging price_comparison + supply_summary + demand_supply_comparison
   const price = RAW?.price_comparison || [];
   const supply = RAW?.supply_summary || [];
   const dsc = RAW?.demand_supply_comparison || [];
-
-  // Build map keyed product||region -> object
   const map = {};
   price.forEach(p => {
-    const k = (p.sku ?? p.name ?? p.product_id ?? '') + '||' + (p.region ?? '');
+    const k = (p.sku ?? p.name ?? '') + '||' + (p.region ?? '');
     map[k] = map[k] || {};
-    map[k].sku = p.sku ?? p.product_id ?? '';
+    map[k].sku = p.sku ?? '';
     map[k].product = p.name ?? '';
     map[k].region = p.region ?? '';
     map[k].date = p.date ?? p.date_recorded ?? '';
@@ -407,7 +402,6 @@ function renderDetailsTable() {
     map[k].product = map[k].product || (d.product_name ?? '');
     map[k].region = map[k].region || d.region;
   });
-
   const rows = Object.values(map);
   if (!rows.length) {
     tbody.innerHTML = '<tr><td colspan="6" class="text-muted">No combined price/supply data to show.</td></tr>';
@@ -426,7 +420,6 @@ function renderDetailsTable() {
 }
 
 function exportCurrentAsCSV() {
-  // Export details table as CSV
   const rows = [['Product', 'Region', 'Date', 'Retail Price', 'Supply (tons)', 'Estimated Demand (tons)']];
   const tbodyRows = document.querySelectorAll('#detailsTable tbody tr');
   tbodyRows.forEach(tr => {
@@ -441,10 +434,9 @@ function exportCurrentAsCSV() {
   URL.revokeObjectURL(url);
 }
 
-/* ---------- Insights ---------- */
+/* Insights (unchanged) */
 function computeAndRenderInsights() {
   const parts = [];
-  // 1) Surplus / Deficit detection
   const dsc = RAW?.demand_supply_comparison || [];
   if (dsc && dsc.length) {
     const surpluses = dsc.filter(r => r.total_supply_tons && (r.estimated_demand_kg ? Number(r.total_supply_tons) > (Number(r.estimated_demand_kg)/1000) : false));
@@ -454,11 +446,8 @@ function computeAndRenderInsights() {
   } else {
     parts.push('<em>Demand vs supply comparison not available (missing population/consumption data).</em>');
   }
-
-  // 2) Price spikes: look for big month-over-month increases in price_history
   const ph = RAW?.price_history || [];
   if (ph && ph.length) {
-    // group by product then check last two months
     const grouped = {};
     ph.forEach(r => {
       const k = r.product_id ?? r.product_name ?? r.sku ?? 'unknown';
@@ -474,56 +463,38 @@ function computeAndRenderInsights() {
       const prevP = Number(prev.avg_retail ?? prev.avg_wholesale ?? 0);
       if (prevP > 0 && ((lastP - prevP) / prevP) > 0.12) spikes.push({ product: k, pct: ((lastP-prevP)/prevP) });
     });
-    if (spikes.length) {
-      parts.push(`<strong>Price spikes:</strong> ${spikes.slice(0,5).map(s => `${s.product} (${(s.pct*100).toFixed(1)}%)`).join(', ')}.`);
-    }
+    if (spikes.length) parts.push(`<strong>Price spikes:</strong> ${spikes.slice(0,5).map(s => `${s.product} (${(s.pct*100).toFixed(1)}%)`).join(', ')}.`);
   }
-
-  // 3) Per-capita hotspots
   const pc = RAW?.percapita_consumption || [];
   if (pc && pc.length) {
     const top = pc.slice().sort((a,b)=> Number(b.percapita_kg||b.percapita||0)-Number(a.percapita_kg||a.percapita||0))[0];
     if (top) parts.push(`<strong>Highest per-capita consumption:</strong> ${top.region || top.region_name} — ${(Number(top.percapita_kg||top.percapita||0)).toFixed(2)} kg/person.`);
   }
-
-  // 4) Elasticity summary
   const el = RAW?.elasticity || [];
   if (el && el.length) {
     const avgOwn = (el.reduce((s,r)=> s + (Number(r.own_price_elasticity||0) || 0), 0) / el.length) || 0;
     parts.push(`<strong>Avg own-price elasticity (precomputed):</strong> ${avgOwn.toFixed(2)}.`);
   }
-
-  // 5) Actionable suggestions
   if (dsc && dsc.length) {
-    // suggest re-route supply from surplus to deficit regions (simple)
     const deficitRegions = dsc.filter(r => r.estimated_demand_kg && Number(r.total_supply_tons) < (Number(r.estimated_demand_kg)/1000)).map(r => r.region);
     const surplusRegions = dsc.filter(r => r.estimated_demand_kg && Number(r.total_supply_tons) > (Number(r.estimated_demand_kg)/1000)).map(r => r.region);
     if (deficitRegions.length && surplusRegions.length) {
       parts.push(`<strong>Suggestion:</strong> Consider rerouting supply from ${[...new Set(surplusRegions)].slice(0,3).join(', ')} to deficit areas such as ${[...new Set(deficitRegions)].slice(0,3).join(', ')}.`);
     }
   }
-
   document.getElementById('insightsContent').innerHTML = parts.length ? parts.map(p => `<div style="margin-bottom:6px">${p}</div>`).join('') : '<div class="text-muted">No insights generated (insufficient data).</div>';
 }
 
-/* ---------- Helpers ---------- */
-function escapeHtml(s) {
-  if (!s && s !== 0) return '';
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-/* ---------- UI wiring ---------- */
+/* Helpers & UI wiring */
+function escapeHtml(s) { if (!s && s !== 0) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 document.getElementById('apply-filters').addEventListener('click', () => {
   currentFilters.sku = document.getElementById('filter-product').value;
   currentFilters.region = document.getElementById('filter-region').value;
   currentFilters.date_from = document.getElementById('date-from').value;
   currentFilters.date_to = document.getElementById('date-to').value;
-  // if sku is not SKU but product id in product_details, prefer product_id param
-  // simplistic: we set sku and product_id both to selected value (backend will match if possible)
   currentFilters.product_id = currentFilters.sku;
   fetchData();
 });
-
 document.getElementById('reset-filters').addEventListener('click', () => {
   document.getElementById('filter-product').value = '';
   document.getElementById('filter-region').value = '';
@@ -532,12 +503,10 @@ document.getElementById('reset-filters').addEventListener('click', () => {
   currentFilters = { sku:'', product_id:'', region:'', date_from:'', date_to:'' };
   fetchData();
 });
-
 document.getElementById('export-csv').addEventListener('click', exportCurrentAsCSV);
 
-// initial load
-fetchData();
-
+async function init() { await fetchData(); }
+init();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
