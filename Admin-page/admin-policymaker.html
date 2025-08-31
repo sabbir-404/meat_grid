@@ -138,10 +138,11 @@ async function loadData(){
     document.querySelector('#'+id+' tbody').innerHTML=html;
   };
 
-  fillTable('supplyTable', j.supplyFull, ['id','division','livestock_count','slaughter_rate','total_yield','record_date'], 'policy_supply');
-  fillTable('priceTable', j.pricesFull, ['id','product_ID','product_name','avg_price','record_date'], 'policy_prices');
-  fillTable('consumptionTable', j.consumptionFull, ['id','product_ID','feedback_count','avg_score','record_date'], 'policy_consumption');
-  fillTable('altTable', j.altProteinFull, ['id','category','avg_price','avg_qty','record_date'], 'policy_alt_protein');
+  // ✅ Use same arrays as charts
+  fillTable('supplyTable', j.supply, ['id','division','livestock_count','slaughter_rate','total_yield','record_date'], 'policy_supply');
+  fillTable('priceTable', j.prices, ['id','product_ID','product_name','avg_price','record_date'], 'policy_prices');
+  fillTable('consumptionTable', j.consumption, ['id','product_ID','feedback_count','avg_score','record_date'], 'policy_consumption');
+  fillTable('altTable', j.altProtein, ['id','category','avg_price','avg_qty','record_date'], 'policy_alt_protein');
 }
 loadData();
 </script>
