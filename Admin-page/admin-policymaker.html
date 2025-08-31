@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Policy Maker - Demand & Supply Analysis</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{background:#f4f6f9}
+.sidebar{width:250px;height:100vh;background:#343a40;color:#fff;position:fixed;padding:20px 0}
+.dashboard-container{margin-left:270px;padding:30px}
+.chart-container{background:#fff;padding:20px;margin-bottom:30px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+</style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="text-center mb-3">
+    <img src="Logo/Logo white.png" alt="Meat Grid Logo" style="max-width: 100px;">
+  </div>
+  <h5 class="text-white px-3"><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h5>
+  <a href="admin-dashboard.html"><i class="fas fa-home me-2"></i>Dashboard</a>
+  <a href="admin-farmer.html"><i class="fas fa-tractor me-2"></i>Livestock</a>
+  <a href="admin-retailers.html"><i class="fas fa-store me-2"></i>Retailer Sales</a>
+  <a href="admin-slaughter.html"><i class="fas fa-industry me-2"></i>Slaughterhouse Info</a>
+  <a href="admin-meat_products.html"><i class="fas fa-cubes me-2"></i>Processed Meat</a>
+  <a href="admin-wholesalers.html"><i class="fas fa-boxes me-2"></i>Wholesale Data</a>
+  <a href="admin-consumers.html"><i class="fas fa-users me-2"></i>Consumer Feedback</a>
+  <a href="admin-nutrition.html"><i class="fas fa-apple-alt me-2"></i>Nutrition & Health</a>
+  <a href="admin-policy.html" class="active"><i class="fas fa-chart-line me-2"></i>Policy Maker</a>
+</div>
+
+<div class="dashboard-container">
+  <h2 class="mb-4">Policy Maker Dashboard - Demand & Supply</h2>
+
+  <!-- Charts -->
+  <div class="chart-container">
+    <h5>Supply by Division</h5>
+    <canvas id="supplyChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h5>Average Wholesale Prices by Product</h5>
+    <canvas id="priceChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h5>Consumer Feedback (Demand Proxy)</h5>
+    <canvas id="feedbackChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h5>Meat vs Alternative Proteins (Cross Elasticity)</h5>
+    <canvas id="altChart"></canvas>
+  </div>
+
+  <!-- Tables loaded via PHP include -->
+  <div id="policy-tables">
+    <?php include("admin-policy-tables.php"); ?>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a2d9d6a52a.js" crossorigin="anonymous"></script>
+<script>
+async function loadData(){
+  const res = await fetch('get_policy_data.php');
+  const j = await res.json();
+  if(!j.success){alert('Error loading data');return;}
+
+  new Chart(document.getElementById('supplyChart'),{
+    type:'bar',
+    data:{
+      labels:j.supply.map(x=>x.division),
+      datasets:[{label:'Total Yield (kg)', data:j.supply.map(x=>x.total_yield), backgroundColor:'#0d6efd'}]
+    }
+  });
+
+  new Chart(document.getElementById('priceChart'),{
+    type:'bar',
+    data:{
+      labels:j.prices.map(x=>x.product_name),
+      datasets:[{label:'Avg Price/kg', data:j.prices.map(x=>x.avg_price), backgroundColor:'#198754'}]
+    }
+  });
+
+  new Chart(document.getElementById('feedbackChart'),{
+    type:'bar',
+    data:{
+      labels:j.consumption.map(x=>x.product_ID),
+      datasets:[
+        {label:'Feedback Count', data:j.consumption.map(x=>x.feedback_count), backgroundColor:'#dc3545'},
+        {label:'Avg Score', data:j.consumption.map(x=>x.avg_score), backgroundColor:'#ffc107'}
+      ]
+    }
+  });
+
+  new Chart(document.getElementById('altChart'),{
+    type:'line',
+    data:{
+      labels:j.altProtein.map(x=>x.category),
+      datasets:[
+        {label:'Avg Price/kg', data:j.altProtein.map(x=>x.avg_price), borderColor:'#0dcaf0', fill:false},
+        {label:'Avg Qty', data:j.altProtein.map(x=>x.avg_qty), borderColor:'#6f42c1', fill:false}
+      ]
+    }
+  });
+}
+loadData();
+</script>
+</body>
+</html>
