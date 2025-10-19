@@ -46,45 +46,6 @@ php -S localhost:8000 -t public
 
 # Or deploy to your Apache/Nginx + PHP setup and point document root to the project public/ or root folder.
 ```
-Open http://localhost:8000 (or your configured host).
 
-## Environment (concise .env.example)
-Copy .env.example → .env and fill values before running.
-
-```text
-# Database
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_NAME=meat_grid
-DB_USER=root
-DB_PASS=secret
-
-# App
-APP_ENV=development
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-APP_KEY=base64:your_app_key_here
-
-# External data / marketplace API
-MARKET_API_URL=https://marketdata.example.com
-MARKET_API_KEY=your-market-api-key
-
-# File uploads
-UPLOAD_DIR=/var/www/meat_grid/uploads
-
-# Email (for alerts/reports)
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=you@example.com
-SMTP_PASS=secret
-
-# Optional feature flags
-ENABLE_REPORT_SCHEDULER=true
-```
-
-## Contributing
-- Fork → branch (feat/...) → PR. Include description, screenshots, and small focused changes.
-
-## License & contact
-- License: MIT  
+## contact
 - Maintainer: sabbir-404 — https://github.com/sabbir-404
