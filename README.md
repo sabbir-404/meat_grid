@@ -1,43 +1,90 @@
-# **WEBSITE PAGES VIEW**
+# $Meat Grid $
+### Meat Grid — Meat product demand & supply analysis 🥩📊
+[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)  
+![HTML](https://img.shields.io/badge/HTML-79.4%25-orange)
+![PHP](https://img.shields.io/badge/PHP-20.6%25-purple)
+![Project Status](https://img.shields.io/badge/status-Active%20(Beta)-brightgreen)
 
-### **Home page**
-<a href="https://sabbir-404.github.io/meat_grid/Home-page/frontpage.html" target="_blank">Open Home Page</a>
+Short description
+- A web-based system for analyzing meat product demand and supply using integrated data from stakeholders to support planning, pricing, and nutrition insights.
 
-### **Admin Page**
-<img width="4678" height="2409" alt="Admin Dashboard - Meat Grid" src="https://github.com/user-attachments/assets/d2e4e0ae-66e8-4de7-be13-028b51897f9f" />
-<a href="https://sabbir-404.github.io/meat_grid/Admin-page/admin-dashboard.html" target="_blank">Open Admin Page</a>
+Status
+- Development: Active (Beta) — core features implemented; improvements and data integrations ongoing.  
+- Last updated: 2025-10-19
 
-### **Analyst Page**
-<img width="3309" height="2028" alt="Analyst Dashboard" src="https://github.com/user-attachments/assets/ceca6f68-988c-4241-865e-609481042f87" />
-<a href="https://sabbir-404.github.io/meat_grid/Analyst/Dashboard.html" target="_blank">Open Analyst Page</a>
+## Features
+- Integrated stakeholder data ingestion (suppliers, retailers, markets)
+- Demand & supply analytics and trend visualization
+- Pricing & planning tools (forecasting, scenario comparison)
+- Nutrition insights and product composition summaries
+- Exportable reports (CSV/PDF) and scheduled summaries
+- Alerts for shortages, price spikes, or demand surges
 
-### **Farmer Page**
-<img width="3309" height="2878" alt="Farmer Dashboard - Meat Grid" src="https://github.com/user-attachments/assets/a0e56f6d-56b8-4288-85a0-a986cf50aa91" />
-<a href="https://sabbir-404.github.io/meat_grid/Farmer/Dashboard.html" target="_blank">Open Farmer Page</a>
+## Tech Stack
+- Primary: HTML, PHP
+- Typical stack: LAMP/LEMP (PHP 8+, MySQL/MariaDB)
+- Frontend: semantic HTML, server-rendered views
+- Recommended: Apache/Nginx, PHP 8+, Node (optional for tooling)
 
-### **Health Authority Page**
-<img width="4678" height="3309" alt="Analyst Report - Health Authority" src="https://github.com/user-attachments/assets/e22289fd-6d6e-49d5-a28c-861ce8d8ac6d" />
-<a href="https://sabbir-404.github.io/meat_grid/Health-Authority/Dashboard.html" target="_blank">Open Health Authority Page</a>
+## Roles
+- Admin — manage users, data sources, system settings  
+- Supplier — submit stock & supply reports  
+- Retailer — publish demand/orders, view forecasts  
+- Planner / Analyst — run scenarios and export reports  
+- Nutritionist — review nutrition-related summaries
 
-### **Local Market Page**
-<a href="https://sabbir-404.github.io/meat_grid/Local-market/Ldashboard.html" target="_blank">Open Local Market Page</a>
+## Quick start
+```bash
+git clone https://github.com/sabbir-404/meat_grid.git
+cd meat_grid
 
-### **Retailer Page**
-<img width="3309" height="3053" alt="Retailer Dashboard" src="https://github.com/user-attachments/assets/62736969-938c-4c11-ba0b-c9e09547db69" />
-<a href="https://sabbir-404.github.io/meat_grid/Retailer/Rdashboard.html" target="_blank">Open Retailer Page</a>
+# If the project uses composer (check repository)
+# composer install
 
-### **Wholesaler Page**
-<img width="3309" height="2278" alt="Wholesale Dashboard" src="https://github.com/user-attachments/assets/6f2fe55d-25fb-4335-ae2e-1d14cf3bcd4b" />
-<a href="https://sabbir-404.github.io/meat_grid/Wholesale/dashboard.html" target="_blank">Open Wholesaler Page</a>
+# Serve with local PHP server for quick dev (if no framework):
+php -S localhost:8000 -t public
 
-### **Slaughterhouse Page**
-<img width="3309" height="2828" alt="Slaughterhouse Dashboard" src="https://github.com/user-attachments/assets/5aab0377-cb49-4284-a9e4-453787155a58" />
-<a href="https://sabbir-404.github.io/meat_grid/Slaughterhouse/Dashboard.html" target="_blank">Open Slaughterhouse Page</a>
+# Or deploy to your Apache/Nginx + PHP setup and point document root to the project public/ or root folder.
+```
+Open http://localhost:8000 (or your configured host).
 
-### **Policy Maker**
-<img width="4678" height="3309" alt="Policy Maker Dashboard" src="https://github.com/user-attachments/assets/33bab06c-c3cc-433c-9308-b5bdb9d5291f" />
-<a href="https://sabbir-404.github.io/meat_grid/Policy-Maker/Dashboard.html" target="_blank">Open Policy Maker Page</a>
+## Environment (concise .env.example)
+Copy .env.example → .env and fill values before running.
 
-### Login & Signup pages
-<img width="2800" height="1700" alt="Sign Up - Meat Grid" src="https://github.com/user-attachments/assets/1cade03d-269a-4831-b2fe-215f7e004836" />
-<img width="2800" height="1700" alt="Login - Meat Grid" src="https://github.com/user-attachments/assets/70c4a4e8-9746-4899-8998-7eba93f31c9e" />
+```text
+# Database
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=meat_grid
+DB_USER=root
+DB_PASS=secret
+
+# App
+APP_ENV=development
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+APP_KEY=base64:your_app_key_here
+
+# External data / marketplace API
+MARKET_API_URL=https://marketdata.example.com
+MARKET_API_KEY=your-market-api-key
+
+# File uploads
+UPLOAD_DIR=/var/www/meat_grid/uploads
+
+# Email (for alerts/reports)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=you@example.com
+SMTP_PASS=secret
+
+# Optional feature flags
+ENABLE_REPORT_SCHEDULER=true
+```
+
+## Contributing
+- Fork → branch (feat/...) → PR. Include description, screenshots, and small focused changes.
+
+## License & contact
+- License: MIT  
+- Maintainer: sabbir-404 — https://github.com/sabbir-404
